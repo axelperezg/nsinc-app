@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Version extends Model
+{
+    protected $fillable = [
+        'name',
+        'fechaInicio',
+        'fechaFinal',
+        'campaign_id',
+    ];
+
+    protected $casts = [
+        'fechaInicio' => 'date',
+        'fechaFinal' => 'date',
+    ];
+
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class);
+    }
+}
