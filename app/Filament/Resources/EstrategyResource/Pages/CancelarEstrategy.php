@@ -22,7 +22,7 @@ class CancelarEstrategy extends Page
     public function mount($record): void
     {
         $this->estrategyOriginal = Estrategy::with('campaigns.versions')->findOrFail($record);
-        
+
         // Verificar que la estrategia esté autorizada
         if ($this->estrategyOriginal->estado_estrategia !== 'Autorizada') {
             Notification::make()
@@ -33,6 +33,34 @@ class CancelarEstrategy extends Page
 
             $this->redirect(route('filament.admin.resources.estrategies.index'));
             return;
+        }
+
+        // Validar fechas de vencimiento para Cancelación (usa las mismas fechas que Modificación)
+        $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
+            'Cancelación',
+            $this->estrategyOriginal->anio
+        );
+
+        if (!$validation['allowed']) {
+            Notification::make()
+                ->title('No se puede cancelar estrategia')
+                ->body($validation['message'])
+                ->danger()
+                ->persistent()
+                ->send();
+
+            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            return;
+        }
+
+        // Si hay advertencia, mostrarla
+        if ($validation['level'] === 'warning') {
+            Notification::make()
+                ->title('Advertencia de fecha límite')
+                ->body($validation['message'])
+                ->warning()
+                ->duration(10000)
+                ->send();
         }
 
         // Crear la nueva estrategia

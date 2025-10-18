@@ -3,35 +3,58 @@
 namespace App\Filament\Resources\EstrategyResource\Pages;
 
 use App\Filament\Resources\EstrategyResource;
+use App\Filament\Widgets\ExpirationDatesWidget;
 use App\Models\Estrategy;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Components\Tab;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class ListEstrategies extends ListRecords
 {
     protected static string $resource = EstrategyResource::class;
 
+    /**
+     * Hook que se ejecuta cuando se actualizan los filtros
+     */
+    public function updatedTableFilters(): void
+    {
+        // Disparar evento para que los widgets se actualicen
+        $this->dispatch('filtersUpdated', year: $this->getFilteredYear());
+    }
+
+    /**
+     * Obtener las acciones del header (se ejecuta cada vez que se actualiza)
+     */
     protected function getHeaderActions(): array
     {
         $actions = [];
 
         // Obtener el año del filtro actual o usar el año actual
-        $anio = request()->get('tableFilters.anio.anio', now()->year);
-        
-        // Verificar si ya existe una estrategia para este año
-        $estrategiaExistente = Estrategy::where('anio', $anio)->first();
+        $anio = $this->getFilteredYear();
+        $user = Auth::user();
 
-        // Solo mostrar el botón "Crear Estrategia" si NO existe ninguna estrategia para el año filtrado
-        if (!$estrategiaExistente) {
-            $actions[] = Actions\CreateAction::make();
+        // Verificar si ya existe una estrategia para este año (solo de la institución del usuario)
+        $estrategiaExistente = null;
+
+        if ($user && $user->institution_id) {
+            $estrategiaExistente = Estrategy::where('anio', $anio)
+                ->where('institution_id', $user->institution_id)
+                ->first();
+        }
+
+        // Solo mostrar el botón "Crear Estrategia" si NO existe estrategia para el año filtrado
+        if (!$estrategiaExistente && $user && $user->institution_id) {
+            $actions[] = Actions\CreateAction::make()
+                ->url(fn () => static::getResource()::getUrl('create', ['year' => $anio]))
+                // Hacer que el botón sea reactivo al año
+                ->extraAttributes(['wire:key' => 'create-action-' . $anio]);
         }
 
         return $actions;
     }
 
+    // Tabs deshabilitados - se usan los filtros de la tabla en su lugar
+    /*
     public function getTabs(): array
     {
         return [
@@ -97,5 +120,35 @@ class ListEstrategies extends ListRecords
         }
         
         return $baseQuery->count();
+    }
+    */
+
+    /**
+     * Widgets que se muestran en la parte superior de la página
+     */
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ExpirationDatesWidget::make([
+                'filterYear' => $this->getFilteredYear(),
+            ]),
+        ];
+    }
+
+    /**
+     * Obtener el año filtrado actual
+     */
+    protected function getFilteredYear(): int
+    {
+        // Obtener los filtros de la tabla
+        $tableFilters = $this->tableFilters;
+
+        // Si existe el filtro de año, usarlo
+        if (isset($tableFilters['anio']['anio']) && !empty($tableFilters['anio']['anio'])) {
+            return (int) $tableFilters['anio']['anio'];
+        }
+
+        // Si no hay filtro, usar el año actual
+        return now()->year;
     }
 }
