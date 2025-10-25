@@ -27,8 +27,16 @@ class ConfigurationSeeder extends Seeder
                 'value' => null,
                 'type' => 'string',
                 'group' => 'pdf',
-                'label' => 'Logo para PDFs',
-                'description' => 'Logo que se mostrará en la parte superior de los PDFs de estrategias. Se recomienda usar formato PNG o JPG con fondo transparente.',
+                'label' => 'Logo Izquierdo para PDFs',
+                'description' => 'Logo que se mostrará en la parte superior izquierda de los PDFs de estrategias. Se recomienda usar formato PNG o JPG con fondo transparente.',
+            ],
+            [
+                'key' => 'pdf.logo_right_path',
+                'value' => null,
+                'type' => 'string',
+                'group' => 'pdf',
+                'label' => 'Logo Derecho para PDFs',
+                'description' => 'Logo que se mostrará en la parte superior derecha de los PDFs de estrategias. Se recomienda usar formato PNG o JPG con fondo transparente.',
             ],
             // Aquí se pueden agregar más configuraciones en el futuro
         ];

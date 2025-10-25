@@ -10,6 +10,7 @@ class Sector extends Model
     protected $fillable = [
         'name',
         'acronym',
+        'ResponsableSector',
     ];
 
     /**

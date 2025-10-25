@@ -20,6 +20,9 @@ class ListEstrategies extends ListRecords
     {
         // Disparar evento para que los widgets se actualicen
         $this->dispatch('filtersUpdated', year: $this->getFilteredYear());
+
+        // Resetear el cache de acciones y forzar re-renderizado
+        $this->cachedHeaderActions = [];
     }
 
     /**
@@ -33,21 +36,33 @@ class ListEstrategies extends ListRecords
         $anio = $this->getFilteredYear();
         $user = Auth::user();
 
-        // Verificar si ya existe una estrategia para este año (solo de la institución del usuario)
-        $estrategiaExistente = null;
+        // Verificar si ya existe una estrategia para este año y esta institución
+        $existeEstrategia = false;
 
         if ($user && $user->institution_id) {
-            $estrategiaExistente = Estrategy::where('anio', $anio)
+            $existeEstrategia = Estrategy::where('anio', $anio)
                 ->where('institution_id', $user->institution_id)
-                ->first();
+                ->exists();
         }
 
-        // Solo mostrar el botón "Crear Estrategia" si NO existe estrategia para el año filtrado
-        if (!$estrategiaExistente && $user && $user->institution_id) {
-            $actions[] = Actions\CreateAction::make()
+        // Solo mostrar el botón "Crear Estrategia" si:
+        // 1. NO existe estrategia para el año filtrado
+        // 2. El usuario tiene una institución asignada
+        // 3. El usuario tiene los permisos adecuados (institution_user o institution_admin)
+        $canCreate = !$existeEstrategia
+            && $user
+            && $user->institution_id
+            && $user->role
+            && in_array($user->role->name, ['institution_user', 'institution_admin']);
+
+        if ($canCreate) {
+            $actions[] = Actions\CreateAction::make('create_' . $anio)
+                ->label('Crear Estrategia')
                 ->url(fn () => static::getResource()::getUrl('create', ['year' => $anio]))
-                // Hacer que el botón sea reactivo al año
-                ->extraAttributes(['wire:key' => 'create-action-' . $anio]);
+                // Hacer que el botón sea reactivo al año seleccionado en el filtro
+                ->extraAttributes([
+                    'wire:key' => 'create-estrategy-' . $anio . '-' . ($user->institution_id ?? 'no-inst'),
+                ]);
         }
 
         return $actions;

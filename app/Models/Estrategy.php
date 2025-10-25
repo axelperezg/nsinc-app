@@ -27,7 +27,9 @@ class Estrategy extends Model
         'presupuesto',
         'responsable_id',
         'responsable_name',
+        'NombreSectorResponsable',
         'ejes_plan_nacional',
+        'justificacion_estudios',
     ];
 
     protected $casts = [

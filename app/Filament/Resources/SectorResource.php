@@ -47,6 +47,9 @@ class SectorResource extends Resource
                     ->label('Acrónimo')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('ResponsableSector')
+                    ->label('Responsable del Sector')
+                    ->maxLength(255),
             ]);
     }
 
@@ -60,6 +63,10 @@ class SectorResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('acronym')
                     ->label('Acrónimo')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('ResponsableSector')
+                    ->label('Responsable')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('institutions_count')

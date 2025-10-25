@@ -45,7 +45,7 @@ class EstrategyResource extends Resource
             ->step(0.000001) // Permitir hasta 6 decimales
             ->prefix('$')
             ->reactive()
-            ->formatStateUsing(fn ($state) => $state ? number_format($state, 2) : '')
+            ->formatStateUsing(fn ($state) => $state ? number_format($state, 2, '.', '') : '')
             ->dehydrateStateUsing(fn ($state) => $state ? round((float)$state, 6) : null);
 
         // Aplicar configuración adicional
@@ -58,7 +58,7 @@ class EstrategyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?string $navigationLabel = 'Estrategias';
+    protected static ?string $navigationLabel = 'Estrategias Comunicación Social';
 
     protected static ?string $modelLabel = 'Estrategia';
 
@@ -168,6 +168,20 @@ class EstrategyResource extends Resource
                                     $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
                                     if ($responsable) {
                                         return $responsable->name;
+                                    }
+                                }
+                                return 'No disponible';
+                            }),
+                        Forms\Components\TextInput::make('NombreSectorResponsable')
+                            ->label('Responsable del Sector')
+                            ->disabled()
+                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
+                            ->default(function () {
+                                $user = Auth::user();
+                                if ($user && $user->institution_id) {
+                                    $institution = \App\Models\Institution::with('sector')->find($user->institution_id);
+                                    if ($institution && $institution->sector) {
+                                        return $institution->sector->ResponsableSector ?? 'No disponible';
                                     }
                                 }
                                 return 'No disponible';
@@ -486,7 +500,7 @@ class EstrategyResource extends Resource
                                     Notification::make()
                                         ->warning()
                                         ->title('Presupuesto bajo')
-                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') parece bajo para una estrategia anual. ¿Es correcto?')
+                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es correcto? Revisa de nuevo.')
                                         ->duration(5000)
                                         ->send();
                                 }
@@ -496,7 +510,7 @@ class EstrategyResource extends Resource
                                     Notification::make()
                                         ->warning()
                                         ->title('Presupuesto muy alto')
-                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es muy alto. Verifica que sea correcto.')
+                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es correcto? Revisa de nuevo.')
                                         ->duration(5000)
                                         ->send();
                                 }
@@ -523,7 +537,7 @@ class EstrategyResource extends Resource
                     ->icon('heroicon-o-megaphone')
                     ->schema([
                         Forms\Components\Repeater::make('campaigns')
-                            ->label('Ingresa la información de la Campaña')
+                            ->label('Programa: Campaña de Comunicación Social')
                             ->relationship('campaigns')
                             ->schema([
                                 Forms\Components\Section::make('Información General')
@@ -574,7 +588,6 @@ class EstrategyResource extends Resource
                                             ->hintIcon('heroicon-o-question-mark-circle')
                                             ->hintColor('info')
                                             ->helperText('Elige el tipo de campaña según su naturaleza y objetivos.')
-                                            ->searchable()
                                             ->preload(),
                                         Forms\Components\Textarea::make('temaEspecifco')
                                             ->label('Tema Específico')
@@ -632,7 +645,7 @@ class EstrategyResource extends Resource
                                                             if ($fechaInicio->lt($hoy)) {
                                                                 Notification::make()
                                                                     ->warning()
-                                                                    ->title('Fecha en el pasado')
+                                                                    ->title('Fecha inicio en el pasado')
                                                                     ->body('La fecha de inicio está en el pasado. Verifica si es correcto.')
                                                                     ->duration(4000)
                                                                     ->send();
@@ -650,6 +663,21 @@ class EstrategyResource extends Resource
                                                                     ->send();
                                                             }
                                                         }
+                                                    })
+                                                    ->rule(function ($get) {
+                                                        return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                                            if (!$value) return;
+
+                                                            $anio = $get('../../anio');
+                                                            if (!$anio) return;
+
+                                                            $fechaInicio = \Carbon\Carbon::parse($value);
+                                                            $anioFecha = $fechaInicio->year;
+
+                                                            if ($anioFecha != $anio) {
+                                                                $fail("La fecha de inicio debe estar dentro del año {$anio} de la estrategia.");
+                                                            }
+                                                        };
                                                     }),
                                                 Forms\Components\DatePicker::make('fechaFinal')
                                                     ->label('Fecha Final')
@@ -699,7 +727,36 @@ class EstrategyResource extends Resource
                                                                 }
                                                             }
                                                         }
-                                                    }),
+                                                    })
+                                                    ->rules([
+                                                        function ($get) {
+                                                            return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                                                if (!$value) return;
+
+                                                                // Validación 1: Fecha final no puede ser anterior o igual a fecha inicial
+                                                                $fechaInicio = $get('fechaInicio');
+                                                                if ($fechaInicio) {
+                                                                    $inicio = \Carbon\Carbon::parse($fechaInicio);
+                                                                    $final = \Carbon\Carbon::parse($value);
+
+                                                                    if ($final->lte($inicio)) {
+                                                                        $fail('La fecha final debe ser posterior a la fecha de inicio.');
+                                                                    }
+                                                                }
+
+                                                                // Validación 2: Fecha final debe estar dentro del año de la estrategia
+                                                                $anio = $get('../../anio');
+                                                                if ($anio) {
+                                                                    $fechaFinal = \Carbon\Carbon::parse($value);
+                                                                    $anioFecha = $fechaFinal->year;
+
+                                                                    if ($anioFecha != $anio) {
+                                                                        $fail("La fecha final debe estar dentro del año {$anio} de la estrategia.");
+                                                                    }
+                                                                }
+                                                            };
+                                                        }
+                                                    ]),
                                             ])
                                             ->columns(3)
                                             ->defaultItems(0)
@@ -1141,6 +1198,72 @@ class EstrategyResource extends Resource
                     ->columns(4)
                     ->collapsible(false),
 
+                Forms\Components\Section::make('Justificación de Estudios')
+                    ->description('Si no se asigna presupuesto a estudios (pre-test o post-test), debes seleccionar una justificación')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        Forms\Components\Placeholder::make('total_estudios_info')
+                            ->label('Total de Estudios')
+                            ->content(function ($get) {
+                                $campaigns = $get('campaigns') ?? [];
+                                $totalEstudios = 0;
+
+                                foreach ($campaigns as $campaign) {
+                                    $totalEstudios += floatval($campaign['preEstudios'] ?? 0) + floatval($campaign['postEstudios'] ?? 0);
+                                }
+
+                                if ($totalEstudios == 0) {
+                                    return '⚠️ $0.00 - Se requiere justificación';
+                                }
+
+                                return '✅ $' . number_format($totalEstudios, 2);
+                            })
+                            ->reactive()
+                            ->helperText('Suma de Pre-Estudios y Post-Estudios de todas las campañas')
+                            ->extraAttributes(['class' => 'font-mono text-lg font-bold']),
+
+                        Forms\Components\Select::make('justificacion_estudios')
+                            ->label('Justificación por no realizar estudios')
+                            ->options([
+                                'Insuficiencia de recursos o poca disponibilidad presupuestal' => ' Insuficiencia de recursos o poca disponibilidad presupuestal',
+                                'Cancelación de Programa' => 'Cancelación de Programa',
+                                'Cancelación de Campaña' => ' Cancelación de Campaña',
+                                'Cuando la dependencia o entidad cuente con un área de estudios, que haya realizado uno en otra
+                                Campaña o lo tenga programado' => 'Cuando la dependencia o entidad cuente con un área de estudios, que haya realizado uno en otra
+                                Campaña o lo tenga programado',
+                                'Cuando la dependencia o entidad haya realizado estudios de mercado, con énfasis en el análisis de
+                                ventas o de prestación de servicios' => 'Cuando la dependencia o entidad haya realizado estudios de mercado, con énfasis en el análisis de
+                                ventas o de prestación de servicios',
+                                'Cuando la dependencia o entidad haya coemitido Campaña, para la cual se haya previsto la aplicación
+                                de estudio por alguna entidad coemisora' => 'Cuando la dependencia o entidad haya coemitido Campaña, para la cual se haya previsto la aplicación
+                                de estudio por alguna entidad coemisora',
+                            ])
+                            ->placeholder('Selecciona una justificación')
+                            ->helperText('Este campo es obligatorio si la suma total de Pre-Estudios y Post-Estudios es igual a $0.00')
+                            ->reactive()
+                            ->required(function ($get) {
+                                $campaigns = $get('campaigns') ?? [];
+                                $totalEstudios = 0;
+
+                                foreach ($campaigns as $campaign) {
+                                    $totalEstudios += floatval($campaign['preEstudios'] ?? 0) + floatval($campaign['postEstudios'] ?? 0);
+                                }
+
+                                return $totalEstudios == 0;
+                            })
+                            ->visible(function ($get) {
+                                $campaigns = $get('campaigns') ?? [];
+                                $totalEstudios = 0;
+
+                                foreach ($campaigns as $campaign) {
+                                    $totalEstudios += floatval($campaign['preEstudios'] ?? 0) + floatval($campaign['postEstudios'] ?? 0);
+                                }
+
+                                return $totalEstudios == 0;
+                            }),
+                    ])
+                    ->collapsible(),
+
                 // Botón para enviar a DGNC
                 Forms\Components\Actions::make([
                     Forms\Components\Actions\Action::make('enviar_cs')
@@ -1339,8 +1462,12 @@ class EstrategyResource extends Resource
                     ->label('Institución'),
                     //->searchable()
                     //->visible(fn () => Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin'),
-            
-                
+
+                Tables\Columns\TextColumn::make('NombreSectorResponsable')
+                    ->label('Responsable Sector')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('concepto')
                     ->label('Concepto')
                     ->searchable()
@@ -1470,27 +1597,65 @@ class EstrategyResource extends Resource
                             'campaigns.versions'
                         ])->find($record->id);
 
-                        // Obtener el logo del PDF desde configuraciones
+                        // Obtener los logos del PDF desde configuraciones
                         $logoPath = \App\Models\Configuration::get('pdf.logo_path');
+                        $logoRightPath = \App\Models\Configuration::get('pdf.logo_right_path');
 
-                        // Convertir la ruta del logo a ruta absoluta si existe
+                        // Función helper para extraer la ruta del archivo desde JSON o string
+                        $extractFilePath = function($value) {
+                            if (empty($value)) {
+                                return null;
+                            }
+
+                            // Si es un JSON (array de archivos de Filament)
+                            if (is_string($value) && str_starts_with($value, '{')) {
+                                $decoded = json_decode($value, true);
+                                if (is_array($decoded) && count($decoded) > 0) {
+                                    // Obtener el primer valor del array
+                                    return reset($decoded);
+                                }
+                            }
+
+                            // Si es un string simple
+                            return $value;
+                        };
+
+                        // Convertir la ruta del logo izquierdo a ruta absoluta si existe
                         $logoAbsolutePath = null;
-                        if ($logoPath) {
-                            $logoAbsolutePath = storage_path('app/public/' . $logoPath);
+                        $logoPathExtracted = $extractFilePath($logoPath);
+                        if ($logoPathExtracted) {
+                            $logoAbsolutePath = storage_path('app/public/' . $logoPathExtracted);
                             // Verificar si el archivo existe
                             if (!file_exists($logoAbsolutePath)) {
                                 $logoAbsolutePath = null;
                             }
                         }
 
+                        // Convertir la ruta del logo derecho a ruta absoluta si existe
+                        $logoRightAbsolutePath = null;
+                        $logoRightPathExtracted = $extractFilePath($logoRightPath);
+                        if ($logoRightPathExtracted) {
+                            $logoRightAbsolutePath = storage_path('app/public/' . $logoRightPathExtracted);
+                            // Verificar si el archivo existe
+                            if (!file_exists($logoRightAbsolutePath)) {
+                                $logoRightAbsolutePath = null;
+                            }
+                        }
+
                         // Generar el PDF
-                        $pdf = Pdf::loadView('pdf.estrategy', [
+                        $pdf = Pdf::loadView('pdf.estrategy.main', [
                             'estrategy' => $estrategy,
-                            'logoPath' => $logoAbsolutePath
+                            'logoPath' => $logoAbsolutePath,
+                            'logoRightPath' => $logoRightAbsolutePath
                         ]);
 
                         // Configurar opciones del PDF
                         $pdf->setPaper('letter', 'portrait');
+
+                        // Configurar opciones de DomPDF para respetar los márgenes
+                        $pdf->setOption('isHtml5ParserEnabled', true);
+                        $pdf->setOption('isRemoteEnabled', true);
+                        $pdf->setOption('dpi', 96);
 
                         // Nombre del archivo
                         $filename = 'Estrategia_' . $estrategy->institution_name . '_' . $estrategy->anio . '.pdf';

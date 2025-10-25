@@ -177,6 +177,27 @@ class CreateEstrategy extends CreateRecord
             // Detener el proceso de creación
             $this->halt();
         }
+
+        // Validar estudios: calcular suma total de pre-estudios y post-estudios de todas las campañas
+        $totalEstudios = 0;
+        if (isset($data['campaigns']) && is_array($data['campaigns'])) {
+            foreach ($data['campaigns'] as $campaign) {
+                $totalEstudios += ($campaign['preEstudios'] ?? 0) + ($campaign['postEstudios'] ?? 0);
+            }
+        }
+
+        // Si no hay estudios (total = 0) y no hay justificación, detener
+        if ($totalEstudios == 0 && empty($data['justificacion_estudios'])) {
+            Notification::make()
+                ->title('Justificación de estudios requerida')
+                ->body('Debes seleccionar una justificación en la sección "Justificación de Estudios" porque no se ha asignado presupuesto a Pre-Estudios ni Post-Estudios en ninguna campaña.')
+                ->danger()
+                ->persistent()
+                ->send();
+
+            // Detener el proceso de creación
+            $this->halt();
+        }
     }
 
     /**

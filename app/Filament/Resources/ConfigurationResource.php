@@ -70,10 +70,25 @@ class ConfigurationResource extends Resource
                             ->formatStateUsing(fn ($state) => filter_var($state, FILTER_VALIDATE_BOOLEAN))
                             ->dehydrateStateUsing(fn ($state) => $state ? '1' : '0'),
 
-                        // FileUpload para logo PDF
+                        // FileUpload para logo PDF izquierdo
                         Forms\Components\FileUpload::make('value')
-                            ->label('Logo')
+                            ->label('Logo Izquierdo')
                             ->visible(fn ($record) => $record && isset($record->key) && $record->key === 'pdf.logo_path')
+                            ->image()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('logos')
+                            ->visibility('public')
+                            ->imagePreviewHeight('150')
+                            ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/jpg'])
+                            ->helperText('Formatos permitidos: PNG, JPG. Tamaño máximo: 2MB. Se recomienda usar fondo transparente.')
+                            ->downloadable()
+                            ->deletable(true),
+
+                        // FileUpload para logo PDF derecho
+                        Forms\Components\FileUpload::make('value')
+                            ->label('Logo Derecho')
+                            ->visible(fn ($record) => $record && isset($record->key) && $record->key === 'pdf.logo_right_path')
                             ->image()
                             ->maxSize(2048)
                             ->disk('public')
@@ -88,7 +103,7 @@ class ConfigurationResource extends Resource
                         // TextInput para otros tipos de string
                         Forms\Components\TextInput::make('value')
                             ->label('Valor')
-                            ->visible(fn ($record) => $record && isset($record->type) && isset($record->key) && $record->type === 'string' && $record->key !== 'pdf.logo_path')
+                            ->visible(fn ($record) => $record && isset($record->type) && isset($record->key) && $record->type === 'string' && !in_array($record->key, ['pdf.logo_path', 'pdf.logo_right_path']))
                             ->maxLength(255),
                     ])
                     ->columns(1),
@@ -131,13 +146,13 @@ class ConfigurationResource extends Resource
                     ->label('Logo')
                     ->disk('public')
                     ->height(50)
-                    ->visible(fn ($record) => isset($record->key) && $record->key === 'pdf.logo_path')
+                    ->visible(fn ($record) => isset($record->key) && in_array($record->key, ['pdf.logo_path', 'pdf.logo_right_path']))
                     ->defaultImageUrl(fn () => null),
 
                 Tables\Columns\TextColumn::make('value')
                     ->label('Valor')
                     ->limit(50)
-                    ->visible(fn ($record) => isset($record->type) && isset($record->key) && $record->type === 'string' && $record->key !== 'pdf.logo_path')
+                    ->visible(fn ($record) => isset($record->type) && isset($record->key) && $record->type === 'string' && !in_array($record->key, ['pdf.logo_path', 'pdf.logo_right_path']))
                     ->placeholder('No configurado')
                     ->wrap(),
 
