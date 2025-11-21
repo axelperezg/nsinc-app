@@ -7,8 +7,8 @@
     <style>
         @page {
             size: letter portrait;
-            margin-top: 2cm;
-            margin-bottom: 2cm;
+            margin-top: 4cm;
+            margin-bottom: 3cm;
             margin-left: 2cm;
             margin-right: 2cm;
         }
@@ -21,8 +21,20 @@
             font-family: 'Noto Sans', Arial, sans-serif;
             font-size: 9pt;
             line-height: 1.3;
-            padding-left: 105px;
-            padding-right: 105px;
+            position: relative;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+            padding-top: 1cm;
+            padding-bottom: 1cm;
+        }
+        /* Marco decorativo en todas las páginas */
+        .marco-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 21.59cm;
+            height: 27.94cm;
+            z-index: -1;
         }
         .page-break {
             page-break-after: always;
@@ -166,6 +178,9 @@
     </style>
 </head>
 <body>
+    {{-- Marco decorativo en todas las páginas --}}
+    <img src="{{ public_path('assets/marcoSegob.jpg') }}" class="marco-background" alt="Marco decorativo">
+
     {{-- Página 1: Carátula de Estrategia --}}
     @include('pdf.estrategy.page1', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
 

@@ -1,6 +1,6 @@
 {{-- Página 1: Carátula de Estrategia Anual --}}
 
-<table class="header-logos">
+<table class="header-logos" style="margin-top: 15px;">
     <tr>
         <td class="logo-left">
             @if($logoPath && file_exists($logoPath))
@@ -164,7 +164,7 @@
     $granTotal = $totalElectronicos + $totalImpresos + $totalComplementarios + $totalEstudios + $totalDisenoProduccion;
 @endphp
 
-<div style="margin-bottom: 15px; margin-top: 20px;">
+<div style="margin-bottom: 10px; margin-top: 10px;">
     <div style="font-weight: bold; font-size: 11pt; margin-bottom: 10px; text-align: center;">RESUMEN DE MEDIOS</div>
 
     <table style="width: 100%; border: none;">
@@ -204,7 +204,7 @@
 {{-- Sección de Firmas Condicional --}}
 @if($estrategy->institution && $estrategy->institution->isSector)
     {{-- Si es Sector, solo mostrar firma del Responsable de Sector centrada --}}
-    <table style="margin-top: 60px; width: 100%;">
+    <table style="margin-top: 10px; width: 100%;">
         <tr>
             <td style="text-align: center; vertical-align: bottom; padding-top: 40px;">
                 <div style="border-top: 1px solid #000; margin: 0 auto; width: 60%; padding-top: 5px; font-size: 8pt;">
@@ -216,7 +216,7 @@
     </table>
 @else
     {{-- Si NO es Sector, mostrar ambas firmas --}}
-    <table class="signature-row" style="margin-top: 60px;">
+    <table class="signature-row" style="margin-top: 10px;">
         <tr>
             <td class="signature-cell">
                 <div class="signature-line">

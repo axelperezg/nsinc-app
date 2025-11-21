@@ -1,17 +1,17 @@
 {{-- Página de Campaña --}}
 
 {{-- Header con logos --}}
-<table class="header-logos" style="margin-bottom: 10px;">
+<table class="header-logos" style="margin-top: calc(5mm + 15px); margin-bottom: 5px;">
     <tr>
         <td class="logo-left">
             @if($logoPath && file_exists($logoPath))
-                <img src="{{ $logoPath }}" height="45" alt="Logo Izquierdo">
+                <img src="{{ $logoPath }}" height="35" alt="Logo Izquierdo">
             @endif
         </td>
         <td class="logo-center"></td>
         <td class="logo-right">
             @if($logoRightPath && file_exists($logoRightPath))
-                <img src="{{ $logoRightPath }}" height="45" alt="Logo Derecho">
+                <img src="{{ $logoRightPath }}" height="35" alt="Logo Derecho">
             @endif
         </td>
     </tr>
@@ -62,38 +62,38 @@
     }
 @endphp
 
-<div style="font-weight: bold; font-size: 10pt; text-align: center; margin-bottom: 5px;">
+<div style="font-weight: bold; font-size: 9pt; text-align: center; margin-bottom: 3px;">
     PROGRAMA ANUAL DE COMUNICACIÓN SOCIAL PARA EL EJERCICIO FISCAL {{ $estrategy->anio }}
 </div>
 
-<table class="data-table" style="margin-bottom: 4px;">
+<table class="data-table" style="margin-bottom: 2px;">
     <tr>
-        <td class="label-cell">Dependencia o Entidad:</td>
-        <td colspan="3">{{ $estrategy->institution_name }}</td>
+        <td class="label-cell" style="padding: 2px 4px;">Dependencia o Entidad:</td>
+        <td colspan="3" style="padding: 2px 4px;">{{ $estrategy->institution_name }}</td>
     </tr>
     <tr>
-        <td class="label-cell">Fecha de elaboración:</td>
-        <td colspan="3">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
+        <td class="label-cell" style="padding: 2px 4px;">Fecha de elaboración:</td>
+        <td colspan="3" style="padding: 2px 4px;">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
     </tr>
 </table>
 
-<table style="width: 100%; border: 1px solid #000; margin-bottom: 4px;">
+<table style="width: 100%; border: 1px solid #000; margin-bottom: 2px;">
     <tr>
-        <td colspan="2" style="padding: 4px; text-align: right; font-weight: bold;">miles de pesos / I.V.A. incluido</td>
+        <td colspan="2" style="padding: 2px; text-align: right; font-weight: bold; font-size: 7.5pt;">miles de pesos / I.V.A. incluido</td>
     </tr>
     <tr>
-        <td style="border: 1px solid #000; padding: 4px; background-color: #d9d9d9; font-weight: bold;">
+        <td style="border: 1px solid #000; padding: 2px; background-color: #d9d9d9; font-weight: bold; font-size: 7.5pt;">
             Presupuesto anual de la dependencia o entidad destinado a la partida 36101:
         </td>
-        <td style="border: 1px solid #000; padding: 4px; text-align: right; background-color: #f2e4b8; font-weight: bold; width: 120px;">
+        <td style="border: 1px solid #000; padding: 2px; text-align: right; background-color: #f2e4b8; font-weight: bold; width: 120px; font-size: 7.5pt;">
             {{ number_format($estrategy->presupuesto, 2) }}
         </td>
     </tr>
     <tr>
-        <td style="border: 1px solid #000; padding: 4px; background-color: #d9d9d9; font-weight: bold;">
+        <td style="border: 1px solid #000; padding: 2px; background-color: #d9d9d9; font-weight: bold; font-size: 7.5pt;">
             ACUMULADO EN CAMPAÑAS:
         </td>
-        <td style="border: 1px solid #000; padding: 4px; text-align: right; font-weight: bold;">
+        <td style="border: 1px solid #000; padding: 2px; text-align: right; font-weight: bold; font-size: 7.5pt;">
             {{ number_format($acumulado, 2) }}
         </td>
     </tr>
@@ -200,122 +200,122 @@
     </tr>
 </table>
 
-<div style="margin-top: 4px;">
+<div style="margin-top: 2px;">
     <table style="width: 100%; border: 1px solid #000;">
         <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 2px 4px; font-weight: bold; width: 70%;">
+            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 1px 3px; font-weight: bold; width: 70%; font-size: 7.5pt;">
                 RESUMEN DE MEDIOS
             </td>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 2px 4px; font-weight: bold; text-align: right;">
+            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 1px 3px; font-weight: bold; text-align: right; font-size: 7.5pt;">
                 MONTO
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 2px 4px; font-weight: bold; font-size: 8pt;">
+            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 MEDIOS ELECTRÓNICOS
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Televisoras</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->televisoras ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Televisoras</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->televisoras ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Radiodifusoras</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->radiodifusoras ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Radiodifusoras</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->radiodifusoras ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Radios Comunitarias</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->mediosDigitalesInternet ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Radios Comunitarias</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->mediosDigitalesInternet ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 2px 4px; font-weight: bold; font-size: 8pt;">
+            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 MEDIOS IMPRESOS
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Diarios CDMX</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->decdmx ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Diarios CDMX</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->decdmx ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Diarios Estados</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->deedos ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Diarios Estados</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->deedos ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Diarios o medios extranjeros</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->deextr ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Diarios o medios extranjeros</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->deextr ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Revistas</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->revistas ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Revistas</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->revistas ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 2px 4px; font-weight: bold; font-size: 8pt;">
+            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 MEDIOS COMPLEMENTARIOS
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Cine</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->cine ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Cine</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->cine ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Medios Complementarios</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->mediosComplementarios ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Medios Complementarios</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->mediosComplementarios ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Medios Digitales</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->mediosDigitales ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Medios Digitales</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->mediosDigitales ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 2px 4px; font-weight: bold; font-size: 8pt;">
+            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 ESTUDIOS
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Pre Estudios</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->preEstudios ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Pre Estudios</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->preEstudios ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Post Estudios</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->postEstudios ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Post Estudios</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->postEstudios ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 2px 4px; font-weight: bold; font-size: 8pt;">
+            <td colspan="2" style="border: 1px solid #000; background-color: #e0e0e0; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 DISEÑO, PRODUCCIÓN, PRE-PRODUCCIÓN, POST-PRODUCCIÓN Y COPIADO
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Diseño</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->disenio ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Diseño</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->disenio ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Producción</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->produccion ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Producción</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->produccion ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Pre-Producción</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->preProduccion ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Pre-Producción</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->preProduccion ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Post-Producción</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->postProduccion ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Post-Producción</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->postProduccion ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 1px 4px; font-size: 8pt;">Copiado</td>
-            <td style="border: 1px solid #000; padding: 1px 4px; text-align: right; font-size: 8pt;">{{ number_format($campaign->copiado ?? 0, 2) }}</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Copiado</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->copiado ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 2px 4px; font-weight: bold; font-size: 8pt;">
+            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 TOTAL CAMPAÑA {{ $campaignNumber }}
             </td>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 2px 4px; text-align: right; font-weight: bold; font-size: 8pt;">
+            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 1px 3px; text-align: right; font-weight: bold; font-size: 7pt;">
                 {{ number_format($totalCampaign, 2) }}
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 2px 4px; font-weight: bold; font-size: 7.5pt;">
+            <td style="border: 1px solid #000; padding: 1px 3px; font-weight: bold; font-size: 6.5pt;">
                 Porcentaje de la campaña respecto al presupuesto total
             </td>
-            <td style="border: 1px solid #000; padding: 2px 4px; text-align: right; font-weight: bold; font-size: 7.5pt;">
+            <td style="border: 1px solid #000; padding: 1px 3px; text-align: right; font-weight: bold; font-size: 6.5pt;">
                 {{ number_format($porcentajeCampaign, 2) }}%
             </td>
         </tr>
@@ -325,10 +325,10 @@
 {{-- Sección de Firmas Condicional --}}
 @if($estrategy->institution && $estrategy->institution->isSector)
     {{-- Si es Sector, solo mostrar firma del Responsable de Sector centrada --}}
-    <table style="margin-top: calc(15px + 2cm); width: 100%;">
+    <table style="margin-top: 45px; width: 100%;">
         <tr>
-            <td style="text-align: center; vertical-align: bottom; padding-top: 20px;">
-                <div style="border-top: 1px solid #000; margin: 0 auto; width: 60%; padding-top: 5px; font-size: 8pt;">
+            <td style="text-align: center; vertical-align: bottom; padding-top: 15px;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 60%; padding-top: 3px; font-size: 7pt;">
                     {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
                     Nombre y firma del titular de comunicación social de la coordinadora sectorial
                 </div>
@@ -337,17 +337,17 @@
     </table>
 @else
     {{-- Si NO es Sector, mostrar ambas firmas --}}
-    <table class="signature-row" style="margin-top: calc(15px + 2cm);">
+    <table class="signature-row" style="margin-top: 45px;">
         <tr>
-            <td class="signature-cell">
-                <div class="signature-line">
+            <td class="signature-cell" style="padding-top: 15px;">
+                <div class="signature-line" style="font-size: 7pt; padding-top: 3px;">
                     {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
                     Nombre y firma del titular de comunicación social de la coordinadora sectorial
                 </div>
             </td>
             <td style="width: 4%;"></td>
-            <td class="signature-cell">
-                <div class="signature-line">
+            <td class="signature-cell" style="padding-top: 15px;">
+                <div class="signature-line" style="font-size: 7pt; padding-top: 3px;">
                     {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
                     Nombre y firma del titular de comunicación social de la dependencia/entidad
                 </div>
