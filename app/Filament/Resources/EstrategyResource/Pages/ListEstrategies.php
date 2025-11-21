@@ -48,12 +48,12 @@ class ListEstrategies extends ListRecords
         // Solo mostrar el botón "Crear Estrategia" si:
         // 1. NO existe estrategia para el año filtrado
         // 2. El usuario tiene una institución asignada
-        // 3. El usuario tiene los permisos adecuados (institution_user o institution_admin)
+        // 3. El usuario tiene los permisos adecuados (institution_user)
         $canCreate = !$existeEstrategia
             && $user
             && $user->institution_id
             && $user->role
-            && in_array($user->role->name, ['institution_user', 'institution_admin']);
+            && $user->role->name === 'institution_user';
 
         if ($canCreate) {
             $actions[] = Actions\CreateAction::make('create_' . $anio)

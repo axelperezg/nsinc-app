@@ -12,6 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
+            // Change edad from string to json type
+            if (Schema::hasColumn('campaigns', 'edad')) {
+                $table->dropColumn('edad');
+            }
             $table->json('edad')->nullable()->after('sexo');
         });
     }

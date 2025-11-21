@@ -73,7 +73,6 @@ class UserResource extends Resource
                 Forms\Components\Select::make('role_id')
                     ->label('Rol')
                     ->relationship('role', 'display_name')
-                    ->searchable()
                     ->preload()
                     ->required(),
             ]);

@@ -94,10 +94,7 @@ class ExpirationDatesWidget extends Widget
         $user = Auth::user();
 
         // Verificar primero si el usuario es de institución
-        if (!$user || !$user->role || !in_array($user->role->name, [
-            'institution_user',
-            'institution_admin',
-        ])) {
+        if (!$user || !$user->role || $user->role->name !== 'institution_user') {
             return false;
         }
 

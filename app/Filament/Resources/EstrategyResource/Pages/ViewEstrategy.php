@@ -149,7 +149,7 @@ class ViewEstrategy extends ViewRecord
     //     }
 
     //     // Solo usuarios de institución pueden enviar a CS si está en estado 'Creada'
-    //     if (in_array($user->role->name, ['institution_admin', 'institution_user']) && 
+    //     if ($user->role->name === 'institution_user' && 
     //         in_array($this->record->estado_estrategia, ['Creada', 'Rechazada CS', 'Rechazada DGNC'])) {
     //         $actions[] = Action::make('enviar_cs')
     //             ->label('Enviar a CS')

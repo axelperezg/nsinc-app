@@ -3,6 +3,6 @@
         {{ $icono }}${{ number_format($monto, 2) }}
     </span>
     @if($monto < 0)
-        <span class="text-red-500 text-sm">(Excedido)</span>
+        <span class="text-red-500 text-sm">(Excedido AXEL)</span>
     @endif
 </div>

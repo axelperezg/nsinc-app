@@ -5,7 +5,7 @@ use App\Http\Controllers\EstrategyController;
 use App\Http\Controllers\OficioDgncController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 // Ruta para evaluación de estrategias por coordinadores de sector

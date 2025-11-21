@@ -44,7 +44,7 @@ class EstrategyResource extends Resource
             ->numeric()
             ->step(0.000001) // Permitir hasta 6 decimales
             ->prefix('$')
-            ->reactive()
+            ->live(onBlur: true)
             ->formatStateUsing(fn ($state) => $state ? number_format($state, 2, '.', '') : '')
             ->dehydrateStateUsing(fn ($state) => $state ? round((float)$state, 6) : null);
 
@@ -76,9 +76,8 @@ class EstrategyResource extends Resource
         
         // Super admin, usuarios de institución, coordinadores de sector y usuarios DGNC pueden ver Estrategias
         return $user->role && in_array($user->role->name, [
-            'super_admin', 
-            'institution_user', 
-            'institution_admin',
+            'super_admin',
+            'institution_user',
             'sector_coordinator',
             'dgnc_user'
         ]);
@@ -361,7 +360,7 @@ class EstrategyResource extends Resource
                             ->hint('¿Qué hace tu institución?')
                             ->hintIcon('heroicon-o-question-mark-circle')
                             ->hintColor('info')
-                            ->helperText('Describe la razón de ser de tu institución, su propósito fundamental y a quién sirve.')
+                            ->helperText('Introduce la misión oficial actualizadade la institución. Debe ser la misma que la que se encuentra en la página oficial de la institución.')
                             ->placeholder('Ejemplo: Garantizar el acceso universal a servicios de salud de calidad...'),
                         Forms\Components\Textarea::make('vision')
                             ->label('Visión')
@@ -371,7 +370,7 @@ class EstrategyResource extends Resource
                             ->hint('¿Hacia dónde va tu institución?')
                             ->hintIcon('heroicon-o-question-mark-circle')
                             ->hintColor('info')
-                            ->helperText('Describe el futuro deseado de tu institución, lo que aspira a lograr a largo plazo.')
+                            ->helperText('Introduce la visión oficial actualizadade la institución. Debe ser la misma que la que se encuentra en la página oficial de la institución')
                             ->placeholder('Ejemplo: Ser reconocida como líder en servicios de salud innovadores...'),
                         Forms\Components\Textarea::make('objetivo_institucional')
                             ->label('Objetivo Institucional')
@@ -1240,7 +1239,7 @@ class EstrategyResource extends Resource
                             ])
                             ->placeholder('Selecciona una justificación')
                             ->helperText('Este campo es obligatorio si la suma total de Pre-Estudios y Post-Estudios es igual a $0.00')
-                            ->reactive()
+                            ->live(onBlur: true)
                             ->required(function ($get) {
                                 $campaigns = $get('campaigns') ?? [];
                                 $totalEstudios = 0;
@@ -1276,7 +1275,7 @@ class EstrategyResource extends Resource
                             if (!$user || !$user->role) return false;
 
                             // Solo usuarios de institución pueden enviar a CS
-                            return in_array($user->role->name, ['institution_admin', 'institution_user']) &&
+                            return $user->role->name === 'institution_user' &&
                                    $record && $record->estado_estrategia === 'Creada';
                         })
                         ->action(function ($record, $data) {
@@ -1680,7 +1679,6 @@ class EstrategyResource extends Resource
                             case 'super_admin':
                                 // Super admin NO puede editar (solo puede ver y eliminar)
                                 return false;
-                            case 'institution_admin':
                             case 'institution_user':
                                 // Usuarios de institución pueden editar si está en estado 'Creada', 'Rechazada CS' o 'Rechazada DGNC'
                                 return in_array($record->estado_estrategia, ['Creada', 'Rechazada CS', 'Rechazada DGNC']);
@@ -1709,7 +1707,7 @@ class EstrategyResource extends Resource
                         if (!$record->isLatestForInstitutionAndYear()) return false;
 
                         // Solo usuarios de institución pueden enviar a CS si está en estado 'Creada', 'Rechazada CS' o 'Rechazada DGNC'
-                        return $user && $user->role && in_array($user->role->name, ['institution_admin', 'institution_user']) &&
+                        return $user && $user->role && $user->role->name === 'institution_user' &&
                                in_array($record->estado_estrategia, ['Creada', 'Rechazada CS', 'Rechazada DGNC']);
                     })
                     ->requiresConfirmation()
@@ -1896,7 +1894,7 @@ class EstrategyResource extends Resource
                         if (!$record->isLatestForInstitutionAndYear()) return false;
                         
                         // Solo usuarios de institución pueden solventar si está observada
-                        return $user && $user->role && in_array($user->role->name, ['institution_admin', 'institution_user']) && 
+                        return $user && $user->role && $user->role->name === 'institution_user' &&
                                $record->estado_estrategia === 'Observada DGNC';
                     })
                     ->action(function ($record) {
@@ -1919,7 +1917,7 @@ class EstrategyResource extends Resource
                         if (!$record->isLatestForInstitutionAndYear()) return false;
                         
                         // Solo usuarios de institución pueden cancelar si está autorizada
-                        if ($user && $user->role && in_array($user->role->name, ['institution_admin', 'institution_user']) && 
+                        if ($user && $user->role && $user->role->name === 'institution_user' &&
                             $record->estado_estrategia === 'Autorizada') {
                             
                             // Si el concepto es "Cancelación" y el estado es "Autorizada", no mostrar para usuarios de institución

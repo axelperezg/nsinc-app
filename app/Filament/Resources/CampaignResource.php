@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CampaignResource\Pages;
 use App\Filament\Resources\CampaignResource\RelationManagers;
 use App\Models\Campaign;
+use App\Exports\CampaignsExport;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CampaignResource extends Resource
 {
@@ -272,6 +274,16 @@ class CampaignResource extends Resource
                     ->label('Institución')
                     ->relationship('estrategy.institution', 'name')
                     ->visible(fn () => Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin'),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('exportar_excel')
+                    ->label('Exportar a Excel')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->action(function () {
+                        return Excel::download(new CampaignsExport, 'campaigns_' . now()->format('Y-m-d_H-i-s') . '.xlsx');
+                    })
+                    ->tooltip('Descargar todas las campañas en formato Excel'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

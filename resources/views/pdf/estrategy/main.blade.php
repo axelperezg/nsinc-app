@@ -7,10 +7,10 @@
     <style>
         @page {
             size: letter portrait;
-            margin-top: 1.5cm;
-            margin-bottom: 1.5cm;
-            margin-left: 1cm;
-            margin-right: 1cm;
+            margin-top: 2cm;
+            margin-bottom: 2cm;
+            margin-left: 2cm;
+            margin-right: 2cm;
         }
         * {
             margin: 0;
@@ -18,9 +18,11 @@
             box-sizing: border-box;
         }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Noto Sans', Arial, sans-serif;
             font-size: 9pt;
             line-height: 1.3;
+            padding-left: 105px;
+            padding-right: 105px;
         }
         .page-break {
             page-break-after: always;

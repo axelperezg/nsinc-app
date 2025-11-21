@@ -23,76 +23,115 @@
 
 {{-- Datos sin bordes --}}
 <div style="margin-bottom: 15px;">
-    <div style="margin-bottom: 8px;">
+    <div style="margin-bottom: 3px;">
         <span style="font-weight: bold;">Dependencia o Entidad:</span>
         <span>{{ $estrategy->institution_name }}</span>
     </div>
-    <div style="margin-bottom: 8px;">
+    <div style="margin-bottom: 3px;">
         <span style="font-weight: bold;">Naturaleza Jurídica:</span>
         <span>{{ $estrategy->juridical_nature_name }}</span>
     </div>
-    <div style="margin-bottom: 8px;">
+    <div style="margin-bottom: 3px;">
         <span style="font-weight: bold;">Cabeza de sector:</span>
         <span>{{ $estrategy->institution->sector->name ?? 'No disponible' }}</span>
     </div>
-    <div style="margin-bottom: 8px;">
+    <div style="margin-bottom: 3px;">
         <span style="font-weight: bold;">Fecha de elaboración:</span>
         <span>{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</span>
     </div>
 </div>
 
-{{-- Secciones sin bordes --}}
+{{-- Secciones con marcos redondeados --}}
 <div style="margin-bottom: 12px;">
-    <div style="font-weight: bold; margin-bottom: 5px;">Misión:</div>
-    <div style="text-align: justify;">{{ $estrategy->mision }}</div>
+    <div style="font-weight: bold; margin-bottom: 3px;">Misión:</div>
+    <div style="border: 1px solid #000; border-radius: 8px; padding: 8px;">
+        <div style="text-align: justify; font-size: 8pt;">{{ $estrategy->mision }}</div>
+    </div>
 </div>
 
 <div style="margin-bottom: 12px;">
-    <div style="font-weight: bold; margin-bottom: 5px;">Visión:</div>
-    <div style="text-align: justify;">{{ $estrategy->vision }}</div>
+    <div style="font-weight: bold; margin-bottom: 3px;">Visión:</div>
+    <div style="border: 1px solid #000; border-radius: 8px; padding: 8px;">
+        <div style="text-align: justify; font-size: 8pt;">{{ $estrategy->vision }}</div>
+    </div>
 </div>
 
 <div style="margin-bottom: 12px;">
-    <div style="font-weight: bold; margin-bottom: 5px;">Objetivo Institucional:</div>
-    <div style="text-align: justify;">{{ $estrategy->objetivo_institucional }}</div>
+    <div style="font-weight: bold; margin-bottom: 3px;">Objetivo Institucional:</div>
+    <div style="border: 1px solid #000; border-radius: 8px; padding: 8px;">
+        <div style="text-align: justify; font-size: 8pt;">{{ $estrategy->objetivo_institucional }}</div>
+    </div>
 </div>
 
 <div style="margin-bottom: 12px;">
-    <div style="font-weight: bold; margin-bottom: 5px;">Objetivo de la estrategia de comunicación:</div>
-    <div style="text-align: justify;">{{ $estrategy->objetivo_estrategia }}</div>
+    <div style="font-weight: bold; margin-bottom: 3px;">Objetivo de la estrategia de comunicación:</div>
+    <div style="border: 1px solid #000; border-radius: 8px; padding: 8px;">
+        <div style="text-align: justify; font-size: 8pt;">{{ $estrategy->objetivo_estrategia }}</div>
+    </div>
 </div>
 
+@php
+    // Decodificar el JSON de ejes_plan_nacional
+    $ejesData = is_string($estrategy->ejes_plan_nacional)
+        ? json_decode($estrategy->ejes_plan_nacional, true)
+        : (is_array($estrategy->ejes_plan_nacional) ? $estrategy->ejes_plan_nacional : []);
+
+    // Mapeo de keys a nombres descriptivos
+    $nombresEjes = [
+        'eje_general_1_gobernanza' => 'Eje General 1: Gobernanza con justicia y participación ciudadana',
+        'eje_general_2_desarrollo' => 'Eje General 2: Desarrollo con bienestar y humanismo',
+        'eje_general_3_economia' => 'Eje General 3: Economía moral y trabajo',
+        'eje_general_4_sustentable' => 'Eje General 4: Desarrollo sustentable',
+        'eje_transversal_1_igualdad' => 'Igualdad sustantiva y derechos de las mujeres',
+        'eje_transversal_2_innovacion' => 'Innovación pública para el desarrollo tecnológico nacional',
+        'eje_transversal_3_derechos' => 'Derechos de los pueblos y comunidades indígenas y afromexicanas',
+    ];
+
+    // Filtrar ejes generales que son true
+    $ejesGenerales = [];
+    foreach ($ejesData as $key => $value) {
+        if (str_starts_with($key, 'eje_general_') && $value === true) {
+            $ejesGenerales[] = $nombresEjes[$key] ?? $key;
+        }
+    }
+
+    // Filtrar ejes transversales que son true
+    $ejesTransversales = [];
+    foreach ($ejesData as $key => $value) {
+        if (str_starts_with($key, 'eje_transversal_') && $value === true) {
+            $ejesTransversales[] = $nombresEjes[$key] ?? $key;
+        }
+    }
+@endphp
+
 <div style="margin-bottom: 12px;">
-    <div style="font-weight: bold; margin-bottom: 5px;">Metas Nacionales del PND (elija con una "x"):</div>
-    <div style="margin-top: 8px;">
-        @if(is_array($estrategy->ejes_plan_nacional))
-            @foreach($estrategy->ejes_plan_nacional as $eje)
-                <div style="margin: 3px 0;">
+    <div style="font-weight: bold; margin-bottom: 5px;">Eje(s) General(es) del Plan Nacional de Desarrollo:</div>
+    <div style="margin-top: 5px;">
+        @if(count($ejesGenerales) > 0)
+            @foreach($ejesGenerales as $eje)
+                <div style="margin: 2px 0;">
                     <span class="checkbox checked"></span>
                     {{ $eje }}
                 </div>
             @endforeach
         @else
-            <div>
-                <span class="checkbox {{ str_contains($estrategy->ejes_plan_nacional ?? '', 'Eje General 1') ? 'checked' : '' }}"></span> PND {{ $estrategy->anio }}-{{ $estrategy->anio + 6 }} Eje General 1
-                &nbsp;&nbsp;
-                <span class="checkbox {{ str_contains($estrategy->ejes_plan_nacional ?? '', 'Eje General 2') ? 'checked' : '' }}"></span> Eje General 2
-                &nbsp;&nbsp;
-                <span class="checkbox {{ str_contains($estrategy->ejes_plan_nacional ?? '', 'Eje General 3') ? 'checked' : '' }}"></span> Eje General 3
-                &nbsp;&nbsp;
-                <span class="checkbox {{ str_contains($estrategy->ejes_plan_nacional ?? '', 'Eje General 4') ? 'checked' : '' }}"></span> Eje General 4
-            </div>
+            <div>Ningún eje general seleccionado</div>
         @endif
     </div>
 </div>
 
 <div style="margin-bottom: 12px;">
-    <div style="font-weight: bold; margin-bottom: 5px;">Meta (s) nacional (es) que regirán el programa de comunicación:</div>
+    <div style="font-weight: bold; margin-bottom: 5px;">Estrategia(s) Transversal(es) que regirán el programa de comunicación:</div>
     <div style="margin-top: 5px;">
-        @if(is_array($estrategy->ejes_plan_nacional) && count($estrategy->ejes_plan_nacional) > 0)
-            {{ implode(', ', $estrategy->ejes_plan_nacional) }}
+        @if(count($ejesTransversales) > 0)
+            @foreach($ejesTransversales as $eje)
+                <div style="margin: 2px 0;">
+                    <span class="checkbox checked"></span>
+                    {{ $eje }}
+                </div>
+            @endforeach
         @else
-            {{ $estrategy->ejes_plan_nacional ?? 'Selecciona manualmente la opción aplicable.' }}
+            <div>Ninguna estrategia transversal seleccionada</div>
         @endif
     </div>
 </div>

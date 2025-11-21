@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'name',
         'temaEspecifco',
@@ -128,5 +130,25 @@ class Campaign extends Model
             'D' => 'D',
             'E' => 'E',
         ];
+    }
+
+    /**
+     * Mutador para sincronizar el nombre de la institución cuando se establece el estrategy_id
+     * Esto mantiene la consistencia con la institución de la estrategia padre
+     */
+    public function setEstrategyIdAttribute($value)
+    {
+        $this->attributes['estrategy_id'] = $value;
+
+        if ($value) {
+            $estrategy = Estrategy::find($value);
+            if ($estrategy && $estrategy->institution) {
+                $this->attributes['institution_name'] = $estrategy->institution->name;
+            } else {
+                $this->attributes['institution_name'] = null;
+            }
+        } else {
+            $this->attributes['institution_name'] = null;
+        }
     }
 }

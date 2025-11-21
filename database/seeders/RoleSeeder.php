@@ -16,11 +16,6 @@ class RoleSeeder extends Seeder
             'description' => 'Acceso completo a todas las instituciones y funcionalidades',
         ]);
 
-        $institutionAdminRole = Role::firstOrCreate(['name' => 'institution_admin'], [
-            'display_name' => 'Administrador de Institución',
-            'description' => 'Administra solo su institución',
-        ]);
-
         $institutionUserRole = Role::firstOrCreate(['name' => 'institution_user'], [
             'display_name' => 'Usuario de Institución',
             'description' => 'Usuario básico de institución',
@@ -53,9 +48,6 @@ class RoleSeeder extends Seeder
 
         // Asignar permisos a roles
         $superAdminRole->permissions()->attach(Permission::all());
-        $institutionAdminRole->permissions()->attach(
-            Permission::whereIn('name', ['view_own_institution', 'manage_own_institution'])->get()
-        );
         $institutionUserRole->permissions()->attach(
             Permission::where('name', 'view_own_institution')->get()
         );

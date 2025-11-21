@@ -35,7 +35,7 @@ class PermissionHelper
      */
     public static function canManageOwnInstitution(User $user): bool
     {
-        return $user->role && in_array($user->role->name, ['super_admin', 'institution_admin']);
+        return $user->role && $user->role->name === 'super_admin';
     }
 
     /**

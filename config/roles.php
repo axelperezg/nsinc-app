@@ -25,15 +25,6 @@ return [
                 'manage_all_sectors',
             ],
         ],
-        'institution_admin' => [
-            'name' => 'institution_admin',
-            'display_name' => 'Administrador de Institución',
-            'description' => 'Administra solo su institución',
-            'permissions' => [
-                'view_own_institution',
-                'manage_own_institution',
-            ],
-        ],
         'institution_user' => [
             'name' => 'institution_user',
             'display_name' => 'Usuario de Institución',

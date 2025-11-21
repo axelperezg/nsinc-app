@@ -30,21 +30,21 @@ class UserSeeder extends Seeder
         }
 
         // Crear usuario de institución (SEP)
-        $institutionAdminRole = Role::where('name', 'institution_admin')->first();
+        $institutionUserRole = Role::where('name', 'institution_user')->first();
         $institutionSEP = \App\Models\Institution::where('acronym', 'SEP')->first();
-        
-        if ($institutionAdminRole && $institutionSEP) {
+
+        if ($institutionUserRole && $institutionSEP) {
             User::firstOrCreate(
                 ['email' => 'sep@admin.com'],
                 [
-                    'name' => 'Admin SEP',
+                    'name' => 'Usuario SEP',
                     'password' => Hash::make('password'),
-                    'role_id' => $institutionAdminRole->id,
+                    'role_id' => $institutionUserRole->id,
                     'institution_id' => $institutionSEP->id,
                 ]
             );
-            
-            $this->command->info('Usuario Admin SEP creado: sep@admin.com / password');
+
+            $this->command->info('Usuario SEP creado: sep@admin.com / password');
         }
 
         // Crear usuario básico (UNAM)
