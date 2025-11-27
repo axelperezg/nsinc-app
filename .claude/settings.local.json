@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(php artisan filament:cache-components:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

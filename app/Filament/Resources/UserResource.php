@@ -45,36 +45,101 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->label('Contraseña')
-                    ->password()
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
-                Forms\Components\Select::make('institution_id')
-                    ->label('Institución')
-                    ->relationship('institution', 'name')
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\Select::make('sector_id')
-                    ->label('Sector')
-                    ->relationship('sector', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->visible(fn () => \Illuminate\Support\Facades\Auth::user() && \Illuminate\Support\Facades\Auth::user()->role && in_array(\Illuminate\Support\Facades\Auth::user()->role->name, ['super_admin', 'sector_coordinator'])),
-                Forms\Components\Select::make('role_id')
-                    ->label('Rol')
-                    ->relationship('role', 'display_name')
-                    ->preload()
-                    ->required(),
+                Forms\Components\Section::make('Información del Usuario')
+                    ->description('Datos básicos del usuario')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Contraseña')
+                            ->password()
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $context): bool => $context === 'create')
+                            ->helperText('Dejar en blanco para mantener la contraseña actual al editar'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Asignación de Rol y Pertenencia')
+                    ->description('Define el rol del usuario y su asignación a institución o sector según corresponda')
+                    ->icon('heroicon-o-identification')
+                    ->schema([
+                        Forms\Components\Select::make('role_id')
+                            ->label('Rol')
+                            ->relationship('role', 'display_name')
+                            ->preload()
+                            ->required()
+                            ->live()
+                            ->helperText('Selecciona el rol que tendrá el usuario en el sistema')
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                // Limpiar sector e institución cuando cambia el rol
+                                $set('sector_id', null);
+                                $set('institution_id', null);
+                            }),
+
+                        Forms\Components\Select::make('sector_id')
+                            ->label('Sector')
+                            ->relationship('sector', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(function (callable $get) {
+                                $roleId = $get('role_id');
+                                if (!$roleId) return false;
+
+                                $role = \App\Models\Role::find($roleId);
+                                return $role && $role->name === 'sector_coordinator';
+                            })
+                            ->visible(function (callable $get) {
+                                $roleId = $get('role_id');
+                                if (!$roleId) return false;
+
+                                $role = \App\Models\Role::find($roleId);
+                                return $role && $role->name === 'sector_coordinator';
+                            })
+                            ->helperText('Selecciona el sector que coordinará este usuario')
+                            ->placeholder('Selecciona un sector'),
+
+                        Forms\Components\Select::make('institution_id')
+                            ->label('Institución')
+                            ->relationship('institution', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(function (callable $get) {
+                                $roleId = $get('role_id');
+                                if (!$roleId) return false;
+
+                                $role = \App\Models\Role::find($roleId);
+                                return $role && $role->name === 'institution_user';
+                            })
+                            ->visible(function (callable $get) {
+                                $roleId = $get('role_id');
+                                if (!$roleId) return false;
+
+                                $role = \App\Models\Role::find($roleId);
+                                return $role && $role->name === 'institution_user';
+                            })
+                            ->helperText('Selecciona la institución a la que pertenece este usuario')
+                            ->placeholder('Selecciona una institución'),
+
+                        Forms\Components\Placeholder::make('info_super_admin')
+                            ->label('')
+                            ->content('Los usuarios con rol Super Administrador y Usuario DGNC tienen acceso a todas las instituciones y sectores del sistema.')
+                            ->visible(function (callable $get) {
+                                $roleId = $get('role_id');
+                                if (!$roleId) return false;
+
+                                $role = \App\Models\Role::find($roleId);
+                                return $role && in_array($role->name, ['super_admin', 'dgnc_user']);
+                            }),
+                    ])
+                    ->columns(1),
             ]);
     }
 

@@ -14,7 +14,7 @@ class Campaign extends Model
         'objetivoComuicacion',
         'campaign_type_id',
         'institution_id',
-        'coemisores',
+        'coemisores_acronyms',
         'sexo',
         'edad',
         'poblacion',

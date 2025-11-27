@@ -82,7 +82,7 @@
         <td colspan="2" style="padding: 2px; text-align: right; font-weight: bold; font-size: 7.5pt;">miles de pesos / I.V.A. incluido</td>
     </tr>
     <tr>
-        <td style="border: 1px solid #000; padding: 2px; background-color: #d9d9d9; font-weight: bold; font-size: 7.5pt;">
+        <td style="border: 1px solid #000; padding: 2px; background-color: #9B1B30; color: #ffffff; font-weight: bold; font-size: 7.5pt;">
             Presupuesto anual de la dependencia o entidad destinado a la partida 36101:
         </td>
         <td style="border: 1px solid #000; padding: 2px; text-align: right; background-color: #f2e4b8; font-weight: bold; width: 120px; font-size: 7.5pt;">
@@ -90,10 +90,10 @@
         </td>
     </tr>
     <tr>
-        <td style="border: 1px solid #000; padding: 2px; background-color: #d9d9d9; font-weight: bold; font-size: 7.5pt;">
+        <td style="border: 1px solid #000; padding: 2px; background-color: #9B1B30; color: #ffffff; font-weight: bold; font-size: 7.5pt;">
             ACUMULADO EN CAMPAÑAS:
         </td>
-        <td style="border: 1px solid #000; padding: 2px; text-align: right; font-weight: bold; font-size: 7.5pt;">
+        <td style="border: 1px solid #000; padding: 2px; background-color: #9B1B30; color: #ffffff; text-align: right; font-weight: bold; font-size: 7.5pt;">
             {{ number_format($acumulado, 2) }}
         </td>
     </tr>
@@ -106,7 +106,7 @@
         <td class="campaign-left">
             <table style="width: 100%; border: none;">
                 <tr>
-                    <td colspan="2" style="background-color: #d9d9d9; padding: 4px; font-weight: bold; border: none;">
+                    <td colspan="2" style="background-color: #9B1B30; color: #ffffff; padding: 4px; font-weight: bold; border: none;">
                         Datos generales
                     </td>
                 </tr>
@@ -121,30 +121,24 @@
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->name }}</td>
                 </tr>
                 <tr>
-                    <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Tipo de campaña:</td>
+                    <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Clasificación de campaña:</td>
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->campaignType->name ?? 'No especificado' }}</td>
                 </tr>
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Tema específico:</td>
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->temaEspecifco }}</td>
                 </tr>
+               
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Público objetivo:</td>
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">
-                        
+
                         <div style="line-height: 1.2;">- Sexo: {{ count($sexoValues) > 0 ? implode(', ', $sexoValues) : 'No especificado' }}</div>
                         <div style="line-height: 1.2;">- Edad: {{ count($edadValues) > 0 ? implode(', ', $edadValues) : 'No especificado' }}</div>
                         <div style="line-height: 1.2;">- Población: {{ count($poblacionValues) > 0 ? implode(', ', $poblacionValues) : 'No especificado' }}</div>
                         <div style="line-height: 1.2;">- NSE: {{ count($nseValues) > 0 ? implode(', ', $nseValues) : 'No especificado' }}</div>
                     </td>
                 </tr>
-                
-                @if(!empty($campaign->coemisores))
-                <tr>
-                    <td style="font-weight: bold; padding: 4px; border: none;">Coemisores:</td>
-                    <td style="padding: 4px; border: none;">{{ $campaign->coemisores }}</td>
-                </tr>
-                @endif
                 @if(!empty($campaign->caracteristicas_especificas))
                 <tr>
                     <td style="font-weight: bold; padding: 4px; border: none;">Características Específicas:</td>
@@ -156,10 +150,24 @@
         <td class="campaign-right">
             <table style="width: 100%; border: none;">
                 <tr>
-                    <td style="background-color: #d9d9d9; padding: 4px; font-weight: bold; border: none;">
+                    <td colspan="2" style="background-color: #9B1B30; color: #ffffff; padding: 4px; font-weight: bold; border: none;">
+                        Datos de la campaña
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Objetivo de Comunicación:</td>
+                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->objetivoComuicacion ?? 'No especificado' }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Coemisor(es):</td>
+                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->coemisores_acronyms ?? 'No especificado' }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="background-color: #9B1B30; color: #ffffff; padding: 4px; font-weight: bold; border: none;">
                         Versiones de la Campaña
                     </td>
                 </tr>
+               
                 @if($campaign->versions && $campaign->versions->count() > 0)
                     @php
                         $versionsWithDates = $campaign->versions->filter(function ($version) {
@@ -170,7 +178,7 @@
                     @endphp
                     @if($fechaInicioMin || $fechaFinalMax)
                         <tr>
-                            <td style="padding: 4px; border: none; font-size: 7.5pt; font-weight: bold;">
+                            <td colspan="2" style="padding: 4px; border: none; font-size: 7.5pt; font-weight: bold;">
                                 Vigencia general:
                                 {{ $fechaInicioMin ? \Carbon\Carbon::parse($fechaInicioMin)->format('d/m/Y') : 'Sin fecha inicial' }}
                                 -
@@ -184,7 +192,7 @@
                             $endDate = $version->fechaFinal ? \Carbon\Carbon::parse($version->fechaFinal)->format('d/m/Y') : 'Sin fecha final';
                         @endphp
                         <tr>
-                            <td style="padding: 4px; border: none; font-size: 7.5pt;">
+                            <td colspan="2" style="padding: 4px; border: none; font-size: 7.5pt;">
                                 <strong>{{ $version->name ?? 'Versión ' . $loop->iteration }}</strong><br>
                                 Del {{ $startDate }} al {{ $endDate }}
                             </td>
@@ -195,10 +203,54 @@
                         <td style="padding: 4px; border: none; font-style: italic; color: #666;">Sin versiones definidas</td>
                     </tr>
                 @endif
+                 
             </table>
         </td>
     </tr>
 </table>
+
+{{-- Sección de Medios Oficiales y Comerciales --}}
+@if($campaign->tv_oficial || $campaign->radio_oficial || $campaign->tv_comercial || $campaign->radio_comercial)
+<div style="margin-top: 3px; margin-bottom: 3px;">
+    <table class="data-table" style="width: 100%;">
+        <tr>
+            <td colspan="4" class="label-cell" style="padding: 4px; font-weight: bold; background-color: #9B1B30; color: #ffffff; text-align: center;">
+                MEDIOS UTILIZADOS
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
+                @if($campaign->tv_oficial)
+                    <strong> TV Oficial</strong>
+                @else
+                    <span style="color: #999;">TV Oficial</span>
+                @endif
+            </td>
+            <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
+                @if($campaign->radio_oficial)
+                    <strong> Radio Oficial</strong>
+                @else
+                    <span style="color: #999;">Radio Oficial</span>
+                @endif
+            </td>
+            <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
+                @if($campaign->tv_comercial)
+                    <strong> TV Comercial</strong>
+                @else
+                    <span style="color: #999;">TV Comercial</span>
+                @endif
+            </td>
+            <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
+                @if($campaign->radio_comercial)
+                    <strong> Radio Comercial</strong>
+                @else
+                    <span style="color: #999;">Radio Comercial</span>
+                @endif
+            </td>
+        </tr>
+    </table>
+</div>
+@endif
 
 <div style="margin-top: 2px;">
     <table style="width: 100%; border: 1px solid #000;">
@@ -304,10 +356,10 @@
             <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->copiado ?? 0, 2) }}</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
+            <td style="border: 1px solid #000; background-color: #9B1B30; color: #ffffff; padding: 1px 3px; font-weight: bold; font-size: 7pt;">
                 TOTAL CAMPAÑA {{ $campaignNumber }}
             </td>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 1px 3px; text-align: right; font-weight: bold; font-size: 7pt;">
+            <td style="border: 1px solid #000; background-color: #9B1B30; color: #ffffff; padding: 1px 3px; text-align: right; font-weight: bold; font-size: 7pt;">
                 {{ number_format($totalCampaign, 2) }}
             </td>
         </tr>

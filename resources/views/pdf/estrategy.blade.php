@@ -299,8 +299,8 @@
         </div>
     </div>
 
-    <!-- EJES DEL PLAN NACIONAL DE DESARROLLO -->
-    @if($estrategy->ejes_plan_nacional && count($estrategy->ejes_plan_nacional) > 0)
+    <!-- EJES DEL PLAN NACIONAL DE DESARROLLO (solo para Comunicación Social 36101) -->
+    @if($estrategy->partida_presupuestal === '36101' && $estrategy->ejes_plan_nacional && count($estrategy->ejes_plan_nacional) > 0)
     <div class="section">
         <div class="section-title">EJES DEL PLAN NACIONAL DE DESARROLLO</div>
 
@@ -341,6 +341,27 @@
                 <li>{{ $eje }}</li>
                 @endforeach
             </ul>
+        </div>
+        @endif
+    </div>
+    @endif
+
+    <!-- ENTORNO DE MERCADO Y METAS GENERALES (solo para Promoción y Publicidad 36201) -->
+    @if($estrategy->partida_presupuestal === '36201')
+    <div class="section">
+        <div class="section-title">ANÁLISIS DE ENTORNO Y METAS</div>
+
+        @if($estrategy->entorno_mercado)
+        <div style="margin-bottom: 10px;">
+            <strong style="color: #9B1B30; font-size: 8.5pt;">Entorno de Mercado:</strong>
+            <p style="margin-top: 5px; text-align: justify; font-size: 8pt;">{{ $estrategy->entorno_mercado }}</p>
+        </div>
+        @endif
+
+        @if($estrategy->metas_generales)
+        <div>
+            <strong style="color: #9B1B30; font-size: 8.5pt;">Metas Generales:</strong>
+            <p style="margin-top: 5px; text-align: justify; font-size: 8pt;">{{ $estrategy->metas_generales }}</p>
         </div>
         @endif
     </div>

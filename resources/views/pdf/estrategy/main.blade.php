@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Estrategia de Comunicación Social {{ $estrategy->anio }}</title>
+    <title>Estrategia de {{ $estrategy->partida_presupuestal === '36101' ? 'Comunicación Social' : 'Promoción y Publicidad' }} {{ $estrategy->anio }}</title>
     <style>
         @page {
             size: letter portrait;
@@ -19,7 +19,7 @@
         }
         body {
             font-family: 'Noto Sans', Arial, sans-serif;
-            font-size: 9pt;
+            font-size: 10pt;
             line-height: 1.3;
             position: relative;
             padding-left: 1.5cm;
@@ -111,6 +111,24 @@
         .signature-section {
             margin-top: 30px;
         }
+        .signature-container {
+            position: relative;
+        }
+        /* Espaciador que agrega 50px de espacio cuando las firmas quedan en nueva página */
+        .signature-spacer {
+            height: 50px;
+            display: block;
+            margin: 0;
+            padding: 0;
+            page-break-before: avoid;
+        }
+        /* Contenedor de firmas - intenta mantenerlas juntas en la misma página */
+        .signature-content {
+            page-break-inside: avoid;
+            margin-top: 10px;
+        }
+        /* Si el contenido anterior no cabe y se fuerza un salto antes de las firmas,
+           el espaciador agregará 50px de espacio antes de las firmas en la nueva página */
         .signature-row {
             width: 100%;
         }
@@ -146,7 +164,8 @@
             text-align: right;
         }
         .gray-header {
-            background-color: #d9d9d9;
+            background-color: #9B1B30;
+            color: #ffffff;
             font-weight: bold;
             padding: 6px;
             text-align: center;
@@ -184,7 +203,15 @@
     {{-- Página 1: Carátula de Estrategia --}}
     @include('pdf.estrategy.page1', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
 
-    {{-- Páginas 2+: Una por cada campaña --}}
+    {{-- Página 1.5: Plan Nacional de Desarrollo (36101) o Entorno de Mercado y Metas (36201) --}}
+    <div class="page-break"></div>
+    @include('pdf.estrategy.page1_5', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
+
+    {{-- Página 2: Resumen de Medios y Gráfico --}}
+    <div class="page-break"></div>
+    @include('pdf.estrategy.page2', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
+
+    {{-- Páginas 3+: Una por cada campaña --}}
     @foreach($estrategy->campaigns as $index => $campaign)
         <div class="page-break"></div>
         @include('pdf.estrategy.campaign', ['estrategy' => $estrategy, 'campaign' => $campaign, 'campaignNumber' => $index + 1, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\EstrategyResource\Pages;
+namespace App\Filament\Resources\PromocionPublicidadResource\Pages;
 
-use App\Filament\Resources\EstrategyResource;
+use App\Filament\Resources\PromocionPublicidadResource;
 use App\Models\Estrategy;
 use App\Models\Campaign;
 use Filament\Resources\Pages\Page;
@@ -10,11 +10,11 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class ModificarEstrategy extends Page
+class CancelarPromocionPublicidad extends Page
 {
-    protected static string $resource = EstrategyResource::class;
+    protected static string $resource = PromocionPublicidadResource::class;
 
-    protected static string $view = 'filament.resources.estrategy-resource.pages.modificar-estrategy';
+    protected static string $view = 'filament.resources.estrategy-resource.pages.cancelar-estrategy';
 
     public $estrategyOriginal;
     public $estrategyNueva;
@@ -27,29 +27,29 @@ class ModificarEstrategy extends Page
         if ($this->estrategyOriginal->estado_estrategia !== 'Autorizada') {
             Notification::make()
                 ->title('Error')
-                ->body('Solo se pueden modificar estrategias autorizadas.')
+                ->body('Solo se pueden cancelar estrategias autorizadas.')
                 ->danger()
                 ->send();
 
-            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            $this->redirect(PromocionPublicidadResource::getUrl('index'));
             return;
         }
 
-        // Validar fechas de vencimiento para Modificación
+        // Validar fechas de vencimiento para Cancelación (usa las mismas fechas que Modificación)
         $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
-            'Modificación',
+            'Cancelación',
             $this->estrategyOriginal->anio
         );
 
         if (!$validation['allowed']) {
             Notification::make()
-                ->title('No se puede modificar estrategia')
+                ->title('No se puede cancelar estrategia')
                 ->body($validation['message'])
                 ->danger()
                 ->persistent()
                 ->send();
 
-            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            $this->redirect(PromocionPublicidadResource::getUrl('index'));
             return;
         }
 
@@ -74,7 +74,7 @@ class ModificarEstrategy extends Page
 
             // 1. Duplicar la estrategia principal
             $estrategyNueva = $this->estrategyOriginal->replicate();
-            $estrategyNueva->concepto = 'Modificacion';
+            $estrategyNueva->concepto = 'Cancelacion';
             $estrategyNueva->estado_estrategia = 'Creada';
             $estrategyNueva->fecha_elaboracion = now();
             $estrategyNueva->fecha_envio_dgnc = null;
@@ -105,24 +105,24 @@ class ModificarEstrategy extends Page
             $this->estrategyNueva = $estrategyNueva;
 
             Notification::make()
-                ->title('Estrategia Modificada')
-                ->body('Se ha creado exitosamente una modificación de la estrategia con todas sus campañas y versiones.')
+                ->title('Estrategia Cancelada')
+                ->body('Se ha creado exitosamente una cancelación de la estrategia con todas sus campañas y versiones.')
                 ->success()
                 ->send();
 
             // Redirigir a la edición de la nueva estrategia
-            $this->redirect(route('filament.admin.resources.estrategies.edit', ['record' => $estrategyNueva->id]));
+            $this->redirect(PromocionPublicidadResource::getUrl('edit', ['record' => $estrategyNueva->id]));
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             Notification::make()
                 ->title('Error')
-                ->body('Ocurrió un error al modificar la estrategia: ' . $e->getMessage())
+                ->body('Ocurrió un error al cancelar la estrategia: ' . $e->getMessage())
                 ->danger()
                 ->send();
 
-            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            $this->redirect(PromocionPublicidadResource::getUrl('index'));
         }
     }
 }

@@ -21,7 +21,7 @@ class CampaignFactory extends Factory
             'campaign_type_id' => CampaignType::factory(),
             'institution_id' => Institution::factory(),
             'estrategy_id' => Estrategy::factory(),
-            'coemisores' => $this->faker->company(),
+            'coemisores_acronyms' => $this->faker->company(),
             'sexo' => ['Mujeres', 'Hombres'],
             'edad' => ['18-24', '25-34'],
             'poblacion' => ['Urbana'],

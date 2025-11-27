@@ -1,17 +1,22 @@
 <?php
 
-namespace App\Filament\Resources\EstrategyResource\Pages;
+namespace App\Filament\Resources\PromocionPublicidadResource\Pages;
 
-use App\Filament\Resources\EstrategyResource;
+use App\Filament\Resources\PromocionPublicidadResource;
 use App\Helpers\ExpirationDateHelper;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 
-class EditEstrategy extends EditRecord
+class EditPromocionPublicidad extends EditRecord
 {
-    protected static string $resource = EstrategyResource::class;
+    protected static string $resource = PromocionPublicidadResource::class;
+
+    /**
+     * Flag para indicar si se debe redirigirir después de guardar
+     */
+    public bool $shouldRedirect = true;
 
     /**
      * Hook que se ejecuta al montar la página
@@ -100,16 +105,50 @@ class EditEstrategy extends EditRecord
     }
 
     /**
-     * Redirigir a la lista después de editar la estrategia
+     * Redirigir a la lista después de editar la estrategia (solo si shouldRedirect es true)
      */
-    protected function getRedirectUrl(): string
+    protected function getRedirectUrl(): ?string
     {
-        return $this->getResource()::getUrl('index');
+        if ($this->shouldRedirect) {
+            return $this->getResource()::getUrl('index');
+        }
+
+        // Si no debe redirigir, retornar null para quedarse en la misma página
+        return null;
     }
 
     protected function getHeaderActions(): array
     {
         $actions = [];
+
+        // Botón "Guardar cambios" para usuarios de institución
+        if (Auth::user() && Auth::user()->role && Auth::user()->role->name === 'institution_user' &&
+            $this->record && in_array($this->record->estado_estrategia, ['Creada', 'Rechazada CS', 'Rechazada DGNC'])) {
+
+            $actions[] = Actions\Action::make('guardar_sin_salir')
+                ->label('Guardar Cambios')
+                ->icon('heroicon-o-bookmark')
+                ->color('success')
+                ->action(function () {
+                    // Desactivar redirección
+                    $this->shouldRedirect = false;
+
+                    try {
+                        // Guardar el formulario usando el método save() de Filament
+                        $this->save();
+
+                        Notification::make()
+                            ->title('Cambios Guardados')
+                            ->body('Los cambios han sido guardados exitosamente. Puedes continuar editando.')
+                            ->success()
+                            ->send();
+                    } finally {
+                        // Reactivar redirección para el siguiente guardado normal
+                        $this->shouldRedirect = true;
+                    }
+                })
+                ->keyBindings(['mod+s']);
+        }
 
         // Solo super administradores pueden eliminar
         if (Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin') {
@@ -117,5 +156,13 @@ class EditEstrategy extends EditRecord
         }
 
         return $actions;
+    }
+
+    /**
+     * Sobrescribir el título de notificación de guardado
+     */
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Cambios guardados';
     }
 }

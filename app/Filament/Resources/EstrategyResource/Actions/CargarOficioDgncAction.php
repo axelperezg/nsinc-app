@@ -25,10 +25,10 @@ class CargarOficioDgncAction
             })
             ->form([
                 Forms\Components\TextInput::make('numero_oficio')
-                    ->label('Número de Oficio')
+                    ->label('Número de Oficio UNMC/DGNC/ 0000 /2025')
                     ->required()
                     ->maxLength(255)
-                    ->placeholder('Ej: OFICIO-DGNC-2025-001'),
+                    ->placeholder('Ej: UNMC/DGNC/ 0000 /2025'),
                 
                 Forms\Components\DatePicker::make('fecha_oficio')
                     ->label('Fecha de Oficio')

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\EstrategyResource\Pages;
+namespace App\Filament\Resources\ComunicacionSocialResource\Pages;
 
-use App\Filament\Resources\EstrategyResource;
+use App\Filament\Resources\ComunicacionSocialResource;
 use App\Models\Estrategy;
 use App\Models\Campaign;
 use Filament\Resources\Pages\Page;
@@ -10,11 +10,11 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class SolventarEstrategy extends Page
+class ModificarComunicacionSocial extends Page
 {
-    protected static string $resource = EstrategyResource::class;
+    protected static string $resource = ComunicacionSocialResource::class;
 
-    protected static string $view = 'filament.resources.estrategy-resource.pages.solventar-estrategy';
+    protected static string $view = 'filament.resources.estrategy-resource.pages.modificar-estrategy';
 
     public $estrategyOriginal;
     public $estrategyNueva;
@@ -23,33 +23,33 @@ class SolventarEstrategy extends Page
     {
         $this->estrategyOriginal = Estrategy::with('campaigns.versions')->findOrFail($record);
 
-        // Verificar que la estrategia esté en estado 'Observada DGNC'
-        if ($this->estrategyOriginal->estado_estrategia !== 'Observada DGNC') {
+        // Verificar que la estrategia esté autorizada
+        if ($this->estrategyOriginal->estado_estrategia !== 'Autorizada') {
             Notification::make()
                 ->title('Error')
-                ->body('Solo se pueden solventar estrategias observadas por DGNC.')
+                ->body('Solo se pueden modificar estrategias autorizadas.')
                 ->danger()
                 ->send();
 
-            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            $this->redirect(static::getResource()::getUrl('index'));
             return;
         }
 
-        // Validar fechas de vencimiento para Observación (Solventación usa fechas de Observación)
+        // Validar fechas de vencimiento para Modificación
         $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
-            'Solventación',
+            'Modificación',
             $this->estrategyOriginal->anio
         );
 
         if (!$validation['allowed']) {
             Notification::make()
-                ->title('No se puede solventar estrategia')
+                ->title('No se puede modificar estrategia')
                 ->body($validation['message'])
                 ->danger()
                 ->persistent()
                 ->send();
 
-            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            $this->redirect(static::getResource()::getUrl('index'));
             return;
         }
 
@@ -74,7 +74,7 @@ class SolventarEstrategy extends Page
 
             // 1. Duplicar la estrategia principal
             $estrategyNueva = $this->estrategyOriginal->replicate();
-            $estrategyNueva->concepto = 'Solventacion';
+            $estrategyNueva->concepto = 'Modificacion';
             $estrategyNueva->estado_estrategia = 'Creada';
             $estrategyNueva->fecha_elaboracion = now();
             $estrategyNueva->fecha_envio_dgnc = null;
@@ -105,25 +105,24 @@ class SolventarEstrategy extends Page
             $this->estrategyNueva = $estrategyNueva;
 
             Notification::make()
-                ->title('Estrategia Solventada')
-                ->body('Se ha creado exitosamente una solventación de la estrategia con todas sus campañas y versiones.')
+                ->title('Estrategia Modificada')
+                ->body('Se ha creado exitosamente una modificación de la estrategia con todas sus campañas y versiones.')
                 ->success()
                 ->send();
 
             // Redirigir a la edición de la nueva estrategia
-            $this->redirect(route('filament.admin.resources.estrategies.edit', ['record' => $estrategyNueva->id]));
+            $this->redirect(static::getResource()::getUrl('edit', ['record' => $estrategyNueva->id]));
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             Notification::make()
                 ->title('Error')
-                ->body('Ocurrió un error al solventar la estrategia: ' . $e->getMessage())
+                ->body('Ocurrió un error al modificar la estrategia: ' . $e->getMessage())
                 ->danger()
                 ->send();
 
-            $this->redirect(route('filament.admin.resources.estrategies.index'));
+            $this->redirect(static::getResource()::getUrl('index'));
         }
     }
-
 }

@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Base;
 
-use App\Filament\Resources\EstrategyResource\Pages;
-use App\Filament\Resources\EstrategyResource\RelationManagers;
 use App\Filament\Resources\EstrategyResource\Actions\CargarOficioDgncAction;
 use App\Filament\Resources\EstrategyResource\Actions\VerOficiosDgncAction;
 use App\Models\Estrategy;
@@ -29,9 +27,20 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class EstrategyResource extends Resource
+abstract class BaseEstrategyResource extends Resource
 {
     protected static ?string $model = Estrategy::class;
+
+    /**
+     * Partida presupuestal: '36101' para Comunicación Social, '36201' para Promoción y Publicidad
+     * Las clases hijas deben definir este valor
+     */
+    protected static string $partidaPresupuestal;
+
+    /**
+     * Título para el PDF (será definido por las clases hijas)
+     */
+    protected static string $tituloPDF;
 
     /**
      * Helper para crear campos numéricos con formato de decimales
@@ -341,6 +350,7 @@ class EstrategyResource extends Resource
                                     
                                     return 'Registro';
                                 }),
+                           
                         ]),
 
                     Wizard\Step::make('Información Institucional')
@@ -360,7 +370,7 @@ class EstrategyResource extends Resource
                             ->hint('¿Qué hace tu institución?')
                             ->hintIcon('heroicon-o-question-mark-circle')
                             ->hintColor('info')
-                            ->helperText('Introduce la misión oficial actualizadade la institución. Debe ser la misma que la que se encuentra en la página oficial de la institución.')
+                            ->helperText('Introduce la misión oficial actualizada de la institución. Debe ser la misma que la que se encuentra en la página oficial de la institución.')
                             ->placeholder('Ejemplo: Garantizar el acceso universal a servicios de salud de calidad...'),
                         Forms\Components\Textarea::make('vision')
                             ->label('Visión')
@@ -397,72 +407,8 @@ class EstrategyResource extends Resource
                     ->collapsible(),
                         ]),
 
-                    Wizard\Step::make('Plan Nacional de Desarrollo')
-                        ->description('Ejes estratégicos relacionados')
-                        ->icon('heroicon-o-flag')
-                        ->completedIcon('heroicon-o-check-circle')
-                        ->schema([
-                            Forms\Components\Section::make('Plan Nacional de Desarrollo')
-                    ->description('Selecciona los ejes del Plan Nacional que se relacionan con tu estrategia')
-                    ->icon('heroicon-o-flag')
-                    ->schema([
-                        Forms\Components\Section::make('Ejes Generales')
-                            ->description('Selecciona los ejes generales que aplican a tu estrategia de comunicación')
-                            ->icon('heroicon-o-chart-bar')
-                            ->schema([
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_1_gobernanza')
-                                    ->label('Eje General 1: Gobernanza con justicia y participación ciudadana')
-                                    ->hint('Fortalecimiento democrático')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye a fortalecer la gobernanza y participación ciudadana.'),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_2_desarrollo')
-                                    ->label('Eje General 2: Desarrollo con bienestar y humanismo')
-                                    ->hint('Bienestar social')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye al desarrollo social y bienestar de la población.'),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_3_economia')
-                                    ->label('Eje General 3: Economía moral y trabajo')
-                                    ->hint('Desarrollo económico')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye al desarrollo económico y generación de empleo.'),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_4_sustentable')
-                                    ->label('Eje General 4: Desarrollo sustentable')
-                                    ->hint('Medio ambiente')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye a la sustentabilidad y protección ambiental.'),
-                            ])
-                            ->columns(2)
-                            ->collapsible(),
-
-                        Forms\Components\Section::make('Ejes Transversales')
-                            ->description('Selecciona los ejes transversales que aplican a tu estrategia')
-                            ->icon('heroicon-o-arrow-path')
-                            ->schema([
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_transversal_1_igualdad')
-                                    ->label('Eje Transversal 1: Igualdad sustantiva y derechos de las mujeres')
-                                    ->hint('Igualdad de género')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia promueve la igualdad de género y derechos de las mujeres.')
-                                    ->columnSpan(2),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_transversal_2_innovacion')
-                                    ->label('Eje Transversal 2: Innovación pública para el desarrollo tecnológico nacional')
-                                    ->hint('Innovación tecnológica')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia incorpora innovación y desarrollo tecnológico.')
-                                    ->columnSpan(2),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_transversal_3_derechos')
-                                    ->label('Eje Transversal 3: Derechos de los pueblos y comunidades indígenas y afromexicanas')
-                                    ->hint('Pueblos originarios')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia incluye a pueblos y comunidades indígenas y afromexicanas.')
-                                    ->columnSpan(2),
-                            ])
-                            ->columns(2)
-                            ->collapsible(),
-                    ])
-                    ->columns(1)
-                    ->collapsible(),
-                        ]),
+                    // Step específico por partida (PND para 36101, Entorno/Metas para 36201)
+                    static::getEspecificosWizardStep(),
 
                     Wizard\Step::make('Presupuesto Anual')
                         ->description('Define el presupuesto total')
@@ -487,7 +433,7 @@ class EstrategyResource extends Resource
                         ->hintIcon('heroicon-o-question-mark-circle')
                         ->hintColor('info')
                         ->helperText('Cifras en miles de pesos. Ejemplo: 1,000,000 = $1,000. Este presupuesto se distribuirá entre todas las campañas.')
-                        ->placeholder('Ejemplo: 5000000')
+                        ->placeholder('Ejemplo: 1000')
                         ->live(onBlur: true)
                         ->afterStateUpdated(function ($state, $set, Forms\Set $setForm) {
                             // Validación en tiempo real del presupuesto
@@ -499,7 +445,7 @@ class EstrategyResource extends Resource
                                     Notification::make()
                                         ->warning()
                                         ->title('Presupuesto bajo')
-                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es correcto? Revisa de nuevo.')
+                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es correcto? Si es correcto, continúa con el proceso.')
                                         ->duration(5000)
                                         ->send();
                                 }
@@ -509,7 +455,7 @@ class EstrategyResource extends Resource
                                     Notification::make()
                                         ->warning()
                                         ->title('Presupuesto muy alto')
-                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es correcto? Revisa de nuevo.')
+                                        ->body('El presupuesto ingresado ($' . number_format($value, 2) . ') es correcto? Si es correcto, continúa con el proceso.')
                                         ->duration(5000)
                                         ->send();
                                 }
@@ -527,16 +473,16 @@ class EstrategyResource extends Resource
                         ]),
 
                     Wizard\Step::make('Campañas')
-                        ->description('Agrega tus campañas de comunicación')
+                        ->description('Agrega tus campañas')
                         ->icon('heroicon-o-megaphone')
                         ->completedIcon('heroicon-o-check-circle')
                         ->schema([
                             Forms\Components\Section::make('Campañas')
-                    ->description('Agrega las campañas de comunicación que ejecutarás durante el año')
+                    ->description('Agrega las campañas que ejecutarás durante el año')
                     ->icon('heroicon-o-megaphone')
                     ->schema([
                         Forms\Components\Repeater::make('campaigns')
-                            ->label('Programa: Campaña de Comunicación Social')
+                            ->label('Programa: Campaña adicional')
                             ->relationship('campaigns')
                             ->schema([
                                 Forms\Components\Section::make('Información General')
@@ -546,7 +492,7 @@ class EstrategyResource extends Resource
                                         Forms\Components\TextInput::make('name')
                                             ->label('Nombre de la Campaña')
                                             ->required()
-                                            ->minLength(10)
+                                            ->minLength(6)
                                             ->maxLength(200)
                                             ->hint('Nombre claro y descriptivo')
                                             ->hintIcon('heroicon-o-question-mark-circle')
@@ -559,7 +505,7 @@ class EstrategyResource extends Resource
                                                     $length = strlen($state);
 
                                                     // Advertencia si el nombre es muy corto
-                                                    if ($length > 0 && $length < 10) {
+                                                    if ($length > 0 && $length < 6) {
                                                         Notification::make()
                                                             ->warning()
                                                             ->title('Nombre muy corto')
@@ -569,7 +515,7 @@ class EstrategyResource extends Resource
                                                     }
 
                                                     // Sugerencia si solo tiene palabras genéricas
-                                                    if ($length >= 10 && preg_match('/^(campaña|estrategia)\s*$/i', $state)) {
+                                                    if ($length >= 6 && preg_match('/^(campaña|estrategia)\s*$/i', $state)) {
                                                         Notification::make()
                                                             ->info()
                                                             ->title('Nombre poco descriptivo')
@@ -645,7 +591,7 @@ class EstrategyResource extends Resource
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title('Fecha inicio en el pasado')
-                                                                    ->body('La fecha de inicio está en el pasado. Verifica si es correcto.')
+                                                                    ->body('La fecha de inicio se ha registrado. Verifica que es correcta.')
                                                                     ->duration(4000)
                                                                     ->send();
                                                             }
@@ -758,11 +704,29 @@ class EstrategyResource extends Resource
                                                     ]),
                                             ])
                                             ->columns(3)
-                                            ->defaultItems(0)
+                                            ->defaultItems(1)
+                                            ->minItems(1)
+                                            ->required()
                                             ->reorderable(false)
                                             ->collapsible()
                                             ->addActionLabel('Agregar Versión')
                                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                                    ])
+                                    ->collapsible(),
+
+                                Forms\Components\Section::make('Coemisores')
+                                    ->description('Indica si hay coemisores en esta campaña')
+                                    ->icon('heroicon-o-building-office-2')
+                                    ->schema([
+                                        Forms\Components\Textarea::make('coemisores_acronyms')
+                                            ->label('Coemisores')
+                                            ->rows(2)
+                                            ->maxLength(500)
+                                            ->hint('Entidades que coemiten la campaña')
+                                            ->hintIcon('heroicon-o-question-mark-circle')
+                                            ->hintColor('info')
+                                            ->helperText('Menciona las dependencias o entidades que participan como coemisores en esta campaña (en caso de ser Coemitida).')
+                                            ->placeholder('Ejemplo: Secretaría de Salud, IMSS, ISSSTE'),
                                     ])
                                     ->collapsible(),
 
@@ -1197,8 +1161,21 @@ class EstrategyResource extends Resource
                     ->columns(4)
                     ->collapsible(false),
 
-                Forms\Components\Section::make('Justificación de Estudios')
-                    ->description('Si no se asigna presupuesto a estudios (pre-test o post-test), debes seleccionar una justificación')
+                    Forms\Components\Section::make('Justificación de Estudios')
+                    ->description(function ($get) {
+                        $campaigns = $get('campaigns') ?? [];
+                        $totalEstudios = 0;
+
+                        foreach ($campaigns as $campaign) {
+                            $totalEstudios += floatval($campaign['preEstudios'] ?? 0) + floatval($campaign['postEstudios'] ?? 0);
+                        }
+
+                        if ($totalEstudios == 0) {
+                            return 'Seleccionar una justificación para la no presentación de Estudio de Pertinencia y Efectividad';
+                        }
+
+                        return 'NO es necesario añadir justificación';
+                    })
                     ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\Placeholder::make('total_estudios_info')
@@ -1263,7 +1240,7 @@ class EstrategyResource extends Resource
                     ])
                     ->collapsible(),
 
-                // Botón para enviar a DGNC
+                // Acciones del formulario
                 Forms\Components\Actions::make([
                     Forms\Components\Actions\Action::make('enviar_cs')
                         ->label('Enviar a CS')
@@ -1330,7 +1307,7 @@ class EstrategyResource extends Resource
                                 ->send();
 
                             // Redirigir a la lista
-                            return redirect()->route('filament.admin.resources.estrategies.index');
+                            return redirect(static::getUrl('index'));
                         })
                         ->requiresConfirmation()
                         ->modalHeading('Enviar a CS')
@@ -1396,7 +1373,7 @@ class EstrategyResource extends Resource
                                 ->send();
                             
                             // Redirigir a la lista
-                            return redirect()->route('filament.admin.resources.estrategies.index');
+                            return redirect(static::getUrl('index'));
                         })
                         ->requiresConfirmation()
                         ->modalHeading('Autorizar Estrategia')
@@ -1521,9 +1498,9 @@ class EstrategyResource extends Resource
                     ->label('Presupuesto')
                     ->money('MXN')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('campaigns_count')
-                    ->label('Campañas')
-                    ->counts('campaigns'),
+                //Tables\Columns\TextColumn::make('campaigns_count')
+                  //  ->label('Campañas')
+                  //  ->counts('campaigns'),
                 Tables\Columns\TextColumn::make('oficio_dgnc_documents_count')
                     ->label('Oficios DGNC')
                     ->counts('oficioDgncDocuments')
@@ -1876,7 +1853,7 @@ class EstrategyResource extends Resource
                     })
                     ->action(function ($record) {
                         // Lógica para duplicar la estrategia
-                        return redirect()->route('filament.admin.resources.estrategies.modificar', ['record' => $record->id]);
+                        return redirect(static::getUrl('modificar', ['record' => $record->id]));
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Modificar Estrategia')
@@ -1899,7 +1876,7 @@ class EstrategyResource extends Resource
                     })
                     ->action(function ($record) {
                         // Lógica para solventar la estrategia
-                        return redirect()->route('filament.admin.resources.estrategies.solventar', ['record' => $record->id]);
+                        return redirect(static::getUrl('solventar', ['record' => $record->id]));
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Solventar Estrategia')
@@ -1932,7 +1909,7 @@ class EstrategyResource extends Resource
                     })
                     ->action(function ($record) {
                         // Lógica para cancelar la estrategia
-                        return redirect()->route('filament.admin.resources.estrategies.cancelar', ['record' => $record->id]);
+                        return redirect(static::getUrl('cancelar', ['record' => $record->id]));
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Cancelar Estrategia')
@@ -2110,16 +2087,36 @@ class EstrategyResource extends Resource
         ];
     }
 
+    /**
+     * Las clases hijas deben sobrescribir este método para definir sus páginas
+     * Este método existe solo como recordatorio - las clases hijas deben implementarlo
+     */
     public static function getPages(): array
     {
-        return [
-            'index' => Pages\ListEstrategies::route('/'),
-            'create' => Pages\CreateEstrategy::route('/create'),
-            'view' => Pages\ViewEstrategy::route('/{record}'),
-            'edit' => Pages\EditEstrategy::route('/{record}/edit'),
-            'modificar' => Pages\ModificarEstrategy::route('/{record}/modificar'),
-            'solventar' => Pages\SolventarEstrategy::route('/{record}/solventar'),
-            'cancelar' => Pages\CancelarEstrategy::route('/{record}/cancelar'),
-        ];
+        // Este método debe ser sobrescrito por las clases hijas
+        throw new \Exception('Las clases hijas de BaseEstrategyResource deben implementar getPages()');
+    }
+
+    /**
+     * Obtiene el query filtrado por partida presupuestal
+     */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (isset(static::$partidaPresupuestal)) {
+            $query->where('partida_presupuestal', static::$partidaPresupuestal);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Hook para que las clases hijas agreguen/modifiquen steps del wizard
+     * Por defecto retorna null (no agrega nada)
+     */
+    protected static function getEspecificosWizardStep(): ?Wizard\Step
+    {
+        return null;
     }
 }

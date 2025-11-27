@@ -104,10 +104,11 @@ class CampaignResource extends Resource
 
                 Forms\Components\Section::make('Información Adicional')
                     ->schema([
-                        Forms\Components\Textarea::make('coemisores')
+                        Forms\Components\Textarea::make('coemisores_acronyms')
                             ->label('Coemisores')
-                            ->maxLength(65535),
-                            Forms\Components\Select::make('sexo')
+                            ->maxLength(65535)
+                            ->helperText('Siglas o acrónimos de las entidades coemisoras'),
+                        Forms\Components\Select::make('sexo')
                             ->label('Sexo')
                             ->multiple()
                             ->options(Campaign::getSexoOptions())

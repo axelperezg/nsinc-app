@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\EstrategyResource\Pages;
+namespace App\Filament\Resources\PromocionPublicidadResource\Pages;
 
-use App\Filament\Resources\EstrategyResource;
+use App\Filament\Resources\PromocionPublicidadResource;
 use App\Helpers\ExpirationDateHelper;
 use App\Models\StrategyDraft;
 use Filament\Actions;
@@ -11,9 +11,9 @@ use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class CreateEstrategy extends CreateRecord
+class CreatePromocionPublicidad extends CreateRecord
 {
-    protected static string $resource = EstrategyResource::class;
+    protected static string $resource = PromocionPublicidadResource::class;
 
     // Vista personalizada con auto-guardado
     protected static string $view = 'filament.resources.estrategy-resource.pages.create-estrategy';
@@ -152,6 +152,12 @@ class CreateEstrategy extends CreateRecord
             // Manejar errores silenciosamente para no interrumpir al usuario
             Log::error('Error al guardar borrador: ' . $e->getMessage());
         }
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['partida_presupuestal'] = '36201';
+        return $data;
     }
 
     /**

@@ -272,10 +272,10 @@ class CampaignModelTest extends TestCase
     public function campaign_preserves_coemisores_information()
     {
         $campaign = Campaign::factory()->create([
-            'coemisores' => 'Secretaría de Salud, IMSS, ISSSTE'
+            'coemisores_acronyms' => 'Secretaría de Salud, IMSS, ISSSTE'
         ]);
 
-        $this->assertEquals('Secretaría de Salud, IMSS, ISSSTE', $campaign->coemisores);
+        $this->assertEquals('Secretaría de Salud, IMSS, ISSSTE', $campaign->coemisores_acronyms);
     }
 
     /** @test */

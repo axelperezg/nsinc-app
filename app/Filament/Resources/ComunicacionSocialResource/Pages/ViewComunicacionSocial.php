@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\EstrategyResource\Pages;
+namespace App\Filament\Resources\ComunicacionSocialResource\Pages;
 
-use App\Filament\Resources\EstrategyResource;
+use App\Filament\Resources\ComunicacionSocialResource;
 use Filament\Resources\Pages\ViewRecord;
 //use Filament\Actions\Action;
 use Illuminate\Support\Facades\Auth;
 
-class ViewEstrategy extends ViewRecord
+class ViewComunicacionSocial extends ViewRecord
 {
-    protected static string $resource = EstrategyResource::class;
+    protected static string $resource = ComunicacionSocialResource::class;
 
     protected function getFormSchema(): array
     {
@@ -53,6 +53,9 @@ class ViewEstrategy extends ViewRecord
                                 ->disabled(),
                             \Filament\Forms\Components\TextInput::make('objetivo_campana')
                                 ->label('Objetivo de Campaña')
+                                ->disabled(),
+                            \Filament\Forms\Components\TextInput::make('coemisores_acronyms')
+                                ->label('Coemisor(es)')
                                 ->disabled(),
                             \Filament\Forms\Components\TextInput::make('publico_objetivo')
                                 ->label('Público Objetivo')

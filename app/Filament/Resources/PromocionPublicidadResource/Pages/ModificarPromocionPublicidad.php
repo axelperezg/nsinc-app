@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Filament\Resources\PromocionPublicidadResource\Pages;
+
+use App\Filament\Resources\PromocionPublicidadResource;
+use App\Models\Estrategy;
+use App\Models\Campaign;
+use Filament\Resources\Pages\Page;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
+class ModificarPromocionPublicidad extends Page
+{
+    protected static string $resource = PromocionPublicidadResource::class;
+
+    protected static string $view = 'filament.resources.estrategy-resource.pages.modificar-estrategy';
+
+    public $estrategyOriginal;
+    public $estrategyNueva;
+
+    public function mount($record): void
+    {
+        $this->estrategyOriginal = Estrategy::with('campaigns.versions')->findOrFail($record);
+
+        // Verificar que la estrategia esté autorizada
+        if ($this->estrategyOriginal->estado_estrategia !== 'Autorizada') {
+            Notification::make()
+                ->title('Error')
+                ->body('Solo se pueden modificar estrategias autorizadas.')
+                ->danger()
+                ->send();
+
+            $this->redirect(PromocionPublicidadResource::getUrl('index'));
+            return;
+        }
+
+        // Validar fechas de vencimiento para Modificación
+        $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
+            'Modificación',
+            $this->estrategyOriginal->anio
+        );
+
+        if (!$validation['allowed']) {
+            Notification::make()
+                ->title('No se puede modificar estrategia')
+                ->body($validation['message'])
+                ->danger()
+                ->persistent()
+                ->send();
+
+            $this->redirect(PromocionPublicidadResource::getUrl('index'));
+            return;
+        }
+
+        // Si hay advertencia, mostrarla
+        if ($validation['level'] === 'warning') {
+            Notification::make()
+                ->title('Advertencia de fecha límite')
+                ->body($validation['message'])
+                ->warning()
+                ->duration(10000)
+                ->send();
+        }
+
+        // Crear la nueva estrategia
+        $this->duplicarEstrategia();
+    }
+
+    protected function duplicarEstrategia(): void
+    {
+        try {
+            DB::beginTransaction();
+
+            // 1. Duplicar la estrategia principal
+            $estrategyNueva = $this->estrategyOriginal->replicate();
+            $estrategyNueva->concepto = 'Modificacion';
+            $estrategyNueva->estado_estrategia = 'Creada';
+            $estrategyNueva->fecha_elaboracion = now();
+            $estrategyNueva->fecha_envio_dgnc = null;
+            $estrategyNueva->created_at = now();
+            $estrategyNueva->updated_at = now();
+            $estrategyNueva->save();
+
+            // 2. Duplicar las campañas
+            foreach ($this->estrategyOriginal->campaigns as $campaignOriginal) {
+                $campaignNueva = $campaignOriginal->replicate();
+                $campaignNueva->estrategy_id = $estrategyNueva->id;
+                $campaignNueva->created_at = now();
+                $campaignNueva->updated_at = now();
+                $campaignNueva->save();
+
+                // 3. Duplicar las versiones de cada campaña
+                foreach ($campaignOriginal->versions as $versionOriginal) {
+                    $versionNueva = $versionOriginal->replicate();
+                    $versionNueva->campaign_id = $campaignNueva->id;
+                    $versionNueva->created_at = now();
+                    $versionNueva->updated_at = now();
+                    $versionNueva->save();
+                }
+            }
+
+            DB::commit();
+
+            $this->estrategyNueva = $estrategyNueva;
+
+            Notification::make()
+                ->title('Estrategia Modificada')
+                ->body('Se ha creado exitosamente una modificación de la estrategia con todas sus campañas y versiones.')
+                ->success()
+                ->send();
+
+            // Redirigir a la edición de la nueva estrategia
+            $this->redirect(PromocionPublicidadResource::getUrl('edit', ['record' => $estrategyNueva->id]));
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Notification::make()
+                ->title('Error')
+                ->body('Ocurrió un error al modificar la estrategia: ' . $e->getMessage())
+                ->danger()
+                ->send();
+
+            $this->redirect(PromocionPublicidadResource::getUrl('index'));
+        }
+    }
+}

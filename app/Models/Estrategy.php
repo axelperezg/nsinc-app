@@ -13,6 +13,7 @@ class Estrategy extends Model
     protected $fillable = [
         'anio',
         'institution_id',
+        'partida_presupuestal',
         'institution_name',
         'juridical_nature_id',
         'juridical_nature_name',
@@ -20,6 +21,8 @@ class Estrategy extends Model
         'vision',
         'objetivo_institucional',
         'objetivo_estrategia',
+        'entorno_mercado',
+        'metas_generales',
         'fecha_elaboracion',
         'estado_estrategia',
         'concepto',
@@ -222,20 +225,67 @@ class Estrategy extends Model
     {
         $latest = static::where('institution_id', $this->institution_id)
             ->where('anio', $this->anio)
+            ->where('partida_presupuestal', $this->partida_presupuestal)
             ->orderBy('created_at', 'desc')
             ->first();
-            
+
         return $latest && $latest->id === $this->id;
     }
 
     /**
      * Obtiene la última estrategia para una institución y año específicos
      */
-    public static function getLatestForInstitutionAndYear(int $institutionId, int $year): ?self
+    public static function getLatestForInstitutionAndYear(int $institutionId, int $year, ?string $partidaPresupuestal = null): ?self
     {
-        return static::where('institution_id', $institutionId)
-            ->where('anio', $year)
-            ->orderBy('created_at', 'desc')
-            ->first();
+        $query = static::where('institution_id', $institutionId)
+            ->where('anio', $year);
+
+        if ($partidaPresupuestal !== null) {
+            $query->where('partida_presupuestal', $partidaPresupuestal);
+        }
+
+        return $query->orderBy('created_at', 'desc')->first();
+    }
+
+    /**
+     * Scope para filtrar estrategias de Comunicación Social (partida 36101)
+     */
+    public function scopePartida36101($query)
+    {
+        return $query->where('partida_presupuestal', '36101');
+    }
+
+    /**
+     * Scope para filtrar estrategias de Promoción y Publicidad (partida 36201)
+     */
+    public function scopePartida36201($query)
+    {
+        return $query->where('partida_presupuestal', '36201');
+    }
+
+    /**
+     * Verifica si esta estrategia es de Comunicación Social
+     */
+    public function isComunicacionSocial(): bool
+    {
+        return $this->partida_presupuestal === '36101';
+    }
+
+    /**
+     * Verifica si esta estrategia es de Promoción y Publicidad
+     */
+    public function isPromocionPublicidad(): bool
+    {
+        return $this->partida_presupuestal === '36201';
+    }
+
+    /**
+     * Obtiene el nombre completo de la partida presupuestal
+     */
+    public function getPartidaNombreAttribute(): string
+    {
+        return $this->partida_presupuestal === '36101'
+            ? 'Comunicación Social'
+            : 'Promoción y Publicidad';
     }
 }
