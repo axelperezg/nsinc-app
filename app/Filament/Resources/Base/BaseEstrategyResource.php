@@ -1430,6 +1430,9 @@ abstract class BaseEstrategyResource extends Resource
                 Tables\Columns\TextColumn::make('anio')
                     ->label('Año')
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('partida_presupuestal')
+                    ->label('Partida Presupuestal'),
                 
                 Tables\Columns\TextColumn::make('institution.sector.name')
                     ->label('Sector'),
@@ -1519,11 +1522,72 @@ abstract class BaseEstrategyResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('institution_id')
-                    ->label('Institución')
-                    ->relationship('institution', 'name')
+               
+                
+                Tables\Filters\Filter::make('sector_id')
+                    ->label('Sector')
+                    ->form([
+                        Forms\Components\Select::make('sector_id')
+                            ->label('Sector')
+                            ->options(fn () => \App\Models\Sector::query()->pluck('name', 'id'))
+                            //->searchable()
+                            ->live(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['sector_id'],
+                            fn (Builder $query, $sectorId): Builder => $query->whereHas('institution', function ($q) use ($sectorId) {
+                                $q->where('sector_id', $sectorId);
+                            })
+                        );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['sector_id']) {
+                            $sector = \App\Models\Sector::find($data['sector_id']);
+                            return $sector ? 'Sector: ' . $sector->name : null;
+                        }
+                        return null;
+                    })
                     ->visible(fn () => Auth::user() && Auth::user()->role && in_array(Auth::user()->role->name, ['super_admin', 'dgnc_user'])),
                 
+                Tables\Filters\Filter::make('institution_id')
+                    ->label('Institución')
+                    ->form([
+                        Forms\Components\Select::make('institution_id')
+                            ->label('Institución')
+                            ->options(function ($get, $livewire) {
+                                // Obtener el sector_id del estado de los filtros de la tabla
+                                $sectorId = null;
+                                if (isset($livewire->tableFilters['sector_id']) && is_array($livewire->tableFilters['sector_id'])) {
+                                    $sectorId = $livewire->tableFilters['sector_id']['sector_id'] ?? null;
+                                }
+                                
+                                $query = \App\Models\Institution::query();
+                                
+                                if ($sectorId) {
+                                    $query->where('sector_id', $sectorId);
+                                }
+                                
+                                return $query->pluck('name', 'id');
+                            })
+                            //->searchable()
+                            ->live(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['institution_id'],
+                            fn (Builder $query, $institutionId): Builder => $query->where('institution_id', $institutionId)
+                        );
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['institution_id']) {
+                            $institution = \App\Models\Institution::find($data['institution_id']);
+                            return $institution ? 'Institución: ' . $institution->name : null;
+                        }
+                        return null;
+                    })
+                    ->visible(fn () => Auth::user() && Auth::user()->role && in_array(Auth::user()->role->name, ['super_admin', 'dgnc_user'])),
+                    
                 Tables\Filters\Filter::make('anio')
                     ->form([
                         Forms\Components\Select::make('anio')
@@ -1558,6 +1622,7 @@ abstract class BaseEstrategyResource extends Resource
                         return 'Año: ' . now()->year;
                     }),
             ])
+            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\Action::make('exportar_pdf')
                     ->label('Exportar PDF')
@@ -1643,6 +1708,90 @@ abstract class BaseEstrategyResource extends Resource
                         }, $filename);
                     })
                     ->tooltip('Descargar estrategia en PDF'),
+                Tables\Actions\Action::make('exportar_pdf_horizontal')
+                    ->label('PDF Horizontal')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->action(function ($record) {
+                        // Cargar la estrategia con todas sus relaciones
+                        $estrategy = Estrategy::with([
+                            'institution.sector',
+                            'juridicalNature',
+                            'responsable',
+                            'campaigns.campaignType',
+                            'campaigns.versions'
+                        ])->find($record->id);
+
+                        // Obtener los logos del PDF desde configuraciones
+                        $logoPath = \App\Models\Configuration::get('pdf.logo_path');
+                        $logoRightPath = \App\Models\Configuration::get('pdf.logo_right_path');
+
+                        // Función helper para extraer la ruta del archivo desde JSON o string
+                        $extractFilePath = function($value) {
+                            if (empty($value)) {
+                                return null;
+                            }
+
+                            // Si es un JSON (array de archivos de Filament)
+                            if (is_string($value) && str_starts_with($value, '{')) {
+                                $decoded = json_decode($value, true);
+                                if (is_array($decoded) && count($decoded) > 0) {
+                                    // Obtener el primer valor del array
+                                    return reset($decoded);
+                                }
+                            }
+
+                            // Si es un string simple
+                            return $value;
+                        };
+
+                        // Convertir la ruta del logo izquierdo a ruta absoluta si existe
+                        $logoAbsolutePath = null;
+                        $logoPathExtracted = $extractFilePath($logoPath);
+                        if ($logoPathExtracted) {
+                            $logoAbsolutePath = storage_path('app/public/' . $logoPathExtracted);
+                            // Verificar si el archivo existe
+                            if (!file_exists($logoAbsolutePath)) {
+                                $logoAbsolutePath = null;
+                            }
+                        }
+
+                        // Convertir la ruta del logo derecho a ruta absoluta si existe
+                        $logoRightAbsolutePath = null;
+                        $logoRightPathExtracted = $extractFilePath($logoRightPath);
+                        if ($logoRightPathExtracted) {
+                            $logoRightAbsolutePath = storage_path('app/public/' . $logoRightPathExtracted);
+                            // Verificar si el archivo existe
+                            if (!file_exists($logoRightAbsolutePath)) {
+                                $logoRightAbsolutePath = null;
+                            }
+                        }
+
+                        // Generar el PDF Horizontal
+                        $pdf = Pdf::loadView('pdf.estrategy_horizontal.main', [
+                            'estrategy' => $estrategy,
+                            'logoPath' => $logoAbsolutePath,
+                            'logoRightPath' => $logoRightAbsolutePath
+                        ]);
+
+                        // Configurar opciones del PDF - LANDSCAPE
+                        $pdf->setPaper('letter', 'landscape');
+
+                        // Configurar opciones de DomPDF para respetar los márgenes
+                        $pdf->setOption('isHtml5ParserEnabled', true);
+                        $pdf->setOption('isRemoteEnabled', true);
+                        $pdf->setOption('dpi', 96);
+
+                        // Nombre del archivo
+                        $filename = 'Estrategia_Horizontal_' . $estrategy->institution_name . '_' . $estrategy->anio . '.pdf';
+                        $filename = str_replace(' ', '_', $filename);
+
+                        // Descargar el PDF
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->stream();
+                        }, $filename);
+                    })
+                    ->tooltip('Descargar estrategia en PDF horizontal'),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(function ($record) {

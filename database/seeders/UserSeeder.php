@@ -11,22 +11,35 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Verificar si el super admin ya existe
+        // Crear super admin principal
         $superAdminRole = Role::where('name', 'super_admin')->first();
-        $existingSuperAdmin = User::where('email', 'admin@admin.com')->first();
-        
-        if ($superAdminRole && !$existingSuperAdmin) {
-            User::create([
-                'name' => 'Super Admin',
-                'email' => 'admin@admin.com',
-                'password' => Hash::make('password'),
-                'role_id' => $superAdminRole->id,
-                'institution_id' => null, // Super admin no tiene institución específica
-            ]);
-            
-            $this->command->info('Usuario Super Admin creado: admin@admin.com / password');
-        } else {
-            $this->command->info('Usuario Super Admin ya existe: admin@admin.com / password');
+
+        if ($superAdminRole) {
+            // Super Admin - Miguel Angel Pérez García
+            User::firstOrCreate(
+                ['email' => 'maperezg@segob.gob.mx'],
+                [
+                    'name' => 'Miguel Angel Pérez García',
+                    'password' => Hash::make('password'),
+                    'role_id' => $superAdminRole->id,
+                    'institution_id' => null, // Super admin no tiene institución específica
+                ]
+            );
+
+            $this->command->info('Usuario Super Admin creado: maperezg@segob.gob.mx / password');
+
+            // Super Admin adicional para pruebas
+            User::firstOrCreate(
+                ['email' => 'admin@admin.com'],
+                [
+                    'name' => 'Super Admin',
+                    'password' => Hash::make('password'),
+                    'role_id' => $superAdminRole->id,
+                    'institution_id' => null,
+                ]
+            );
+
+            $this->command->info('Usuario Super Admin de prueba creado: admin@admin.com / password');
         }
 
         // Crear usuario de institución (SEP)

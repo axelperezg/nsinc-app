@@ -54,10 +54,7 @@ class CampaignResource extends Resource
                             ->label('Nombre de la Campaña')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\Textarea::make('temaEspecifco')
-                            ->label('Tema Específico')
-                            ->required()
-                            ->maxLength(65535),
+                        
                         Forms\Components\Textarea::make('objetivoComuicacion')
                             ->label('Objetivo de Comunicación')
                             ->required()
@@ -287,13 +284,13 @@ class CampaignResource extends Resource
                     ->tooltip('Descargar todas las campañas en formato Excel'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                //Tables\Actions\EditAction::make(),
+                //Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                //Tables\Actions\BulkActionGroup::make([
+                    //Tables\Actions\DeleteBulkAction::make(),
+                //]),
             ]);
     }
 
