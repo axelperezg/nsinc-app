@@ -254,6 +254,7 @@ abstract class BaseEstrategyResource extends Resource
                         Forms\Components\DatePicker::make('fecha_envio_dgnc')
                             ->label('Fecha de Envío DGNC')
                             ->disabled()
+                            
                             ->visible(function () {
                                 // Solo mostrar si el estado es 'Enviada a DGNC' o posterior
                                 $anio = request()->get('tableFilters.anio.anio', now()->year);

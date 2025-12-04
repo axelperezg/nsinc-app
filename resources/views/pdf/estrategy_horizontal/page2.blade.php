@@ -50,46 +50,7 @@
         $granTotal = $totalElectronicos + $totalImpresos + $totalComplementarios + $totalEstudios + $totalDisenoProduccion;
     @endphp
 
-    {{-- Tabla de Programa Sectorial, Objetivos y Temas --}}
-    <table style="width: 100%; border: 1px solid #000; margin-bottom: 10px;">
-        <tr>
-            <th style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px; font-size: 7.5pt; font-weight: bold; width: 33%; text-align: center;">
-                Programa Sectorial y/o Especial
-            </th>
-            <th style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px; font-size: 7.5pt; font-weight: bold; width: 33%; text-align: center;">
-                Objetivos Estratégicos y/o Transversales
-            </th>
-            <th style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px; font-size: 7.5pt; font-weight: bold; width: 34%; text-align: center;">
-                Temas Específicos Derivadores de los Objetivos Estratégicos y/o Transversales
-            </th>
-        </tr>
-        @if($estrategy->campaigns && $estrategy->campaigns->count() > 0)
-            @foreach($estrategy->campaigns->take(2) as $index => $campaign)
-            <tr>
-                <td style="border: 1px solid #000; padding: 5px; font-size: 7pt; vertical-align: top;">
-                    Este campo será requisitado hasta que se publique el Plan Nacional de Desarrollo 2025-2030
-                </td>
-                <td style="border: 1px solid #000; padding: 5px; font-size: 7pt; vertical-align: top;">
-                    Este campo será requisitado hasta que se publique el Plan Nacional de Desarrollo 2025-2030
-                </td>
-                <td style="border: 1px solid #000; padding: 5px; font-size: 7pt; vertical-align: top;">
-                    {{ $index + 1 }}.- {{ $campaign->temaEspecifco ?? 'No especificado' }}
-                </td>
-            </tr>
-            @endforeach
-        @else
-            <tr>
-                <td style="border: 1px solid #000; padding: 5px; font-size: 7pt;">
-                    Este campo será requisitado hasta que se publique el Plan Nacional de Desarrollo 2025-2030
-                </td>
-                <td style="border: 1px solid #000; padding: 5px; font-size: 7pt;">
-                    Este campo será requisitado hasta que se publique el Plan Nacional de Desarrollo 2025-2030
-                </td>
-                <td style="border: 1px solid #000; padding: 5px; font-size: 7pt;">
-                    Sin campañas definidas
-                </td>
-            </tr>
-        @endif
+       
     </table>
 
     {{-- Tabla de Resumen de Medios --}}

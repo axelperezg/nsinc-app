@@ -104,8 +104,41 @@ class ExpirationDateResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
-            ])
+                Tables\Filters\Filter::make('anio')
+                ->form([
+                    Forms\Components\Select::make('anio')
+                        ->label('Año')
+                        ->options(
+                            [
+                                2025 => '2025',
+                                2026 => '2026',
+                                2027 => '2027',
+                                2028 => '2028',
+                                2029 => '2029',
+                                2030 => '2030',
+                            ]
+                        )->default(now()->year),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query
+                        ->when(
+                            $data['anio'],
+                            fn (Builder $query, $anio): Builder => $query->where('anio', $anio),
+                        )
+                        ->when(
+                            !$data['anio'],
+                            fn (Builder $query): Builder => $query->where('anio', now()->year),
+                        );
+                })
+                ->default(now()->year)
+                ->indicateUsing(function (array $data): ?string {
+                    if ($data['anio']) {
+                        return 'Año: ' . $data['anio'];
+                    }
+                    return 'Año: ' . now()->year;
+                }),
+        ])
+        ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
