@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('versions', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->date('fechaInicio');
-            $table->date('fechaFinal');
-            // Crear la columna sin foreign key primero (la tabla campaigns se crea después)
-            // La foreign key se agregará en la migración 2025_12_04_180605_add_foreign_key_campaign_id_to_versions_table
-            $table->unsignedBigInteger('campaign_id');
-            $table->timestamps();
-        });
+        // Verificar si la tabla ya existe antes de crearla
+        if (!Schema::hasTable('versions')) {
+            Schema::create('versions', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->date('fechaInicio');
+                $table->date('fechaFinal');
+                // Crear la columna sin foreign key primero (la tabla campaigns se crea después)
+                // La foreign key se agregará en la migración 2025_12_04_180605_add_foreign_key_campaign_id_to_versions_table
+                $table->unsignedBigInteger('campaign_id');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
