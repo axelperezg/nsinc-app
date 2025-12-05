@@ -15,11 +15,11 @@ class UserSeeder extends Seeder
         $superAdminRole = Role::where('name', 'super_admin')->first();
 
         if ($superAdminRole) {
-            // Super Admin - Miguel Angel Pérez García
+            // Super Admin - Manuel Axel Pérez García
             User::firstOrCreate(
                 ['email' => 'maperezg@segob.gob.mx'],
                 [
-                    'name' => 'Miguel Angel Pérez García',
+                    'name' => 'Manuel Axel Pérez García',
                     'password' => Hash::make('password'),
                     'role_id' => $superAdminRole->id,
                     'institution_id' => null, // Super admin no tiene institución específica
