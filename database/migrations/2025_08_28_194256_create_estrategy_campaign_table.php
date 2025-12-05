@@ -11,12 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('estrategy_campaign', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('estrategy_id')->constrained('estrategies')->onDelete('cascade');
-            $table->foreignId('campaign_id')->constrained('campaigns')->onDelete('cascade');
-            $table->timestamps();
-        });
+        // Esta tabla se eliminó posteriormente (2025_11_27) ya que la relación es directa vía estrategy_id en campaigns
+        // Solo creamos la tabla si no existe para evitar errores en deployments nuevos
+        if (!Schema::hasTable('estrategy_campaign')) {
+            Schema::create('estrategy_campaign', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('estrategy_id')->constrained('estrategies')->onDelete('cascade');
+                // No creamos foreign key a 'campaigns' porque puede no existir aún o la tabla se eliminará después
+                // La tabla se eliminará en la migración 2025_11_27_182308_drop_unused_pivot_tables
+                $table->unsignedBigInteger('campaign_id')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
