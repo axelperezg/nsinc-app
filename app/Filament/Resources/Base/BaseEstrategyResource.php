@@ -360,7 +360,7 @@ abstract class BaseEstrategyResource extends Resource
                         ->icon('heroicon-o-building-office-2')
                         ->completedIcon('heroicon-o-check-circle')
                         ->schema([
-                            Forms\Components\Section::make('Información Institucional')
+                    Forms\Components\Section::make('Información Institucional')
                     ->description('Describe la misión, visión y objetivos de tu institución')
                     ->icon('heroicon-o-building-office-2')
                     ->schema([
@@ -494,7 +494,6 @@ abstract class BaseEstrategyResource extends Resource
                                         Forms\Components\TextInput::make('name')
                                             ->label('Nombre de la Campaña')
                                             ->required()
-                                            ->minLength(6)
                                             ->maxLength(200)
                                             ->hint('Nombre claro y descriptivo')
                                             ->hintIcon('heroicon-o-question-mark-circle')
@@ -506,26 +505,7 @@ abstract class BaseEstrategyResource extends Resource
                                                 if ($state) {
                                                     $length = strlen($state);
 
-                                                    // Advertencia si el nombre es muy corto
-                                                    if ($length > 0 && $length < 6) {
-                                                        Notification::make()
-                                                            ->warning()
-                                                            ->title('Nombre muy corto')
-                                                            ->body("El nombre de la campaña debe tener al menos 10 caracteres. Actualmente tiene {$length}.")
-                                                            ->duration(3000)
-                                                            ->send();
-                                                    }
-
-                                                    // Sugerencia si solo tiene palabras genéricas
-                                                    if ($length >= 6 && preg_match('/^(campaña|estrategia)\s*$/i', $state)) {
-                                                        Notification::make()
-                                                            ->info()
-                                                            ->title('Nombre poco descriptivo')
-                                                            ->body('Intenta ser más específico. Incluye el tema, público objetivo o periodo.')
-                                                            ->duration(4000)
-                                                            ->send();
-                                                    }
-
+                                                    
                                                     // Validar que el nombre de la campaña no coincida con ninguna versión
                                                     $versions = $get('../versions') ?? [];
                                                     if (is_array($versions)) {
@@ -739,14 +719,14 @@ abstract class BaseEstrategyResource extends Resource
                                                             return function (string $attribute, $value, \Closure $fail) use ($get) {
                                                                 if (!$value) return;
 
-                                                                // Validación 1: Fecha final no puede ser anterior o igual a fecha inicial
+                                                                // Validación 1: Fecha final no puede ser anterior a fecha inicial (puede ser el mismo día)
                                                                 $fechaInicio = $get('fechaInicio');
                                                                 if ($fechaInicio) {
                                                                     $inicio = \Carbon\Carbon::parse($fechaInicio);
                                                                     $final = \Carbon\Carbon::parse($value);
 
-                                                                    if ($final->lte($inicio)) {
-                                                                        $fail('La fecha final debe ser posterior a la fecha de inicio.');
+                                                                    if ($final->lt($inicio)) {
+                                                                        $fail('La fecha final no puede ser anterior a la fecha de inicio.');
                                                                     }
                                                                 }
 
