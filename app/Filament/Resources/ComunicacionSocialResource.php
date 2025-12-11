@@ -110,6 +110,26 @@ class ComunicacionSocialResource extends BaseEstrategyResource
                             ])
                             ->columns(2)
                             ->collapsible(),
+
+                        Forms\Components\Textarea::make('programa_sectorial_especial')
+                            ->label('Programa Sectorial y/o Especial')
+                            ->required()
+                            ->rows(4)
+                            ->maxLength(65535)
+                            ->hint('Campo obligatorio para Comunicación Social')
+                            ->hintIcon('heroicon-o-information-circle')
+                            ->helperText('Describe el programa sectorial y/o especial relacionado con esta estrategia.')
+                            ->columnSpan(2),
+
+                        Forms\Components\Textarea::make('objetivos_estrategicos_transversales')
+                            ->label('Objetivos Estratégicos y/o Transversales')
+                            ->required()
+                            ->rows(4)
+                            ->maxLength(65535)
+                            ->hint('Campo obligatorio para Comunicación Social')
+                            ->hintIcon('heroicon-o-information-circle')
+                            ->helperText('Describe los objetivos estratégicos y/o transversales de esta estrategia.')
+                            ->columnSpan(2),
                     ])
                     ->columns(1)
                     ->collapsible(),

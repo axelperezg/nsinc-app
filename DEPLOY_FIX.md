@@ -78,3 +78,5 @@ DB::table('cache')->count();
 
 Si no da error, la tabla existe correctamente.
 
+
+

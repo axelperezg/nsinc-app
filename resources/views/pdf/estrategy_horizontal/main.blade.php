@@ -19,8 +19,8 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            font-size: 8pt;
-            line-height: 1.2;
+            font-size: 9pt;
+            line-height: 1.4;
             position: relative;
         }
         .page-break {
@@ -73,9 +73,10 @@
         }
         .section-box {
             border: 1px solid #000;
-            padding: 6px;
-            margin-bottom: 6px;
-            min-height: 40px;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 8px;
+            min-height: 50px;
         }
         .section-title {
             font-weight: bold;
@@ -123,11 +124,44 @@
             text-align: center;
             font-size: 9pt;
         }
+        .eje-badge {
+            display: inline-block;
+            background-color: #e8f4f8;
+            border: 1px solid #5b9bd5;
+            border-radius: 5px;
+            padding: 6px 12px;
+            margin: 4px 4px 4px 0;
+            font-size: 9pt;
+            line-height: 1.3;
+        }
+        .eje-transversal-badge {
+            display: inline-block;
+            background-color: #fff4e6;
+            border: 1px solid #f0ad4e;
+            border-radius: 5px;
+            padding: 6px 12px;
+            margin: 4px 4px 4px 0;
+            font-size: 9pt;
+            line-height: 1.3;
+        }
+        .subsection-title {
+            font-weight: bold;
+            font-size: 9pt;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    {{-- Página 1: Carátula de Estrategia --}}
+    {{-- Página 1: Misión, Visión y Objetivos --}}
     @include('pdf.estrategy_horizontal.page1', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
+
+    {{-- Página 1.5: Plan Nacional de Desarrollo (solo para 36101) --}}
+    @if($estrategy->partida_presupuestal === '36101')
+        <div class="page-break"></div>
+        @include('pdf.estrategy_horizontal.page1_5', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
+    @endif
 
     {{-- Página 2: Resumen de Medios y Distribución Presupuestal --}}
     <div class="page-break"></div>

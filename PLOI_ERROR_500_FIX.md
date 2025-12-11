@@ -312,3 +312,5 @@ Si después de seguir todos estos pasos el problema persiste:
 - 🔄 Después de cambios en `.env`, ejecuta `php artisan config:clear`
 - 🛡️ Los permisos correctos son críticos para Laravel
 
+
+

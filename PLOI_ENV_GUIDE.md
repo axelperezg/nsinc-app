@@ -89,3 +89,5 @@ DB::connection()->getPdo();
 
 Si no hay errores, la conexión está funcionando correctamente.
 
+
+

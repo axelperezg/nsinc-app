@@ -34,6 +34,8 @@ class Estrategy extends Model
         'responsable_name',
         'NombreSectorResponsable',
         'ejes_plan_nacional',
+        'programa_sectorial_especial',
+        'objetivos_estrategicos_transversales',
         'justificacion_estudios',
     ];
 

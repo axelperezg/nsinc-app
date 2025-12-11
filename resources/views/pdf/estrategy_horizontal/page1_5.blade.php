@@ -1,4 +1,4 @@
-{{-- Página 1: Misión, Visión y Objetivos --}}
+{{-- Página 1.5: Plan Nacional de Desarrollo --}}
 
 <div style="padding: 0 20px;">
     {{-- Header con logos --}}
@@ -41,43 +41,77 @@
         </tr>
     </table>
 
-    {{-- Misión --}}
+    {{-- Plan Nacional de Desarrollo --}}
     <div style="margin-bottom: 12px;">
-        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10pt; color: #333;">Misión:</div>
-        <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; min-height: 80px; text-align: justify; font-size: 9pt; line-height: 1.5; background-color: #fafafa;">
-            {{ $estrategy->mision }}
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 10pt; color: #333;">Plan Nacional de Desarrollo:</div>
+        <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; background-color: #fafafa;">
+            @php
+                $ejes_plan = $estrategy->ejes_plan_nacional ?? [];
+
+                // Ejes Generales
+                $ejesGenerales = [
+                    'eje_general_1_gobernanza' => 'Eje General 1: Gobernanza con justicia y participación ciudadana',
+                    'eje_general_2_desarrollo' => 'Eje General 2: Desarrollo con bienestar y humanismo',
+                    'eje_general_3_economia' => 'Eje General 3: Economía moral y trabajo',
+                    'eje_general_4_sustentable' => 'Eje General 4: Desarrollo sustentable',
+                ];
+
+                // Ejes Transversales
+                $ejesTransversales = [
+                    'eje_transversal_1_igualdad' => 'Eje Transversal 1: Igualdad sustantiva y derechos de las mujeres',
+                    'eje_transversal_2_innovacion' => 'Eje Transversal 2: Innovación pública para el desarrollo tecnológico nacional',
+                    'eje_transversal_3_derechos' => 'Eje Transversal 3: Derechos de los pueblos y comunidades indígenas y afromexicanas',
+                ];
+
+                $selectedGenerales = array_filter($ejesGenerales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY);
+                $selectedTransversales = array_filter($ejesTransversales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY);
+            @endphp
+
+            {{-- Ejes Generales --}}
+            <div style="margin-bottom: 16px;">
+                <div style="font-weight: bold; font-size: 10pt; margin-bottom: 8px; color: #2c5282;">Ejes Generales:</div>
+                @if(count($selectedGenerales) > 0)
+                    <div>
+                        @foreach($selectedGenerales as $ejeTexto)
+                            <span class="eje-badge">{{ $ejeTexto }}</span>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="font-size: 9pt; color: #666; font-style: italic;">No se seleccionaron ejes generales</div>
+                @endif
+            </div>
+
+            {{-- Ejes Transversales --}}
+            <div>
+                <div style="font-weight: bold; font-size: 10pt; margin-bottom: 8px; color: #8b5a00;">Ejes Transversales:</div>
+                @if(count($selectedTransversales) > 0)
+                    <div>
+                        @foreach($selectedTransversales as $ejeTexto)
+                            <span class="eje-transversal-badge">{{ $ejeTexto }}</span>
+                        @endforeach
+                    </div>
+                @else
+                    <div style="font-size: 9pt; color: #666; font-style: italic;">No se seleccionaron ejes transversales</div>
+                @endif
+            </div>
         </div>
     </div>
 
-    {{-- Visión --}}
+    {{-- Programa Sectorial y/o Especial --}}
     <div style="margin-bottom: 12px;">
-        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10pt; color: #333;">Visión:</div>
+        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10pt; color: #333;">Programa Sectorial y/o Especial:</div>
         <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; min-height: 80px; text-align: justify; font-size: 9pt; line-height: 1.5; background-color: #fafafa;">
-            {{ $estrategy->vision }}
+            {{ $estrategy->programa_sectorial_especial ?? 'No especificado' }}
         </div>
     </div>
 
-    {{-- Objetivos (lado a lado en cuadros separados más compactos) --}}
-    <table style="width: 100%; margin-bottom: 10px; border-collapse: separate; border-spacing: 6px 0;">
-        <tr>
-            <td style="width: 50%; vertical-align: top;">
-                <div style="border: 1px solid #000; border-radius: 8px; padding: 8px; background-color: #f0f8ff;">
-                    <div style="font-weight: bold; margin-bottom: 3px; font-size: 9pt; color: #2c5282;">Objetivo Institucional:</div>
-                    <div style="text-align: justify; font-size: 9pt; line-height: 1.3;">
-                        {{ $estrategy->objetivo_institucional }}
-                    </div>
-                </div>
-            </td>
-            <td style="width: 50%; vertical-align: top;">
-                <div style="border: 1px solid #000; border-radius: 8px; padding: 8px; background-color: #fff8f0;">
-                    <div style="font-weight: bold; margin-bottom: 3px; font-size: 9pt; color: #8b5a00;">Objetivo de la estrategia de comunicación:</div>
-                    <div style="text-align: justify; font-size: 9pt; line-height: 1.3;">
-                        {{ $estrategy->objetivo_estrategia }}
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    {{-- Objetivos Estratégicos y/o Transversales --}}
+    <div style="margin-bottom: 12px;">
+        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10pt; color: #333;">Objetivos Estratégicos y/o Transversales:</div>
+        <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; min-height: 80px; text-align: justify; font-size: 9pt; line-height: 1.5; background-color: #fafafa;">
+            {{ $estrategy->objetivos_estrategicos_transversales ?? 'No especificado' }}
+        </div>
+    </div>
 
     {{-- Sección de Firmas --}}
     @if($estrategy->institution && $estrategy->institution->isSector)

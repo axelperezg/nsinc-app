@@ -126,7 +126,7 @@ class EditComunicacionSocial extends EditRecord
             $this->record && in_array($this->record->estado_estrategia, ['Creada', 'Rechazada CS', 'Rechazada DGNC'])) {
 
             $actions[] = Actions\Action::make('guardar_sin_salir')
-                ->label('Guardar Cambios')
+                ->label('Guardar Sin Salir')
                 ->icon('heroicon-o-bookmark')
                 ->color('success')
                 ->action(function () {

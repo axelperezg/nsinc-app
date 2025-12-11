@@ -8,16 +8,16 @@
     </a>
 </div>
 
-<nav class="-mx-4 md:border-t-[.6rem] lg:sticky lg:top-[55px] z-10" style="background-color: #25634f;">
+<nav class="-mx-4 md:border-t-[.3rem] lg:sticky lg:top-[55px] z-10" style="background-color: #25634f;">
         <div class="px-4 mx-auto max-w-7xl">
             <div class="flex items-center justify-center">
-                <ul class="flex flex-col w-full md:flex-row md:space-y-0 md:justify-center">
-                    <li class="py-2 md:py-4 text-[.8rem] lg:text-base text-center">
+                <ul class="flex flex-col w-full md:flex-row md:space-y-0 md:justify-center md:items-center">
+                    <li class="py-2 md:py-4 text-[.8rem] lg:text-base w-full text-center">
                         <a
                             href="http://www.normatividaddecomunicacion.gob.mx/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="flex items-center justify-center gap-3 font-medium transition-colors text-gold no-underline cursor-pointer"
+                            class="flex items-center justify-center gap-3 font-medium transition-colors text-gold no-underline cursor-pointer text-center"
                             style="color: #b8956a; text-decoration: none;"
                         >
                             Secretaría de Gobernación      |      Unidad de Normatividad de Medios de Comunicación       |     Dirección General de Normatividad de Comunicación

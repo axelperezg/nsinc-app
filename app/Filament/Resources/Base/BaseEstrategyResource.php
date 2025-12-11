@@ -198,6 +198,7 @@ abstract class BaseEstrategyResource extends Resource
                             ->label('Fecha de Elaboración')
                             ->disabled()
                             ->default(now())
+                            ->hidden()
                             ->dehydrated(), // Esto asegura que el campo se incluya en el envío aunque esté deshabilitado
                         Forms\Components\TextInput::make('estado_estrategia')
                             ->label('Estado de la Estrategia')
@@ -254,7 +255,7 @@ abstract class BaseEstrategyResource extends Resource
                         Forms\Components\DatePicker::make('fecha_envio_dgnc')
                             ->label('Fecha de Envío DGNC')
                             ->disabled()
-                            
+                            ->hidden()
                             ->visible(function () {
                                 // Solo mostrar si el estado es 'Enviada a DGNC' o posterior
                                 $anio = request()->get('tableFilters.anio.anio', now()->year);
@@ -501,7 +502,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->helperText('Ingresa un nombre descriptivo que identifique claramente la campaña (mínimo 10 caracteres).')
                                             ->placeholder('Ejemplo: Campaña de Prevención de Enfermedades Respiratorias 2025')
                                             ->live(debounce: 500)
-                                            ->afterStateUpdated(function ($state, $set) {
+                                            ->afterStateUpdated(function ($state, $set, $get) {
                                                 if ($state) {
                                                     $length = strlen($state);
 
@@ -524,7 +525,39 @@ abstract class BaseEstrategyResource extends Resource
                                                             ->duration(4000)
                                                             ->send();
                                                     }
+
+                                                    // Validar que el nombre de la campaña no coincida con ninguna versión
+                                                    $versions = $get('../versions') ?? [];
+                                                    if (is_array($versions)) {
+                                                        foreach ($versions as $version) {
+                                                            if (isset($version['name']) && trim(strtolower($version['name'])) === trim(strtolower($state))) {
+                                                                Notification::make()
+                                                                    ->danger()
+                                                                    ->title('Nombre duplicado')
+                                                                    ->body('El nombre de la campaña no puede ser igual al nombre de ninguna de sus versiones. Por favor, cambia el nombre de la campaña o de la versión.')
+                                                                    ->duration(5000)
+                                                                    ->send();
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
                                                 }
+                                            })
+                                            ->rule(function ($get) {
+                                                return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                                    if (!$value) return;
+
+                                                    // Validar que el nombre de la campaña no coincida con ninguna versión
+                                                    $versions = $get('../versions') ?? [];
+                                                    if (is_array($versions)) {
+                                                        foreach ($versions as $version) {
+                                                            if (isset($version['name']) && trim(strtolower($version['name'])) === trim(strtolower($value))) {
+                                                                $fail('El nombre de la campaña no puede ser igual al nombre de ninguna de sus versiones. Por favor, cambia el nombre de la campaña o de la versión.');
+                                                                return;
+                                                            }
+                                                        }
+                                                    }
+                                                };
                                             }),
                                         Forms\Components\Select::make('campaign_type_id')
                                             ->label('Tipo de Campaña')
@@ -574,7 +607,34 @@ abstract class BaseEstrategyResource extends Resource
                                                     ->hint('Identifica esta versión')
                                                     ->hintIcon('heroicon-o-question-mark-circle')
                                                     ->helperText('Por ejemplo: "Versión 1 - Lanzamiento", "Versión 2 - Refuerzo"')
-                                                    ->placeholder('Ejemplo: Versión 1 - Primavera'),
+                                                    ->placeholder('Ejemplo: Versión 1 - Primavera')
+                                                    ->live(debounce: 500)
+                                                    ->afterStateUpdated(function ($state, $set, $get) {
+                                                        if ($state) {
+                                                            // Validar que el nombre de la versión no coincida con el nombre de la campaña
+                                                            $campaignName = $get('../../name') ?? '';
+                                                            if ($campaignName && trim(strtolower($campaignName)) === trim(strtolower($state))) {
+                                                                Notification::make()
+                                                                    ->danger()
+                                                                    ->title('Nombre duplicado')
+                                                                    ->body('El nombre de la versión no puede ser igual al nombre de la campaña. Por favor, cambia el nombre de la versión o el nombre de la campaña.')
+                                                                    ->duration(5000)
+                                                                    ->send();
+                                                            }
+                                                        }
+                                                    })
+                                                    ->rule(function ($get) {
+                                                        return function (string $attribute, $value, \Closure $fail) use ($get) {
+                                                            if (!$value) return;
+
+                                                            // Validar que el nombre de la versión no coincida con el nombre de la campaña
+                                                            $campaignName = $get('../../name') ?? '';
+                                                            if ($campaignName && trim(strtolower($campaignName)) === trim(strtolower($value))) {
+                                                                $fail('El nombre de la versión no puede ser igual al nombre de la campaña. Por favor, cambia el nombre de la versión o el nombre de la campaña.');
+                                                                return;
+                                                            }
+                                                        };
+                                                    }),
                                                 Forms\Components\DatePicker::make('fechaInicio')
                                                     ->label('Fecha de Inicio')
                                                     ->required()
@@ -2210,7 +2270,7 @@ abstract class BaseEstrategyResource extends Resource
                     })
                     ->modalHeading('Editar Campos Críticos')
                     ->modalDescription('Modifica los campos críticos de la estrategia. Ten cuidado con los cambios de estado.')
-                    ->modalSubmitActionLabel('Guardar Cambios')
+                    ->modalSubmitActionLabel('Guardar cambios')
                     ->modalCancelActionLabel('Cancelar')
                     ->modalWidth('2xl'),
 

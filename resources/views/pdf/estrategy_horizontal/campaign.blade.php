@@ -68,38 +68,38 @@
 
     <table class="data-table" style="margin-bottom: 6px;">
         <tr>
-            <td class="label-cell" style="width: 20%; padding: 3px 5px; font-size: 7pt; background-color: #d9d9d9;">Dependencia o Entidad:</td>
-            <td colspan="3" style="padding: 3px 5px; font-size: 7pt;">{{ $estrategy->institution_name }}</td>
+            <td class="label-cell" style="width: 20%; padding: 3px 5px; font-size: 9pt; background-color: #d9d9d9;">Dependencia o Entidad:</td>
+            <td colspan="3" style="padding: 3px 5px; font-size: 9pt;">{{ $estrategy->institution_name }}</td>
         </tr>
         <tr>
-            <td class="label-cell" style="padding: 3px 5px; font-size: 7pt; background-color: #d9d9d9;">Fecha de elaboración:</td>
-            <td colspan="3" style="padding: 3px 5px; font-size: 7pt;">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
+            <td class="label-cell" style="padding: 3px 5px; font-size: 9pt; background-color: #d9d9d9;">Fecha de elaboración:</td>
+            <td colspan="3" style="padding: 3px 5px; font-size: 9pt;">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
         </tr>
     </table>
 
     <table style="width: 100%; border: 1px solid #000; margin-bottom: 6px;">
         <tr>
-            <td colspan="2" style="padding: 2px 5px; text-align: right; font-size: 6.5pt; border: none;">miles de pesos / I.V.A. incluido</td>
+            <td colspan="2" style="padding: 2px 5px; text-align: right; font-size: 8pt; border: none;">miles de pesos / I.V.A. incluido</td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 3px 5px; background-color: #9B1B30; color: #ffffff; font-weight: bold; font-size: 7pt;">
+            <td style="border: 1px solid #000; padding: 3px 5px; background-color: #9B1B30; color: #ffffff; font-weight: bold; font-size: 9pt;">
                 Presupuesto anual de la dependencia o entidad destinado a la partida {{ $estrategy->partida_presupuestal }}:
             </td>
-            <td style="border: 1px solid #000; padding: 3px 5px; text-align: right; background-color: #f2e4b8; font-weight: bold; width: 130px; font-size: 7pt;">
+            <td style="border: 1px solid #000; padding: 3px 5px; text-align: right; background-color: #f2e4b8; font-weight: bold; width: 130px; font-size: 9pt;">
                 {{ number_format($estrategy->presupuesto, 2) }}
             </td>
         </tr>
         <tr>
-            <td style="border: 1px solid #000; padding: 3px 5px; background-color: #9B1B30; color: #ffffff; font-weight: bold; font-size: 7pt;">
+            <td style="border: 1px solid #000; padding: 3px 5px; background-color: #9B1B30; color: #ffffff; font-weight: bold; font-size: 9pt;">
                 ACUMULADO EN CAMPAÑAS:
             </td>
-            <td style="border: 1px solid #000; padding: 3px 5px; background-color: #9B1B30; color: #ffffff; text-align: right; font-weight: bold; font-size: 7pt;">
+            <td style="border: 1px solid #000; padding: 3px 5px; background-color: #9B1B30; color: #ffffff; text-align: right; font-weight: bold; font-size: 9pt;">
                 {{ number_format($acumulado, 2) }}
             </td>
         </tr>
     </table>
 
-    <div class="gray-header" style="margin-bottom: 6px; font-size: 9pt; background-color: #9B1B30; color: #ffffff; padding: 5px; text-align: center; font-weight: bold;">
+    <div class="gray-header" style="margin-bottom: 6px; font-size: 10pt; background-color: #9B1B30; color: #ffffff; padding: 5px; text-align: center; font-weight: bold;">
         CAMPAÑA {{ $campaignNumber }}
     </div>
 
@@ -108,7 +108,7 @@
         <tr>
             <td style="width: 60%; vertical-align: top; border: 1px solid #000; padding: 5px;">
                 {{-- Datos generales --}}
-                <div style="background-color: #9B1B30; color: #ffffff; font-weight: bold; padding: 3px; margin-bottom: 4px; font-size: 7.5pt; text-align: center;">
+                <div style="background-color: #9B1B30; color: #ffffff; font-weight: bold; padding: 3px; margin-bottom: 4px; font-size: 9pt; text-align: center;">
                     Datos generales
                 </div>
                 @php
@@ -117,30 +117,30 @@
                     $poblacionValues = filled($campaign->poblacion) ? (is_array($campaign->poblacion) ? $campaign->poblacion : [$campaign->poblacion]) : [];
                     $nseValues = filled($campaign->nse) ? (is_array($campaign->nse) ? $campaign->nse : [$campaign->nse]) : [];
                 @endphp
-                <div style="margin-bottom: 3px; font-size: 7pt;"><strong>Nombre de la campaña:</strong> {{ $campaign->name }}</div>
-                <div style="margin-bottom: 3px; font-size: 7pt;"><strong>Versión(es):</strong>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Nombre de la campaña:</strong> {{ $campaign->name }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Versión(es):</strong>
                     @if($campaign->versions && $campaign->versions->count() > 0)
                         {{ $campaign->versions->pluck('name')->implode(', ') }}
                     @else
                         Sin versiones
                     @endif
                 </div>
-                <div style="margin-bottom: 3px; font-size: 7pt;"><strong>Tema específico:</strong> {{ $campaign->temaEspecifco ?? 'No especificado' }}</div>
-                <div style="margin-bottom: 3px; font-size: 7pt;"><strong>Objetivo de comunicación:</strong> {{ $campaign->objetivoComuicacion ?? 'No especificado' }}</div>
-                <div style="margin-bottom: 3px; font-size: 7pt;"><strong>Clasificación de campaña:</strong> {{ $campaign->campaignType->name ?? 'No especificado' }}</div>
-                <div style="margin-bottom: 3px; font-size: 7pt;"><strong>Coemisor:</strong> {{ $campaign->coemisores_acronyms ?? 'No especificado' }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Tema específico:</strong> {{ $campaign->temaEspecifco ?? 'No especificado' }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Objetivo de comunicación:</strong> {{ $campaign->objetivoComuicacion ?? 'No especificado' }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Clasificación de campaña:</strong> {{ $campaign->campaignType->name ?? 'No especificado' }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Coemisor:</strong> {{ $campaign->coemisores_acronyms ?? 'No especificado' }}</div>
 
-                <div style="margin-bottom: 3px; margin-top: 4px; font-size: 7pt;"><strong>Población objetivo:</strong></div>
-                <div style="margin-left: 10px; font-size: 6.5pt; line-height: 1.3;">
+                <div style="margin-bottom: 3px; margin-top: 4px; font-size: 9pt;"><strong>Población objetivo:</strong></div>
+                <div style="margin-left: 10px; font-size: 8pt; line-height: 1.3;">
                     <div>HOMBRES Y MUJERES | POBLACIÓN: {{ count($poblacionValues) > 0 ? implode(', ', $poblacionValues) : 'No especificado' }}</div>
                     <div>{{ count($edadValues) > 0 ? implode(', ', $edadValues) : 'No especificado' }} AÑOS</div>
                     <div>NSE: {{ count($nseValues) > 0 ? implode(', ', $nseValues) : 'No especificado' }}</div>
                 </div>
 
-                <div style="margin-bottom: 3px; margin-top: 4px; font-size: 7pt;"><strong>Vigencia de la campaña:</strong></div>
+                <div style="margin-bottom: 3px; margin-top: 4px; font-size: 9pt;"><strong>Vigencia de la campaña:</strong></div>
                 @if($campaign->versions && $campaign->versions->count() > 0)
                     <div style="margin-left: 10px; margin-top: 3px;">
-                        <table style="width: 100%; border: 1px solid #000; font-size: 6.5pt;">
+                        <table style="width: 100%; border: 1px solid #000; font-size: 8pt;">
                             <tr style="background-color: #d9d9d9;">
                                 <th style="border: 1px solid #000; padding: 2px; text-align: center; font-weight: bold;">Etapas</th>
                                 <th style="border: 1px solid #000; padding: 2px; text-align: center; font-weight: bold;">Fechas</th>
@@ -161,10 +161,10 @@
             </td>
             <td style="width: 40%; vertical-align: top; border: 1px solid #000; padding: 5px;">
                 {{-- Medios a utilizar --}}
-                <div style="background-color: #9B1B30; color: #ffffff; font-weight: bold; padding: 3px; margin-bottom: 4px; text-align: center; font-size: 7.5pt;">
+                <div style="background-color: #9B1B30; color: #ffffff; font-weight: bold; padding: 3px; margin-bottom: 4px; text-align: center; font-size: 9pt;">
                     Medios a utilizar
                 </div>
-                <table style="width: 100%; border: 1px solid #000; font-size: 6.5pt;">
+                <table style="width: 100%; border: 1px solid #000; font-size: 8pt;">
                     <tr>
                         <td colspan="2" style="border: 1px solid #000; background-color: #d9d9d9; padding: 2px; text-align: center; font-weight: bold;">Tiempos oficiales</td>
                         <td colspan="2" style="border: 1px solid #000; background-color: #d9d9d9; padding: 2px; text-align: center; font-weight: bold;">Tiempos comerciales</td>
@@ -248,12 +248,12 @@
                         <td style="border: 1px solid #000; padding: 2px; text-align: right;">{{ number_format($campaign->copiado ?? 0, 2) }}</td>
                     </tr>
                     <tr style="background-color: #d9d9d9;">
-                        <td colspan="4" style="border: 1px solid #000; padding: 3px; font-weight: bold; font-size: 7pt;">Presupuesto asignado a la campaña</td>
-                        <td style="border: 1px solid #000; padding: 3px; text-align: right; font-weight: bold; font-size: 7pt;">{{ number_format($totalCampaign, 2) }}</td>
+                        <td colspan="4" style="border: 1px solid #000; padding: 3px; font-weight: bold; font-size: 9pt;">Presupuesto asignado a la campaña</td>
+                        <td style="border: 1px solid #000; padding: 3px; text-align: right; font-weight: bold; font-size: 9pt;">{{ number_format($totalCampaign, 2) }}</td>
                     </tr>
                     <tr style="background-color: #e8e8e8;">
-                        <td colspan="4" style="border: 1px solid #000; padding: 2px; font-size: 6pt;">Porcentaje que representa la campaña de la partida {{ $estrategy->partida_presupuestal }}:</td>
-                        <td style="border: 1px solid #000; padding: 2px; text-align: right; font-weight: bold;">{{ number_format($porcentajeCampaign, 2) }}%</td>
+                        <td colspan="4" style="border: 1px solid #000; padding: 2px; font-size: 8pt;">Porcentaje que representa la campaña de la partida {{ $estrategy->partida_presupuestal }}:</td>
+                        <td style="border: 1px solid #000; padding: 2px; text-align: right; font-weight: bold; font-size: 8pt;">{{ number_format($porcentajeCampaign, 2) }}%</td>
                     </tr>
                 </table>
             </td>
