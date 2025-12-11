@@ -157,6 +157,12 @@ class CreatePromocionPublicidad extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['partida_presupuestal'] = '36201';
+        
+        // Asegurar que fecha_elaboracion tenga un valor
+        if (!isset($data['fecha_elaboracion']) || empty($data['fecha_elaboracion'])) {
+            $data['fecha_elaboracion'] = now()->toDateString();
+        }
+        
         return $data;
     }
 
