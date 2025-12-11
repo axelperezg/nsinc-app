@@ -65,7 +65,6 @@
                         <ul class="text-xs text-amber-800 dark:text-amber-200 space-y-1 list-disc list-inside">
                             <li>Navega entre pasos usando los botones "Siguiente" y "Anterior"</li>
                             <li>Puedes saltar pasos si necesitas revisar información específica</li>
-                            <li>Tus datos se guardan automáticamente cada 30 segundos</li>
                             <li>Completa todos los campos requeridos en cada paso para continuar</li>
                         </ul>
                     </div>
