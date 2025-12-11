@@ -16,8 +16,8 @@ class CampaignFactory extends Factory
     {
         return [
             'name' => $this->faker->sentence(3),
-            'temaEspecifco' => $this->faker->sentence(),
-            'objetivoComuicacion' => $this->faker->paragraph(),
+            'temaEspecifico' => $this->faker->sentence(),
+            'objetivoComunicacion' => $this->faker->paragraph(),
             'campaign_type_id' => CampaignType::factory(),
             'institution_id' => Institution::factory(),
             'estrategy_id' => Estrategy::factory(),

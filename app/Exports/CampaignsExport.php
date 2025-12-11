@@ -88,7 +88,7 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
                     'institucion' => $campaign->estrategy && $campaign->estrategy->institution
                         ? $campaign->estrategy->institution->name
                         : ($campaign->institution_name ?? ''),
-                    'objetivo_comunicacion' => $campaign->objetivoComuicacion ?? '',
+                    'objetivo_comunicacion' => $campaign->objetivoComunicacion ?? '',
                     'coemisores_acronyms' => $campaign->coemisores_acronyms ?? '',
 
                     // Audiencia

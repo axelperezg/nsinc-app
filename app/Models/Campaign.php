@@ -10,10 +10,12 @@ class Campaign extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'temaEspecifco',
-        'objetivoComuicacion',
+        'temaEspecifico',
+        'objetivoComunicacion',
         'campaign_type_id',
+        'estrategy_id',
         'institution_id',
+        'institution_name',
         'coemisores_acronyms',
         'sexo',
         'edad',

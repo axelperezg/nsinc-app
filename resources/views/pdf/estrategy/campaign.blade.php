@@ -126,7 +126,7 @@
                 </tr>
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Tema específico:</td>
-                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->temaEspecifco }}</td>
+                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->temaEspecifico }}</td>
                 </tr>
                
                 <tr>
@@ -156,7 +156,7 @@
                 </tr>
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Objetivo de Comunicación:</td>
-                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->objetivoComuicacion ?? 'No especificado' }}</td>
+                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->objetivoComunicacion ?? 'No especificado' }}</td>
                 </tr>
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Coemisor(es):</td>

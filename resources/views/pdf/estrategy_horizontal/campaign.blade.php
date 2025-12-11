@@ -125,8 +125,8 @@
                         Sin versiones
                     @endif
                 </div>
-                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Tema específico:</strong> {{ $campaign->temaEspecifco ?? 'No especificado' }}</div>
-                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Objetivo de comunicación:</strong> {{ $campaign->objetivoComuicacion ?? 'No especificado' }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Tema específico:</strong> {{ $campaign->temaEspecifico ?? 'No especificado' }}</div>
+                <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Objetivo de comunicación:</strong> {{ $campaign->objetivoComunicacion ?? 'No especificado' }}</div>
                 <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Clasificación de campaña:</strong> {{ $campaign->campaignType->name ?? 'No especificado' }}</div>
                 <div style="margin-bottom: 3px; font-size: 9pt;"><strong>Coemisor:</strong> {{ $campaign->coemisores_acronyms ?? 'No especificado' }}</div>
 

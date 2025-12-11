@@ -548,7 +548,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->hintColor('info')
                                             ->helperText('Elige el tipo de campaña según su naturaleza y objetivos.')
                                             ->preload(),
-                                        Forms\Components\Textarea::make('temaEspecifco')
+                                        Forms\Components\Textarea::make('temaEspecifico')
                                             ->label('Tema Específico')
                                             ->required()
                                             ->rows(3)
@@ -558,7 +558,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->hintColor('info')
                                             ->helperText('Describe el tema central que abordará la campaña de manera específica y concreta.')
                                             ->placeholder('Ejemplo: Promoción de vacunación contra influenza en población vulnerable...'),
-                                        Forms\Components\Textarea::make('objetivoComuicacion')
+                                        Forms\Components\Textarea::make('objetivoComunicacion')
                                             ->label('Objetivo de Comunicación')
                                             ->required()
                                             ->rows(3)

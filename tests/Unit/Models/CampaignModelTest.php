@@ -284,10 +284,10 @@ class CampaignModelTest extends TestCase
         $objective = 'Incrementar la conciencia sobre la importancia de la vacunación';
 
         $campaign = Campaign::factory()->create([
-            'objetivoComuicacion' => $objective
+            'objetivoComunicacion' => $objective
         ]);
 
-        $this->assertEquals($objective, $campaign->objetivoComuicacion);
+        $this->assertEquals($objective, $campaign->objetivoComunicacion);
     }
 
     /** @test */
@@ -296,10 +296,10 @@ class CampaignModelTest extends TestCase
         $theme = 'Salud Pública - Prevención de Enfermedades';
 
         $campaign = Campaign::factory()->create([
-            'temaEspecifco' => $theme
+            'temaEspecifico' => $theme
         ]);
 
-        $this->assertEquals($theme, $campaign->temaEspecifco);
+        $this->assertEquals($theme, $campaign->temaEspecifico);
     }
 
     /** @test */

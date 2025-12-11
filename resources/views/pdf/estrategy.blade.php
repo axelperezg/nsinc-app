@@ -437,11 +437,11 @@
             </div>
             <div class="info-row">
                 <div class="info-label">Tema Específico</div>
-                <div class="info-value">{{ $campaign->temaEspecifco }}</div>
+                <div class="info-value">{{ $campaign->temaEspecifico }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Objetivo de Comunicación</div>
-                <div class="info-value">{{ $campaign->objetivoComuicacion }}</div>
+                <div class="info-value">{{ $campaign->objetivoComunicacion }}</div>
             </div>
         </div>
 

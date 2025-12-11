@@ -55,8 +55,12 @@ class CampaignResource extends Resource
                             ->required()
                             ->maxLength(255),
                         
-                        Forms\Components\Textarea::make('objetivoComuicacion')
+                        Forms\Components\Textarea::make('objetivoComunicacion')
                             ->label('Objetivo de Comunicación')
+                            ->required()
+                            ->maxLength(65535),
+                        Forms\Components\Textarea::make('temaEspecifico')
+                            ->label('Tema Específico')
                             ->required()
                             ->maxLength(65535),
                         Forms\Components\Select::make('campaign_type_id')
@@ -245,7 +249,7 @@ class CampaignResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->visible(fn () => Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin'),
-                Tables\Columns\TextColumn::make('temaEspecifco')
+                Tables\Columns\TextColumn::make('temaEspecifico')
                     ->label('Tema Específico')
                     ->limit(50)
                     ->searchable(),
