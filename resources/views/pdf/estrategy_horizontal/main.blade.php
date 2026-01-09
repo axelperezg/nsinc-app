@@ -9,8 +9,8 @@
             size: letter landscape;
             margin-top: 1.5cm;
             margin-bottom: 1.5cm;
-            margin-left: 2cm;
-            margin-right: 2cm;
+            margin-left: 3cm;
+            margin-right: 3cm;
         }
         * {
             margin: 0;
@@ -18,7 +18,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Noto Sans', sans-serif;
             font-size: 9pt;
             line-height: 1.4;
             position: relative;
@@ -42,7 +42,7 @@
             text-align: left;
         }
         .logo-right {
-            width: 20%;
+            width: 10%;
             text-align: right;
         }
         .logo-center {
@@ -53,6 +53,7 @@
             font-size: 11pt;
             font-weight: bold;
             text-align: center;
+            color: #9E3B28;
             margin: 8px 0;
         }
         .data-table {

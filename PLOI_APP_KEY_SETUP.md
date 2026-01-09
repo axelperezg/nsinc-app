@@ -270,3 +270,4 @@ tail -n 50 storage/logs/laravel.log
 
 
 
+

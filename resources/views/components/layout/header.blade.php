@@ -1,7 +1,7 @@
 <div class="-mx-4">
     <a href="/" class="block">
         <img 
-            src="/assets/banner_sinc.png" 
+            src="/assets/banner_segob.png" 
             alt="Gobierno de México - Secretaría de Gobernación - Dirección General de Normatividad de Comunicación" 
             class="w-full h-auto object-cover"
         />

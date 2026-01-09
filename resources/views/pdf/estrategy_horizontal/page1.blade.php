@@ -17,7 +17,7 @@
             </td>
             <td style="width: 15%; text-align: right; vertical-align: top; border: none;">
                 @if($logoRightPath && file_exists($logoRightPath))
-                    <img src="{{ $logoRightPath }}" height="60" alt="Logo Derecho">
+                    <img src="{{ $logoRightPath }}" height="30" alt="Logo Derecho">
                 @endif
             </td>
         </tr>
@@ -35,10 +35,10 @@
             <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; width: 22%;">Cabeza de sector:</td>
             <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; width: 28%;">{{ $estrategy->institution->sector->name ?? 'No disponible' }}</td>
         </tr>
-        <tr>
+        <!--<tr>
             <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; border-radius: 0 0 0 5px;">Fecha de elaboración:</td>
             <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; border-radius: 0 0 5px 0;" colspan="3">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
-        </tr>
+        </tr>-->
     </table>
 
     {{-- Misión --}}
