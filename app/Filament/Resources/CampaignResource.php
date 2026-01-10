@@ -237,6 +237,10 @@ class CampaignResource extends Resource
                 return $query;
             })
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable()

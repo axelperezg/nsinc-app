@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,11 +12,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            // 1. Roles y permisos (base del sistema)
+            RoleSeeder::class,
+            
+            // 2. Sectores (necesarios para instituciones y usuarios)
+            SectorSeeder::class,
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            // 3. Naturalezas jurídicas (necesarias para instituciones)
+            JuridicalNatureSeeder::class,
+
+            // 6. Ramo Seeder
+            RamoSeeder::class,
+            
+            // 3. Configuraciones del sistema
+            ConfigurationSeeder::class,
+            
+            // 4. Fechas de vencimiento
+            ExpirationDateSeeder::class,
+            
+            // 5. Instituciones (necesita sectores)
+            InstitutionSeeder::class,
+            
+            // 6. Usuarios (necesita roles, sectores e instituciones)
+            UserSeeder::class,
+            
+            // 7. Estrategias (necesita usuarios e instituciones)
+            // EstrategySeeder::class, // Descomentar si se necesita
         ]);
+
+        $this->command->info('✅ Todos los seeders se ejecutaron correctamente.');
     }
 }

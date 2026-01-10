@@ -87,6 +87,10 @@ class InstitutionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sector.name')
                     ->label('Sector')
                     ->searchable()
