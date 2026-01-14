@@ -37,27 +37,34 @@ class RoleSeeder extends Seeder
             'manage_all_institutions' => 'Gestionar todas las instituciones',
             'view_own_institution' => 'Ver institución propia',
             'manage_own_institution' => 'Gestionar institución propia',
+            'view_all_sectors' => 'Ver todos los sectores',
+            'manage_all_sectors' => 'Gestionar todos los sectores',
+            'view_sector_strategies' => 'Ver estrategias del sector',
+            'approve_sector_strategies' => 'Aprobar estrategias del sector',
+            'view_own_sector' => 'Ver sector propio',
+            'view_all_strategies' => 'Ver todas las estrategias',
+            'authorize_strategies' => 'Autorizar estrategias',
         ];
 
         foreach ($permissions as $name => $display_name) {
-            Permission::create([
-                'name' => $name,
-                'display_name' => $display_name
-            ]);
+            Permission::firstOrCreate(
+                ['name' => $name],
+                ['display_name' => $display_name]
+            );
         }
 
-        // Asignar permisos a roles
-        $superAdminRole->permissions()->attach(Permission::all());
-        $institutionUserRole->permissions()->attach(
-            Permission::where('name', 'view_own_institution')->get()
+        // Asignar permisos a roles (usando sync para evitar duplicados)
+        $superAdminRole->permissions()->sync(Permission::all()->pluck('id'));
+        $institutionUserRole->permissions()->sync(
+            Permission::where('name', 'view_own_institution')->pluck('id')
         );
 
-        $sectorCoordinatorRole->permissions()->attach(
-            Permission::whereIn('name', ['view_sector_strategies', 'approve_sector_strategies', 'view_own_sector'])->get()
+        $sectorCoordinatorRole->permissions()->sync(
+            Permission::whereIn('name', ['view_sector_strategies', 'approve_sector_strategies', 'view_own_sector'])->pluck('id')
         );
 
-        $dgncUserRole->permissions()->attach(
-            Permission::whereIn('name', ['view_all_strategies', 'authorize_strategies', 'view_all_institutions'])->get()
+        $dgncUserRole->permissions()->sync(
+            Permission::whereIn('name', ['view_all_strategies', 'authorize_strategies', 'view_all_institutions'])->pluck('id')
         );
     }
 }
