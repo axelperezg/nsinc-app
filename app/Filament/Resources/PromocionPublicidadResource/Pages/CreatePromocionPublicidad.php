@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PromocionPublicidadResource\Pages;
 
 use App\Filament\Resources\PromocionPublicidadResource;
 use App\Helpers\ExpirationDateHelper;
+use App\Models\Estrategy;
 use App\Models\StrategyDraft;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -174,6 +175,27 @@ class CreatePromocionPublicidad extends CreateRecord
         $data = $this->form->getState();
         $year = $data['anio'] ?? now()->year;
         $concepto = $data['concepto'] ?? 'Registro';
+        $institutionId = $data['institution_id'] ?? Auth::user()->institution_id;
+
+        // Verificar duplicados recientes (creados en los últimos 30 segundos)
+        $recentDuplicate = Estrategy::withoutGlobalScopes()
+            ->where('institution_id', $institutionId)
+            ->where('anio', $year)
+            ->where('concepto', $concepto)
+            ->where('partida_presupuestal', '36201') // Promoción y Publicidad
+            ->where('created_at', '>=', now()->subSeconds(30))
+            ->exists();
+
+        if ($recentDuplicate) {
+            Notification::make()
+                ->title('Posible duplicado detectado')
+                ->body('Ya existe una estrategia creada recientemente con estos datos. Por favor verifique antes de intentar nuevamente.')
+                ->warning()
+                ->persistent()
+                ->send();
+
+            $this->halt();
+        }
 
         // Validar nuevamente antes de guardar
         $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year);
@@ -250,5 +272,17 @@ class CreatePromocionPublicidad extends CreateRecord
             $this->getCreateFormAction(),
             $this->getCancelFormAction(),
         ];
+    }
+
+    /**
+     * Personalizar el botón de crear para deshabilitarlo durante el envío
+     */
+    protected function getCreateFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCreateFormAction()
+            ->extraAttributes([
+                'wire:loading.attr' => 'disabled',
+                'wire:loading.class' => 'opacity-50 cursor-not-allowed',
+            ]);
     }
 }

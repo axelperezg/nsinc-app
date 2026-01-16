@@ -14,6 +14,7 @@ class Estrategy extends Model
         'anio',
         'institution_id',
         'partida_presupuestal',
+        'plan_nacional_desarrollo_id',
         'institution_name',
         'juridical_nature_id',
         'juridical_nature_name',
@@ -34,6 +35,7 @@ class Estrategy extends Model
         'responsable_name',
         'NombreSectorResponsable',
         'ejes_plan_nacional',
+        'ejes_plan_nacional_snapshot',
         'programa_sectorial_especial',
         'objetivos_estrategicos_transversales',
         'justificacion_estudios',
@@ -44,6 +46,7 @@ class Estrategy extends Model
         'fecha_envio_dgnc' => 'date',
         'presupuesto' => 'decimal:2',
         'ejes_plan_nacional' => 'array',
+        'ejes_plan_nacional_snapshot' => 'array',
     ];
 
     // Arrays de opciones para los selects
@@ -127,11 +130,27 @@ class Estrategy extends Model
     }
 
     /**
+     * Relación con Plan Nacional de Desarrollo
+     */
+    public function planNacionalDesarrollo()
+    {
+        return $this->belongsTo(PlanNacionalDesarrollo::class);
+    }
+
+    /**
      * Obtiene los documentos de oficio DGNC de esta estrategia
      */
     public function oficioDgncDocuments()
     {
         return $this->hasMany(OficioDgncDocument::class);
+    }
+
+    /**
+     * Verifica si esta estrategia tiene un Plan Nacional asociado
+     */
+    public function hasPlanNacional(): bool
+    {
+        return $this->plan_nacional_desarrollo_id !== null;
     }
 
     /**

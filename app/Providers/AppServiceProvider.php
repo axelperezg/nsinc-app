@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Estrategy;
+use App\Models\PlanNacionalDesarrollo;
+use App\Observers\EstrategyObserver;
+use App\Observers\PlanNacionalDesarrolloObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Registrar observers
+        PlanNacionalDesarrollo::observe(PlanNacionalDesarrolloObserver::class);
+        Estrategy::observe(EstrategyObserver::class);
     }
 }

@@ -46,54 +46,106 @@
         <div style="font-weight: bold; margin-bottom: 8px; font-size: 10pt; color: #333;">Plan Nacional de Desarrollo:</div>
         <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; background-color: #EFD0C8;">
             @php
+                $snapshot = $estrategy->ejes_plan_nacional_snapshot;
                 $ejes_plan = $estrategy->ejes_plan_nacional ?? [];
+                $pnd = $estrategy->planNacionalDesarrollo;
 
-                // Ejes Generales
-                $ejesGenerales = [
-                    'eje_general_1_gobernanza' => 'Eje General 1: Gobernanza con justicia y participación ciudadana',
-                    'eje_general_2_desarrollo' => 'Eje General 2: Desarrollo con bienestar y humanismo',
-                    'eje_general_3_economia' => 'Eje General 3: Economía moral y trabajo',
-                    'eje_general_4_sustentable' => 'Eje General 4: Desarrollo sustentable',
-                ];
+                // Usar snapshot si existe (preserva datos históricos)
+                if ($snapshot && !empty($snapshot['ejes'])) {
+                    $nombreEjesGenerales = $snapshot['nombre_ejes_generales'] ?? 'Ejes Generales';
+                    $nombreEjesTransversales = $snapshot['nombre_ejes_transversales'] ?? 'Ejes Transversales';
 
-                // Ejes Transversales
-                $ejesTransversales = [
-                    'eje_transversal_1_igualdad' => 'Eje Transversal 1: Igualdad sustantiva y derechos de las mujeres',
-                    'eje_transversal_2_innovacion' => 'Eje Transversal 2: Innovación pública para el desarrollo tecnológico nacional',
-                    'eje_transversal_3_derechos' => 'Eje Transversal 3: Derechos de los pueblos y comunidades indígenas y afromexicanas',
-                ];
+                    $selectedGenerales = collect($snapshot['ejes'])
+                        ->filter(fn($eje) => ($eje['tipo'] ?? '') === 'general')
+                        ->pluck('label')
+                        ->toArray();
 
-                $selectedGenerales = array_filter($ejesGenerales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY);
-                $selectedTransversales = array_filter($ejesTransversales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY);
+                    $selectedTransversales = collect($snapshot['ejes'])
+                        ->filter(fn($eje) => ($eje['tipo'] ?? '') === 'transversal')
+                        ->pluck('label')
+                        ->toArray();
+
+                    $noPndMessage = false;
+                } elseif (!$pnd) {
+                    // Fallback a ejes hardcodeados para estrategias antiguas sin snapshot
+                    $nombreEjesGenerales = 'Ejes Generales';
+                    $nombreEjesTransversales = 'Ejes Transversales';
+
+                    $ejesGenerales = [
+                        'eje_general_1_gobernanza' => 'Eje General 1: Gobernanza con justicia y participación ciudadana',
+                        'eje_general_2_desarrollo' => 'Eje General 2: Desarrollo con bienestar y humanismo',
+                        'eje_general_3_economia' => 'Eje General 3: Economía moral y trabajo',
+                        'eje_general_4_sustentable' => 'Eje General 4: Desarrollo sustentable',
+                    ];
+
+                    $ejesTransversales = [
+                        'eje_transversal_1_igualdad' => 'Eje Transversal 1: Igualdad sustantiva y derechos de las mujeres',
+                        'eje_transversal_2_innovacion' => 'Eje Transversal 2: Innovación pública para el desarrollo tecnológico nacional',
+                        'eje_transversal_3_derechos' => 'Eje Transversal 3: Derechos de los pueblos y comunidades indígenas y afromexicanas',
+                    ];
+
+                    $selectedGenerales = array_values(array_filter($ejesGenerales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+                    $selectedTransversales = array_values(array_filter($ejesTransversales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+
+                    // Verificar si la estrategia fue creada sin PND activo
+                    $noPndMessage = !$estrategy->plan_nacional_desarrollo_id;
+                } else {
+                    // Cargar ejes desde el PND asociado (fallback para estrategias sin snapshot)
+                    $nombreEjesGenerales = $pnd->nombre_ejes_generales ?? 'Ejes Generales';
+                    $nombreEjesTransversales = $pnd->nombre_ejes_transversales ?? 'Ejes Transversales';
+
+                    $ejesGenerales = collect($pnd->ejes_generales ?? [])->pluck('label', 'key')->toArray();
+                    $ejesTransversales = collect($pnd->ejes_transversales ?? [])->pluck('label', 'key')->toArray();
+
+                    $selectedGenerales = array_values(array_filter($ejesGenerales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+                    $selectedTransversales = array_values(array_filter($ejesTransversales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+
+                    $noPndMessage = false;
+                }
             @endphp
 
-            {{-- Ejes Generales --}}
-            <div style="margin-bottom: 16px;">
-                <div style="font-weight: bold; font-size: 10pt; margin-bottom: 8px; color: #F9EEEB;">Ejes Generales:</div>
-                @if(count($selectedGenerales) > 0)
-                    <div>
-                        @foreach($selectedGenerales as $ejeTexto)
-                            <span class="eje-badge">{{ $ejeTexto }}</span>
-                        @endforeach
+            @if($noPndMessage)
+                {{-- Mostrar mensaje si fue creada sin PND activo --}}
+                <div style="font-size: 10pt; color: #666; font-style: italic; text-align: center; padding: 20px;">
+                    El Plan Nacional de Desarrollo se habilitará cuando este sea publicado
+                </div>
+            @else
+                {{-- Ejes Generales con nombre dinámico --}}
+                <div style="margin-bottom: 16px;">
+                    <div style="font-weight: bold; font-size: 10pt; margin-bottom: 8px; color: #F9EEEB;">
+                        {{ $nombreEjesGenerales }}:
                     </div>
-                @else
-                    <div style="font-size: 9pt; color: #666; font-style: italic;">No se seleccionaron ejes generales</div>
-                @endif
-            </div>
+                    @if(count($selectedGenerales) > 0)
+                        <div>
+                            @foreach($selectedGenerales as $ejeTexto)
+                                <span class="eje-badge">{{ $ejeTexto }}</span>
+                            @endforeach
+                        </div>
+                    @else
+                        <div style="font-size: 9pt; color: #666; font-style: italic;">
+                            No se seleccionaron {{ strtolower($nombreEjesGenerales) }}
+                        </div>
+                    @endif
+                </div>
 
-            {{-- Ejes Transversales --}}
-            <div>
-                <div style="font-weight: bold; font-size: 9pt; margin-bottom: 8px; color: #8b5a00;">Ejes Transversales:</div>
-                @if(count($selectedTransversales) > 0)
-                    <div>
-                        @foreach($selectedTransversales as $ejeTexto)
-                            <span class="eje-transversal-badge">{{ $ejeTexto }}</span>
-                        @endforeach
+                {{-- Ejes Transversales con nombre dinámico --}}
+                <div>
+                    <div style="font-weight: bold; font-size: 9pt; margin-bottom: 8px; color: #8b5a00;">
+                        {{ $nombreEjesTransversales }}:
                     </div>
-                @else
-                    <div style="font-size: 9pt; color: #666; font-style: italic;">No se seleccionaron ejes transversales</div>
-                @endif
-            </div>
+                    @if(count($selectedTransversales) > 0)
+                        <div>
+                            @foreach($selectedTransversales as $ejeTexto)
+                                <span class="eje-transversal-badge">{{ $ejeTexto }}</span>
+                            @endforeach
+                        </div>
+                    @else
+                        <div style="font-size: 9pt; color: #666; font-style: italic;">
+                            No se seleccionaron {{ strtolower($nombreEjesTransversales) }}
+                        </div>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 

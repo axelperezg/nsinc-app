@@ -22,8 +22,32 @@
         PLAN NACIONAL DE DESARROLLO
     </div>
 
-    @if($estrategy->ejes_plan_nacional && count($estrategy->ejes_plan_nacional) > 0)
-        @php
+    @php
+        $snapshot = $estrategy->ejes_plan_nacional_snapshot;
+        $ejes_plan = $estrategy->ejes_plan_nacional ?? [];
+        $pnd = $estrategy->planNacionalDesarrollo;
+
+        // Usar snapshot si existe (preserva datos históricos)
+        if ($snapshot && !empty($snapshot['ejes'])) {
+            $nombreEjesGenerales = $snapshot['nombre_ejes_generales'] ?? 'EJES GENERALES';
+            $nombreEjesTransversales = $snapshot['nombre_ejes_transversales'] ?? 'EJES TRANSVERSALES';
+
+            $selectedGenerales = collect($snapshot['ejes'])
+                ->filter(fn($eje) => ($eje['tipo'] ?? '') === 'general')
+                ->pluck('label')
+                ->toArray();
+
+            $selectedTransversales = collect($snapshot['ejes'])
+                ->filter(fn($eje) => ($eje['tipo'] ?? '') === 'transversal')
+                ->pluck('label')
+                ->toArray();
+
+            $noPndMessage = false;
+        } elseif (!$pnd) {
+            // Fallback a ejes hardcodeados para estrategias antiguas sin snapshot
+            $nombreEjesGenerales = 'EJES GENERALES';
+            $nombreEjesTransversales = 'EJES TRANSVERSALES';
+
             $ejesGenerales = [
                 'eje_general_1_gobernanza' => 'Eje General 1: Gobernanza con justicia y participación ciudadana',
                 'eje_general_2_desarrollo' => 'Eje General 2: Desarrollo con bienestar y humanismo',
@@ -37,15 +61,37 @@
                 'eje_transversal_3_derechos' => 'Eje Transversal 3: Derechos de los pueblos y comunidades indígenas y afromexicanas',
             ];
 
-            $selectedGenerales = array_filter($ejesGenerales, fn($key) => isset($estrategy->ejes_plan_nacional[$key]) && $estrategy->ejes_plan_nacional[$key], ARRAY_FILTER_USE_KEY);
-            $selectedTransversales = array_filter($ejesTransversales, fn($key) => isset($estrategy->ejes_plan_nacional[$key]) && $estrategy->ejes_plan_nacional[$key], ARRAY_FILTER_USE_KEY);
-        @endphp
+            $selectedGenerales = array_values(array_filter($ejesGenerales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+            $selectedTransversales = array_values(array_filter($ejesTransversales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
 
-        {{-- Ejes Generales --}}
+            // Verificar si la estrategia fue creada sin PND activo
+            $noPndMessage = !$estrategy->plan_nacional_desarrollo_id;
+        } else {
+            // Cargar ejes desde el PND asociado (fallback para estrategias sin snapshot)
+            $nombreEjesGenerales = $pnd->nombre_ejes_generales ?? 'EJES GENERALES';
+            $nombreEjesTransversales = $pnd->nombre_ejes_transversales ?? 'EJES TRANSVERSALES';
+
+            $ejesGenerales = collect($pnd->ejes_generales ?? [])->pluck('label', 'key')->toArray();
+            $ejesTransversales = collect($pnd->ejes_transversales ?? [])->pluck('label', 'key')->toArray();
+
+            $selectedGenerales = array_values(array_filter($ejesGenerales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+            $selectedTransversales = array_values(array_filter($ejesTransversales, fn($key) => isset($ejes_plan[$key]) && $ejes_plan[$key], ARRAY_FILTER_USE_KEY));
+
+            $noPndMessage = false;
+        }
+    @endphp
+
+    @if($noPndMessage)
+        {{-- Mostrar mensaje si fue creada sin PND activo --}}
+        <div style="text-align: center; color: #666; font-style: italic; padding: 30px;">
+            El Plan Nacional de Desarrollo se habilitará cuando este sea publicado
+        </div>
+    @elseif(count($selectedGenerales) > 0 || count($selectedTransversales) > 0)
+        {{-- Ejes Generales con nombre dinámico --}}
         @if(count($selectedGenerales) > 0)
         <div style="margin-bottom: 20px;">
             <div class="gray-header" style="margin-bottom: 10px;">
-                EJES GENERALES
+                {{ strtoupper($nombreEjesGenerales) }}
             </div>
             <table class="data-table">
                 @foreach($selectedGenerales as $eje)
@@ -59,11 +105,11 @@
         </div>
         @endif
 
-        {{-- Ejes Transversales --}}
+        {{-- Ejes Transversales con nombre dinámico --}}
         @if(count($selectedTransversales) > 0)
         <div style="margin-bottom: 20px;">
             <div class="gray-header" style="margin-bottom: 10px;">
-                EJES TRANSVERSALES
+                {{ strtoupper($nombreEjesTransversales) }}
             </div>
             <table class="data-table">
                 @foreach($selectedTransversales as $eje)
@@ -76,15 +122,9 @@
             </table>
         </div>
         @endif
-
-        @if(count($selectedGenerales) == 0 && count($selectedTransversales) == 0)
-        <div style="text-align: center; color: #666; font-style: italic; padding: 20px;">
-            No se han seleccionado ejes del Plan Nacional de Desarrollo
-        </div>
-        @endif
     @else
         <div style="text-align: center; color: #666; font-style: italic; padding: 20px;">
-            No se han definido ejes del Plan Nacional de Desarrollo para esta estrategia
+            No se han seleccionado ejes del Plan Nacional de Desarrollo
         </div>
     @endif
 

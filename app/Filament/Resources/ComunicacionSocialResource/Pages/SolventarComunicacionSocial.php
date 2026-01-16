@@ -70,6 +70,26 @@ class SolventarComunicacionSocial extends Page
     protected function duplicarEstrategia(): void
     {
         try {
+            // Verificar duplicados recientes (creados en los últimos 30 segundos)
+            $recentDuplicate = Estrategy::withoutGlobalScopes()
+                ->where('institution_id', $this->estrategyOriginal->institution_id)
+                ->where('anio', $this->estrategyOriginal->anio)
+                ->where('concepto', 'Solventacion')
+                ->where('estrategia_original_id', $this->estrategyOriginal->id)
+                ->where('created_at', '>=', now()->subSeconds(30))
+                ->first();
+
+            if ($recentDuplicate) {
+                Notification::make()
+                    ->title('Solventación ya existe')
+                    ->body('Ya existe una solventación reciente de esta estrategia. Redirigiendo a la edición.')
+                    ->info()
+                    ->send();
+
+                $this->redirect(static::getResource()::getUrl('edit', ['record' => $recentDuplicate->id]));
+                return;
+            }
+
             DB::beginTransaction();
 
             // 1. Duplicar la estrategia principal
@@ -78,6 +98,7 @@ class SolventarComunicacionSocial extends Page
             $estrategyNueva->estado_estrategia = 'Creada';
             $estrategyNueva->fecha_elaboracion = now();
             $estrategyNueva->fecha_envio_dgnc = null;
+            $estrategyNueva->estrategia_original_id = $this->estrategyOriginal->id;
             $estrategyNueva->created_at = now();
             $estrategyNueva->updated_at = now();
             $estrategyNueva->save();
