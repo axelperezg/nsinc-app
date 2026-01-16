@@ -22,10 +22,13 @@ class DatabaseSeeder extends Seeder
             // 3. Naturalezas jurídicas (necesarias para instituciones)
             JuridicalNatureSeeder::class,
 
-            // 6. Ramo Seeder
+            // 4. Ramo Seeder
             RamoSeeder::class,
-            
-            // 3. Configuraciones del sistema
+
+            // 5. Plan Nacional de Desarrollo (configuración de ejes para estrategias)
+            PlanNacionalDesarrolloSeeder::class,
+
+            // 6. Configuraciones del sistema
             ConfigurationSeeder::class,
             
             // 4. Fechas de vencimiento

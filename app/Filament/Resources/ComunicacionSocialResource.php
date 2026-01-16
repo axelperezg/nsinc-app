@@ -4,9 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\Base\BaseEstrategyResource;
 use App\Filament\Resources\ComunicacionSocialResource\Pages;
-use Illuminate\Support\Facades\Auth;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard;
+use Illuminate\Support\Facades\Auth;
 
 class ComunicacionSocialResource extends BaseEstrategyResource
 {
@@ -30,7 +30,7 @@ class ComunicacionSocialResource extends BaseEstrategyResource
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -39,7 +39,7 @@ class ComunicacionSocialResource extends BaseEstrategyResource
             'super_admin',
             'institution_user',
             'sector_coordinator',
-            'dgnc_user'
+            'dgnc_user',
         ]);
     }
 
@@ -53,64 +53,110 @@ class ComunicacionSocialResource extends BaseEstrategyResource
             ->icon('heroicon-o-flag')
             ->completedIcon('heroicon-o-check-circle')
             ->schema([
+                // Campo oculto para guardar referencia al PND
+                Forms\Components\Hidden::make('plan_nacional_desarrollo_id')
+                    ->default(function ($record) {
+                        // Si está editando una estrategia existente, usar su PND
+                        if ($record && $record->plan_nacional_desarrollo_id) {
+                            return $record->plan_nacional_desarrollo_id;
+                        }
+                        // Para nuevas estrategias, obtener el PND activo
+                        $pnd = \App\Models\PlanNacionalDesarrollo::getActive();
+
+                        return $pnd?->id;
+                    })
+                    ->dehydrated(true),
+
                 Forms\Components\Section::make('Plan Nacional de Desarrollo')
-                    ->description('Selecciona los ejes del Plan Nacional que se relacionan con tu estrategia')
+                    ->description(function ($record) {
+                        // Obtener PND (del record o el activo)
+                        $pndId = $record?->plan_nacional_desarrollo_id
+                            ?? \App\Models\PlanNacionalDesarrollo::getActive()?->id;
+
+                        if (! $pndId) {
+                            return 'El Plan Nacional de Desarrollo se habilitará cuando este sea publicado';
+                        }
+
+                        $pnd = \App\Models\PlanNacionalDesarrollo::find($pndId);
+
+                        return $pnd
+                            ? "Selecciona los ejes del {$pnd->nombre} que se relacionan con tu estrategia"
+                            : 'Selecciona los ejes del Plan Nacional que se relacionan con tu estrategia';
+                    })
                     ->icon('heroicon-o-flag')
+                    ->schema(function ($record) {
+                        // Obtener PND
+                        $pndId = $record?->plan_nacional_desarrollo_id
+                            ?? \App\Models\PlanNacionalDesarrollo::getActive()?->id;
+
+                        if (! $pndId) {
+                            // PND inactivo - mostrar mensaje
+                            return [
+                                Forms\Components\Placeholder::make('pnd_inactive')
+                                    ->label('')
+                                    ->content('El Plan Nacional de Desarrollo se habilitará cuando este sea publicado')
+                                    ->extraAttributes(['class' => 'text-center italic text-gray-500']),
+                            ];
+                        }
+
+                        $pnd = \App\Models\PlanNacionalDesarrollo::find($pndId);
+
+                        if (! $pnd) {
+                            return [];
+                        }
+
+                        $schema = [];
+
+                        // Generar sección de Ejes Generales
+                        if (! empty($pnd->ejes_generales)) {
+                            $ejesGeneralesFields = [];
+                            foreach ($pnd->ejes_generales as $eje) {
+                                $description = $eje['description'] ?? 'este eje';
+                                $ejesGeneralesFields[] = Forms\Components\Checkbox::make("ejes_plan_nacional.{$eje['key']}")
+                                    ->label($eje['label'])
+                                    ->hint($eje['description'] ?? '')
+                                    ->hintIcon('heroicon-o-information-circle')
+                                    ->helperText("Marca si tu estrategia contribuye a {$description}.");
+                            }
+
+                            $schema[] = Forms\Components\Section::make($pnd->nombre_ejes_generales ?? 'Ejes Generales')
+                                ->description('Selecciona los ejes que aplican a tu estrategia de comunicación')
+                                ->icon('heroicon-o-chart-bar')
+                                ->schema($ejesGeneralesFields)
+                                ->columns(2)
+                                ->collapsible();
+                        }
+
+                        // Generar sección de Ejes Transversales
+                        if (! empty($pnd->ejes_transversales)) {
+                            $ejesTransversalesFields = [];
+                            foreach ($pnd->ejes_transversales as $eje) {
+                                $description = $eje['description'] ?? 'este eje';
+                                $ejesTransversalesFields[] = Forms\Components\Checkbox::make("ejes_plan_nacional.{$eje['key']}")
+                                    ->label($eje['label'])
+                                    ->hint($eje['description'] ?? '')
+                                    ->hintIcon('heroicon-o-information-circle')
+                                    ->helperText("Marca si tu estrategia promueve {$description}.")
+                                    ->columnSpan(2);
+                            }
+
+                            $schema[] = Forms\Components\Section::make($pnd->nombre_ejes_transversales ?? 'Ejes Transversales')
+                                ->description('Selecciona los ejes que aplican a tu estrategia')
+                                ->icon('heroicon-o-arrow-path')
+                                ->schema($ejesTransversalesFields)
+                                ->columns(2)
+                                ->collapsible();
+                        }
+
+                        return $schema;
+                    })
+                    ->columns(1)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Programas y Objetivos')
+                    ->description('Describe los programas y objetivos relacionados con esta estrategia')
+                    ->icon('heroicon-o-document-text')
                     ->schema([
-                        Forms\Components\Section::make('Ejes Generales')
-                            ->description('Selecciona los ejes generales que aplican a tu estrategia de comunicación')
-                            ->icon('heroicon-o-chart-bar')
-                            ->schema([
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_1_gobernanza')
-                                    ->label('Eje General 1: Gobernanza con justicia y participación ciudadana')
-                                    ->hint('Fortalecimiento democrático')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye a fortalecer la gobernanza y participación ciudadana.'),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_2_desarrollo')
-                                    ->label('Eje General 2: Desarrollo con bienestar y humanismo')
-                                    ->hint('Bienestar social')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye al desarrollo social y bienestar de la población.'),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_3_economia')
-                                    ->label('Eje General 3: Economía moral y trabajo')
-                                    ->hint('Desarrollo económico')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye al desarrollo económico y generación de empleo.'),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_general_4_sustentable')
-                                    ->label('Eje General 4: Desarrollo sustentable')
-                                    ->hint('Medio ambiente')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia contribuye a la sustentabilidad y protección ambiental.'),
-                            ])
-                            ->columns(2)
-                            ->collapsible(),
-
-                        Forms\Components\Section::make('Ejes Transversales')
-                            ->description('Selecciona los ejes transversales que aplican a tu estrategia')
-                            ->icon('heroicon-o-arrow-path')
-                            ->schema([
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_transversal_1_igualdad')
-                                    ->label('Eje Transversal 1: Igualdad sustantiva y derechos de las mujeres')
-                                    ->hint('Igualdad de género')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia promueve la igualdad de género y derechos de las mujeres.')
-                                    ->columnSpan(2),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_transversal_2_innovacion')
-                                    ->label('Eje Transversal 2: Innovación pública para el desarrollo tecnológico nacional')
-                                    ->hint('Innovación tecnológica')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia incorpora innovación y desarrollo tecnológico.')
-                                    ->columnSpan(2),
-                                Forms\Components\Checkbox::make('ejes_plan_nacional.eje_transversal_3_derechos')
-                                    ->label('Eje Transversal 3: Derechos de los pueblos y comunidades indígenas y afromexicanas')
-                                    ->hint('Pueblos originarios')
-                                    ->hintIcon('heroicon-o-information-circle')
-                                    ->helperText('Marca si tu estrategia incluye a pueblos y comunidades indígenas y afromexicanas.')
-                                    ->columnSpan(2),
-                            ])
-                            ->columns(2)
-                            ->collapsible(),
-
                         Forms\Components\Textarea::make('programa_sectorial_especial')
                             ->label('Programa Sectorial y/o Especial')
                             ->required()
@@ -131,7 +177,7 @@ class ComunicacionSocialResource extends BaseEstrategyResource
                             ->helperText('Describe los objetivos estratégicos y/o transversales de esta estrategia.')
                             ->columnSpan(2),
                     ])
-                    ->columns(1)
+                    ->columns(2)
                     ->collapsible(),
             ]);
     }

@@ -1760,7 +1760,8 @@ abstract class BaseEstrategyResource extends Resource
                             'juridicalNature',
                             'responsable',
                             'campaigns.campaignType',
-                            'campaigns.versions'
+                            'campaigns.versions',
+                            'planNacionalDesarrollo'
                         ])->find($record->id);
 
                         // Obtener los logos del PDF desde configuraciones
