@@ -12,6 +12,13 @@ use Illuminate\Support\Collection;
 
 class CampaignsExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
+    protected ?string $partidaPresupuestal;
+
+    public function __construct(?string $partidaPresupuestal = null)
+    {
+        $this->partidaPresupuestal = $partidaPresupuestal;
+    }
+
     /**
      * Tipos de medios y sus campos correspondientes en la tabla
      */
@@ -43,13 +50,21 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
      */
     public function collection()
     {
-        $campaigns = Campaign::with([
+        $query = Campaign::with([
             'campaignType',
             'estrategy.institution',
             'estrategy.juridicalNature',
             'estrategy.responsable',
             'versions'
-        ])->get();
+        ]);
+
+        if ($this->partidaPresupuestal) {
+            $query->whereHas('estrategy', function ($q) {
+                $q->where('partida_presupuestal', $this->partidaPresupuestal);
+            });
+        }
+
+        $campaigns = $query->get();
 
         $expandedRows = new Collection();
         $mediaTypes = $this->getMediaTypes();

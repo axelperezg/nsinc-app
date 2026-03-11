@@ -99,6 +99,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Verifica si el usuario tiene rol de consulta
+     */
+    public function isConsulta(): bool
+    {
+        return $this->role && $this->role->name === 'consulta';
+    }
+
+    /**
      * Verifica si el usuario puede ver todas las instituciones
      */
     public function canViewAllInstitutions(): bool

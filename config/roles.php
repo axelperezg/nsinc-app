@@ -53,6 +53,14 @@ return [
                 'view_all_institutions',
             ],
         ],
+        'consulta' => [
+            'name' => 'consulta',
+            'display_name' => 'Consulta',
+            'description' => 'Usuario de solo lectura con acceso a estrategias de Comunicación Social y Promoción y Publicidad',
+            'permissions' => [
+                'view_all_strategies',
+            ],
+        ],
     ],
 
     /*

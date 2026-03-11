@@ -31,6 +31,11 @@ class RoleSeeder extends Seeder
             'description' => 'Usuario de la Dirección General de Normatividad de Comunicación',
         ]);
 
+        $consultaRole = Role::firstOrCreate(['name' => 'consulta'], [
+            'display_name' => 'Consulta',
+            'description' => 'Usuario de solo lectura con acceso a estrategias de Comunicación Social y Promoción y Publicidad',
+        ]);
+
         // Crear permisos
         $permissions = [
             'view_all_institutions' => 'Ver todas las instituciones',
@@ -65,6 +70,10 @@ class RoleSeeder extends Seeder
 
         $dgncUserRole->permissions()->sync(
             Permission::whereIn('name', ['view_all_strategies', 'authorize_strategies', 'view_all_institutions'])->pluck('id')
+        );
+
+        $consultaRole->permissions()->sync(
+            Permission::where('name', 'view_all_strategies')->pluck('id')
         );
     }
 }

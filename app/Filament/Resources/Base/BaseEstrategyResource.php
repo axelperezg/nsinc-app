@@ -78,11 +78,11 @@ abstract class BaseEstrategyResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         $user = Auth::user();
-        
+
         if (!$user) {
             return false;
         }
-        
+
         // Super admin, usuarios de institución, coordinadores de sector y usuarios DGNC pueden ver Estrategias
         return $user->role && in_array($user->role->name, [
             'super_admin',
@@ -90,6 +90,14 @@ abstract class BaseEstrategyResource extends Resource
             'sector_coordinator',
             'dgnc_user'
         ]);
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
+
+        // El rol consulta no puede crear estrategias
+        return $user && !$user->isConsulta();
     }
 
 
@@ -1448,6 +1456,9 @@ abstract class BaseEstrategyResource extends Resource
                         break;
                     case 'dgnc_user':
                         // Usuario DGNC ve todas las estrategias
+                        break;
+                    case 'consulta':
+                        // Usuario de consulta ve todas las estrategias (solo lectura)
                         break;
                     case 'sector_coordinator':
                         // Coordinador de sector ve estrategias de su sector en estados 'Enviado a CS' y 'Aceptada CS'

@@ -33,16 +33,21 @@ class CampaignResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         $user = Auth::user();
-        
+
         if (!$user) {
             return false;
         }
-        
-        // Solo super administradores pueden ver el menú de Campañas
-        return $user->role && $user->role->name === 'super_admin';
+
+        // Super administradores y usuarios de consulta pueden ver el menú de Campañas
+        return $user->isSuperAdmin() || $user->isConsulta();
     }
 
+    public static function canCreate(): bool
+    {
+        $user = Auth::user();
 
+        return $user && !$user->isConsulta();
+    }
 
     public static function form(Form $form): Form
     {
@@ -226,14 +231,18 @@ class CampaignResource extends Resource
         return $table
             ->modifyQueryUsing(function (Builder $query) {
                 $user = Auth::user();
-                
-                if ($user && $user->role && $user->role->name !== 'super_admin' && $user->institution_id) {
+
+                // Super admin y consulta ven todas las campañas
+                if ($user && ($user->isSuperAdmin() || $user->isConsulta())) {
+                    return $query;
+                }
+
+                if ($user && $user->institution_id) {
                     $query->whereHas('estrategy', function ($q) use ($user) {
                         $q->where('institution_id', $user->institution_id);
                     });
                 }
-                // Si es super admin, no se aplica filtro
-                
+
                 return $query;
             })
             ->columns([
@@ -248,11 +257,15 @@ class CampaignResource extends Resource
                 Tables\Columns\TextColumn::make('campaignType.name')
                     ->label('Tipo de Campaña')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('estrategy.partida_presupuestal')
+                    ->label('Partida')
+                    ->sortable()
+                    ->visible(fn () => Auth::user() && (Auth::user()->isSuperAdmin() || Auth::user()->isConsulta())),
                 Tables\Columns\TextColumn::make('estrategy.institution.name')
                     ->label('Institución')
                     ->searchable()
                     ->sortable()
-                    ->visible(fn () => Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin'),
+                    ->visible(fn () => Auth::user() && (Auth::user()->isSuperAdmin() || Auth::user()->isConsulta())),
                 Tables\Columns\TextColumn::make('temaEspecifico')
                     ->label('Tema Específico')
                     ->limit(50)
@@ -276,10 +289,24 @@ class CampaignResource extends Resource
                 Tables\Filters\SelectFilter::make('campaign_type_id')
                     ->label('Tipo de Campaña')
                     ->relationship('campaignType', 'name'),
+                Tables\Filters\SelectFilter::make('partida_presupuestal')
+                    ->label('Partida Presupuestal')
+                    ->options([
+                        '36101' => '36101 - Comunicación Social',
+                        '36201' => '36201 - Promoción y Publicidad',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value']) {
+                            $query->whereHas('estrategy', function ($q) use ($data) {
+                                $q->where('partida_presupuestal', $data['value']);
+                            });
+                        }
+                    })
+                    ->visible(fn () => Auth::user() && (Auth::user()->isSuperAdmin() || Auth::user()->isConsulta())),
                 Tables\Filters\SelectFilter::make('estrategy.institution_id')
                     ->label('Institución')
                     ->relationship('estrategy.institution', 'name')
-                    ->visible(fn () => Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin'),
+                    ->visible(fn () => Auth::user() && (Auth::user()->isSuperAdmin() || Auth::user()->isConsulta())),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('exportar_excel')

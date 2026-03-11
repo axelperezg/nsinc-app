@@ -34,12 +34,13 @@ class ComunicacionSocialResource extends BaseEstrategyResource
             return false;
         }
 
-        // Super admin, usuarios de institución, coordinadores de sector y usuarios DGNC pueden ver
+        // Super admin, usuarios de institución, coordinadores de sector, usuarios DGNC y consulta pueden ver
         return $user->role && in_array($user->role->name, [
             'super_admin',
             'institution_user',
             'sector_coordinator',
             'dgnc_user',
+            'consulta',
         ]);
     }
 
