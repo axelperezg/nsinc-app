@@ -9,8 +9,8 @@
             size: letter landscape;
             margin-top: 1.5cm;
             margin-bottom: 1.5cm;
-            margin-left: 3cm;
-            margin-right: 3cm;
+            margin-left: 0;
+            margin-right: 0;
         }
         * {
             margin: 0;
@@ -22,6 +22,10 @@
             font-size: 9pt;
             line-height: 1.4;
             position: relative;
+            padding-top: 4mm;
+            padding-bottom: 4mm;
+            padding-left: 1cm;
+            padding-right: 1cm;
         }
         .page-break {
             page-break-after: always;
@@ -158,11 +162,9 @@
     {{-- Página 1: Misión, Visión y Objetivos --}}
     @include('pdf.estrategy_horizontal.page1', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
 
-    {{-- Página 1.5: Plan Nacional de Desarrollo (solo para 36101) --}}
-    @if($estrategy->partida_presupuestal === '36101')
-        <div class="page-break"></div>
-        @include('pdf.estrategy_horizontal.page1_5', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
-    @endif
+    {{-- Página 1.5: PND (36101) o Entorno de Mercado y Metas (36201) --}}
+    <div class="page-break"></div>
+    @include('pdf.estrategy_horizontal.page1_5', ['estrategy' => $estrategy, 'logoPath' => $logoPath ?? null, 'logoRightPath' => $logoRightPath ?? null])
 
     {{-- Página 2: Resumen de Medios y Distribución Presupuestal --}}
     <div class="page-break"></div>

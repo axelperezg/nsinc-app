@@ -1,160 +1,153 @@
-{{-- Página 2: Resumen de Medios y Distribución Presupuestal --}}
+{{-- Página 2: Resumen Presupuestal (Hoja 3 del ejemplo) --}}
 
-<div style="padding: 0 20px;">
-    {{-- Header con logos --}}
-    <table style="width: 100%; margin-bottom: 10px; border: none;">
+{{-- Header con logos --}}
+<table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 18px;">
+    <tr>
+        <td style="width: 25%; text-align: left; vertical-align: middle; border: none;">
+            @if($logoPath && file_exists($logoPath))
+                <img src="{{ $logoPath }}" height="55" alt="Logo Izquierdo">
+            @endif
+        </td>
+        <td style="width: 50%; border: none;"></td>
+        <td style="width: 25%; text-align: right; vertical-align: middle; border: none;">
+            @if($logoRightPath && file_exists($logoRightPath))
+                <img src="{{ $logoRightPath }}" height="55" alt="Logo Derecho">
+            @endif
+        </td>
+    </tr>
+</table>
+
+{{-- Títulos --}}
+<div style="text-align: center; margin-bottom: 14px;">
+    <div style="font-size: 14pt; font-weight: bold; line-height: 1.4; margin-bottom: 4px;">
+        ESTRATEGIA ANUAL DE {{ $estrategy->partida_presupuestal === '36101' ? 'COMUNICACIÓN SOCIAL' : 'PROMOCIÓN Y PUBLICIDAD' }}<br>
+        PARA EL EJERCICIO FISCAL {{ $estrategy->anio }}
+    </div>
+    <div style="font-size: 11pt; font-weight: bold; margin-top: 6px;">
+        RESUMEN PRESUPUESTAL - {{ $estrategy->partida_presupuestal === '36101' ? 'COMUNICACIÓN SOCIAL' : 'PROMOCIÓN Y PUBLICIDAD' }}
+    </div>
+</div>
+
+@php
+    $totalElectronicos    = 0;
+    $totalImpresos        = 0;
+    $totalComplementarios = 0;
+    $totalEstudios        = 0;
+    $totalDisenoProduccion = 0;
+
+    foreach ($estrategy->campaigns as $c) {
+        $totalElectronicos    += ($c->televisoras ?? 0) + ($c->radiodifusoras ?? 0) + ($c->mediosDigitalesInternet ?? 0);
+        $totalImpresos        += ($c->decdmx ?? 0) + ($c->deedos ?? 0) + ($c->deextr ?? 0) + ($c->revistas ?? 0);
+        $totalComplementarios += ($c->cine ?? 0) + ($c->mediosComplementarios ?? 0) + ($c->mediosDigitales ?? 0);
+        $totalEstudios        += ($c->preEstudios ?? 0) + ($c->postEstudios ?? 0);
+        $totalDisenoProduccion += ($c->disenio ?? 0) + ($c->produccion ?? 0) + ($c->preProduccion ?? 0) + ($c->postProduccion ?? 0) + ($c->copiado ?? 0);
+    }
+    $granTotal = $totalElectronicos + $totalImpresos + $totalComplementarios + $totalEstudios + $totalDisenoProduccion;
+@endphp
+
+{{-- Tabla de distribución presupuestal --}}
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 18px;">
+    <tr>
+        <td colspan="2" style="background-color: #9B1B30; color: #fff; padding: 8px 12px; text-align: center; font-weight: bold; font-size: 10pt; border: 1px solid #000;">
+            DISTRIBUCIÓN PRESUPUESTAL POR CATEGORÍA
+        </td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; font-size: 10pt; width: 75%;">MEDIOS ELECTRÓNICOS</td>
+        <td style="border: 1px solid #000; padding: 8px 12px; text-align: right; font-size: 10pt; width: 25%;">${{ number_format($totalElectronicos, 2) }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; font-size: 10pt;">MEDIOS IMPRESOS</td>
+        <td style="border: 1px solid #000; padding: 8px 12px; text-align: right; font-size: 10pt;">${{ number_format($totalImpresos, 2) }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; font-size: 10pt;">MEDIOS COMPLEMENTARIOS</td>
+        <td style="border: 1px solid #000; padding: 8px 12px; text-align: right; font-size: 10pt;">${{ number_format($totalComplementarios, 2) }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; font-size: 10pt;">ESTUDIOS</td>
+        <td style="border: 1px solid #000; padding: 8px 12px; text-align: right; font-size: 10pt;">${{ number_format($totalEstudios, 2) }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; font-size: 10pt;">DISEÑO, PRODUCCIÓN Y POST-PRODUCCIÓN</td>
+        <td style="border: 1px solid #000; padding: 8px 12px; text-align: right; font-size: 10pt;">${{ number_format($totalDisenoProduccion, 2) }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; padding: 8px 12px; font-weight: bold; font-size: 10pt; background-color: #9B1B30; color: #fff;">PRESUPUESTO TOTAL</td>
+        <td style="border: 1px solid #000; padding: 8px 12px; text-align: right; font-size: 10pt; font-weight: bold; background-color: #9B1B30; color: #fff;">${{ number_format($granTotal, 2) }}</td>
+    </tr>
+</table>
+
+{{-- Gráfica de distribución porcentual --}}
+<div style="text-align: center; font-weight: bold; font-size: 10pt; margin-bottom: 12px;">
+    DISTRIBUCIÓN PORCENTUAL DEL PRESUPUESTO
+</div>
+
+@if($granTotal > 0)
+    @php
+        $categorias = [
+            ['nombre' => 'Medios Electrónicos',    'valor' => $totalElectronicos,     'color' => '#9B1B30'],
+            ['nombre' => 'Medios Impresos',         'valor' => $totalImpresos,         'color' => '#C45E73'],
+            ['nombre' => 'Medios Complementarios',  'valor' => $totalComplementarios,  'color' => '#E89CAC'],
+            ['nombre' => 'Estudios',                'valor' => $totalEstudios,         'color' => '#B8860B'],
+            ['nombre' => 'Diseño y Producción',     'valor' => $totalDisenoProduccion, 'color' => '#DAA520'],
+        ];
+    @endphp
+    @foreach($categorias as $cat)
+        @if($cat['valor'] > 0)
+            @php $pct = ($cat['valor'] / $granTotal) * 100; @endphp
+            <table style="width: 100%; border: none; border-collapse: collapse; margin-bottom: 5px;">
+                <tr>
+                    <td style="border: none; width: 20%; padding: 0 8px 0 0; font-size: 9pt; vertical-align: middle;">
+                        {{ $cat['nombre'] }}
+                    </td>
+                    <td style="border: none; width: 65%; padding: 0; vertical-align: middle;">
+                        <table style="width: 100%; border: none; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: {{ number_format($pct, 1) }}%; background-color: {{ $cat['color'] }}; height: 18px; border: none;"></td>
+                                <td style="border: none;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="border: none; width: 15%; padding: 0 0 0 8px; font-size: 9pt; text-align: right; vertical-align: middle;">
+                        {{ number_format($pct, 1) }}%
+                    </td>
+                </tr>
+            </table>
+        @endif
+    @endforeach
+@else
+    <div style="text-align: center; color: #666; font-style: italic;">No hay datos presupuestales para mostrar</div>
+@endif
+
+{{-- Sección de Firmas --}}
+@if($estrategy->institution && $estrategy->institution->isSector)
+    <table style="margin-top: 50px; width: 100%;">
         <tr>
-            <td style="width: 15%; text-align: left; vertical-align: top; border: none;">
-                @if($logoPath && file_exists($logoPath))
-                    <img src="{{ $logoPath }}" height="60" alt="Logo Izquierdo">
-                @endif
-            </td>
-            <td style="width: 70%; text-align: center; vertical-align: middle; border: none;">
-                <div style="font-size: 12pt; font-weight: bold; color: #000; line-height: 1.3;">
-                    ESTRATEGIA ANUAL DE {{ $estrategy->partida_presupuestal === '36101' ? 'COMUNICACIÓN SOCIAL' : 'PROMOCIÓN Y PUBLICIDAD' }}<br>
-                    PARA EL EJERCICIO FISCAL {{ $estrategy->anio }}
+            <td style="text-align: center; vertical-align: bottom; border: none;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 45%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
+                    {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
+                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
                 </div>
             </td>
-            <td style="width: 15%; text-align: right; vertical-align: top; border: none;">
-                @if($logoRightPath && file_exists($logoRightPath))
-                    <img src="{{ $logoRightPath }}" height="60" alt="Logo Derecho">
-                @endif
+        </tr>
+    </table>
+@else
+    <table style="margin-top: 126px; width: 100%; border: none;">
+        <tr>
+            <td style="width: 48%; text-align: center; vertical-align: bottom; border: none;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 80%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
+                    {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
+                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
+                </div>
+            </td>
+            <td style="width: 4%; border: none;"></td>
+            <td style="width: 48%; text-align: center; vertical-align: bottom; border: none;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 80%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
+                    {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
+                    Nombre y firma del titular de comunicación social de la dependencia/entidad
+                </div>
             </td>
         </tr>
     </table>
-
-    {{-- Datos Principales --}}
-    <table style="width: 100%; border: 1px solid #000; border-radius: 5px; margin-bottom: 10px;">
-        <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; width: 22%; border-radius: 5px 0 0 0;">Dependencia o Entidad:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt;" colspan="3">{{ $estrategy->institution_name }}</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold;">Naturaleza Jurídica:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; width: 28%;">{{ $estrategy->juridical_nature_name }}</td>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; width: 22%;">Cabeza de sector:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; width: 28%;">{{ $estrategy->institution->sector->name ?? 'No disponible' }}</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; border-radius: 0 0 0 5px;">Fecha de elaboración:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; border-radius: 0 0 5px 0;" colspan="3">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
-        </tr>
-    </table>
-
-    @php
-        // Calcular totales por categoría
-        $totalElectronicos = 0;
-        $totalImpresos = 0;
-        $totalComplementarios = 0;
-        $totalEstudios = 0;
-        $totalDisenoProduccion = 0;
-
-        foreach($estrategy->campaigns as $campaign) {
-            // Medios Electrónicos
-            $totalElectronicos += ($campaign->televisoras ?? 0) + ($campaign->radiodifusoras ?? 0) + ($campaign->mediosDigitalesInternet ?? 0);
-
-            // Medios Impresos
-            $totalImpresos += ($campaign->decdmx ?? 0) + ($campaign->deedos ?? 0) + ($campaign->deextr ?? 0) + ($campaign->revistas ?? 0);
-
-            // Medios Complementarios
-            $totalComplementarios += ($campaign->cine ?? 0) + ($campaign->mediosComplementarios ?? 0) + ($campaign->mediosDigitales ?? 0);
-
-            // Estudios
-            $totalEstudios += ($campaign->preEstudios ?? 0) + ($campaign->postEstudios ?? 0);
-
-            // Diseño, Producción, Post-Producción
-            $totalDisenoProduccion += ($campaign->disenio ?? 0) + ($campaign->produccion ?? 0) + ($campaign->preProduccion ?? 0) + ($campaign->postProduccion ?? 0) + ($campaign->copiado ?? 0);
-        }
-
-        $granTotal = $totalElectronicos + $totalImpresos + $totalComplementarios + $totalEstudios + $totalDisenoProduccion;
-    @endphp
-
-    {{-- Tabla de Resumen de Medios --}}
-    <div style="margin-bottom: 12px;">
-        <div style="font-weight: bold; margin-bottom: 8px; font-size: 10pt; color: #333;">Resumen de Medios y Distribución Presupuestal:</div>
-        <table style="width: 100%; border: 1px solid #000; border-radius: 5px;">
-            <tr>
-                <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 8px 12px; font-size: 9pt; font-weight: bold; width: 70%; border-radius: 5px 0 0 0;">
-                    MEDIOS ELECTRÓNICOS
-                </td>
-                <td style="border: 1px solid #000; padding: 8px 12px; font-size: 9pt; text-align: right; width: 30%; border-radius: 0 5px 0 0;">
-                    {{ number_format($totalElectronicos, 2) }}
-                </td>
-            </tr>
-            <tr style="background-color: #f9f9f9;">
-                <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 8px 12px; font-size: 9pt; font-weight: bold;">
-                    MEDIOS IMPRESOS
-                </td>
-                <td style="border: 1px solid #000; padding: 8px 12px; font-size: 9pt; text-align: right;">
-                    {{ number_format($totalImpresos, 2) }}
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 8px 12px; font-size: 9pt; font-weight: bold;">
-                    MEDIOS COMPLEMENTARIOS
-                </td>
-                <td style="border: 1px solid #000; padding: 8px 12px; font-size: 9pt; text-align: right;">
-                    {{ number_format($totalComplementarios, 2) }}
-                </td>
-            </tr>
-            <tr style="background-color: #f9f9f9;">
-                <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 8px 12px; font-size: 9pt; font-weight: bold;">
-                    ESTUDIOS
-                </td>
-                <td style="border: 1px solid #000; padding: 8px 12px; font-size: 9pt; text-align: right;">
-                    {{ number_format($totalEstudios, 2) }}
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 8px 12px; font-size: 9pt; font-weight: bold;">
-                    DISEÑO, PRODUCCIÓN, POST-PRODUCCIÓN
-                </td>
-                <td style="border: 1px solid #000; padding: 8px 12px; font-size: 9pt; text-align: right;">
-                    {{ number_format($totalDisenoProduccion, 2) }}
-                </td>
-            </tr>
-            <tr style="background-color: #d9d9d9;">
-                <td style="border: 1px solid #000; padding: 10px 12px; font-size: 10pt; font-weight: bold; border-radius: 0 0 0 5px;">
-                    TOTAL
-                </td>
-                <td style="border: 1px solid #000; padding: 10px 12px; font-size: 10pt; text-align: right; font-weight: bold; border-radius: 0 0 5px 0;">
-                    {{ number_format($granTotal, 2) }}
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    {{-- Sección de Firmas --}}
-    @if($estrategy->institution && $estrategy->institution->isSector)
-        {{-- Si es Sector, solo mostrar firma del Responsable de Sector centrada --}}
-        <table style="margin-top: 80px; width: 100%;">
-            <tr>
-                <td style="text-align: center; vertical-align: bottom; padding-top: 30px;">
-                    <div style="border-top: 1px solid #000; margin: 0 auto; width: 50%; padding-top: 5px; font-size: 9pt;">
-                        {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                        Nombre y firma del titular de comunicación social de la coordinadora sectorial
-                    </div>
-                </td>
-            </tr>
-        </table>
-    @else
-        {{-- Si NO es Sector, mostrar ambas firmas --}}
-        <table style="margin-top: 80px; width: 100%;">
-            <tr>
-                <td style="width: 48%; text-align: center; vertical-align: bottom; padding-top: 30px;">
-                    <div style="border-top: 1px solid #000; margin: 0 auto; width: 85%; padding-top: 5px; font-size: 9pt;">
-                        {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                        Nombre y firma del titular de comunicación social de la coordinadora sectorial
-                    </div>
-                </td>
-                <td style="width: 4%;"></td>
-                <td style="width: 48%; text-align: center; vertical-align: bottom; padding-top: 30px;">
-                    <div style="border-top: 1px solid #000; margin: 0 auto; width: 85%; padding-top: 5px; font-size: 9pt;">
-                        {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
-                        Nombre y firma del titular de comunicación social de la dependencia/entidad
-                    </div>
-                </td>
-            </tr>
-        </table>
-    @endif
-</div>
+@endif

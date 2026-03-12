@@ -1676,90 +1676,90 @@ abstract class BaseEstrategyResource extends Resource
             ])
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
-                // Tables\Actions\Action::make('exportar_pdf')
-                //     ->label('Exportar PDF')
-                //     ->icon('heroicon-o-document-arrow-down')
-                //     ->color('info')
-                //     ->action(function ($record) {
-                //         // Cargar la estrategia con todas sus relaciones
-                //         $estrategy = Estrategy::with([
-                //             'institution.sector',
-                //             'juridicalNature',
-                //             'responsable',
-                //             'campaigns.campaignType',
-                //             'campaigns.versions'
-                //         ])->find($record->id);
+                //  Tables\Actions\Action::make('exportar_pdf')
+                //      ->label('Exportar PDF')
+                //      ->icon('heroicon-o-document-arrow-down')
+                //      ->color('info')
+                //      ->action(function ($record) {
+                //          // Cargar la estrategia con todas sus relaciones
+                //          $estrategy = Estrategy::with([
+                //              'institution.sector',
+                //              'juridicalNature',
+                //              'responsable',
+                //              'campaigns.campaignType',
+                //              'campaigns.versions'
+                //          ])->find($record->id);
 
-                //         // Obtener los logos del PDF desde configuraciones
-                //         $logoPath = \App\Models\Configuration::get('pdf.logo_path');
-                //         $logoRightPath = \App\Models\Configuration::get('pdf.logo_right_path');
+                //          // Obtener los logos del PDF desde configuraciones
+                //          $logoPath = \App\Models\Configuration::get('pdf.logo_path');
+                //          $logoRightPath = \App\Models\Configuration::get('pdf.logo_right_path');
 
-                //         // Función helper para extraer la ruta del archivo desde JSON o string
-                //         $extractFilePath = function($value) {
-                //             if (empty($value)) {
-                //                 return null;
-                //             }
+                //          // Función helper para extraer la ruta del archivo desde JSON o string
+                //          $extractFilePath = function($value) {
+                //              if (empty($value)) {
+                //                  return null;
+                //              }
 
-                //             // Si es un JSON (array de archivos de Filament)
-                //             if (is_string($value) && str_starts_with($value, '{')) {
-                //                 $decoded = json_decode($value, true);
-                //                 if (is_array($decoded) && count($decoded) > 0) {
-                //                     // Obtener el primer valor del array
-                //                     return reset($decoded);
+                //              // Si es un JSON (array de archivos de Filament)
+                //              if (is_string($value) && str_starts_with($value, '{')) {
+                //                  $decoded = json_decode($value, true);
+                //                  if (is_array($decoded) && count($decoded) > 0) {
+                //                      // Obtener el primer valor del array
+                //                      return reset($decoded);
+                //                  }
+                //              }
+
+                //              // Si es un string simple
+                //              return $value;
+                //          };
+
+                //             // Convertir la ruta del logo izquierdo a ruta absoluta si existe
+                //             $logoAbsolutePath = null;
+                //             $logoPathExtracted = $extractFilePath($logoPath);
+                //             if ($logoPathExtracted) {
+                //                 $logoAbsolutePath = storage_path('app/public/' . $logoPathExtracted);
+                //                 // Verificar si el archivo existe
+                //                 if (!file_exists($logoAbsolutePath)) {
+                //                     $logoAbsolutePath = null;
                 //                 }
                 //             }
 
-                //             // Si es un string simple
-                //             return $value;
-                //         };
-
-                //         // Convertir la ruta del logo izquierdo a ruta absoluta si existe
-                //         $logoAbsolutePath = null;
-                //         $logoPathExtracted = $extractFilePath($logoPath);
-                //         if ($logoPathExtracted) {
-                //             $logoAbsolutePath = storage_path('app/public/' . $logoPathExtracted);
-                //             // Verificar si el archivo existe
-                //             if (!file_exists($logoAbsolutePath)) {
-                //                 $logoAbsolutePath = null;
-                //             }
+                //     // Convertir la ruta del logo derecho a ruta absoluta si existe
+                //     $logoRightAbsolutePath = null;
+                //     $logoRightPathExtracted = $extractFilePath($logoRightPath);
+                //     if ($logoRightPathExtracted) {
+                //         $logoRightAbsolutePath = storage_path('app/public/' . $logoRightPathExtracted);
+                //         // Verificar si el archivo existe
+                //         if (!file_exists($logoRightAbsolutePath)) {
+                //             $logoRightAbsolutePath = null;
                 //         }
+                //     }
 
-                //         // Convertir la ruta del logo derecho a ruta absoluta si existe
-                //         $logoRightAbsolutePath = null;
-                //         $logoRightPathExtracted = $extractFilePath($logoRightPath);
-                //         if ($logoRightPathExtracted) {
-                //             $logoRightAbsolutePath = storage_path('app/public/' . $logoRightPathExtracted);
-                //             // Verificar si el archivo existe
-                //             if (!file_exists($logoRightAbsolutePath)) {
-                //                 $logoRightAbsolutePath = null;
-                //             }
-                //         }
+                //          // Generar el PDF
+                //          $pdf = Pdf::loadView('pdf.estrategy.main', [
+                //              'estrategy' => $estrategy,
+                //              'logoPath' => $logoAbsolutePath,
+                //              'logoRightPath' => $logoRightAbsolutePath
+                //          ]);
 
-                //         // Generar el PDF
-                //         $pdf = Pdf::loadView('pdf.estrategy.main', [
-                //             'estrategy' => $estrategy,
-                //             'logoPath' => $logoAbsolutePath,
-                //             'logoRightPath' => $logoRightAbsolutePath
-                //         ]);
+                //          // Configurar opciones del PDF
+                //          $pdf->setPaper('letter', 'portrait');
 
-                //         // Configurar opciones del PDF
-                //         $pdf->setPaper('letter', 'portrait');
+                //          // Configurar opciones de DomPDF para respetar los márgenes
+                //          $pdf->setOption('isHtml5ParserEnabled', true);
+                //          $pdf->setOption('isRemoteEnabled', true);
+                //          $pdf->setOption('dpi', 96);
 
-                //         // Configurar opciones de DomPDF para respetar los márgenes
-                //         $pdf->setOption('isHtml5ParserEnabled', true);
-                //         $pdf->setOption('isRemoteEnabled', true);
-                //         $pdf->setOption('dpi', 96);
+                //          // Nombre del archivo
+                //          $filename = 'Estrategia_' . $estrategy->institution_name . '_' . $estrategy->anio . '.pdf';
+                //          $filename = str_replace(' ', '_', $filename);
 
-                //         // Nombre del archivo
-                //         $filename = 'Estrategia_' . $estrategy->institution_name . '_' . $estrategy->anio . '.pdf';
-                //         $filename = str_replace(' ', '_', $filename);
-
-                //         // Descargar el PDF
-                //         return response()->streamDownload(function () use ($pdf) {
-                //             echo $pdf->stream();
-                //         }, $filename);
-                //     })
-                //     ->tooltip('Descargar estrategia en PDF'),
+                //          // Descargar el PDF
+                //          return response()->streamDownload(function () use ($pdf) {
+                //              echo $pdf->stream();
+                //          }, $filename);
+                //      })
+                //      ->tooltip('Descargar estrategia en PDF'),
                 Tables\Actions\Action::make('exportar_pdf_horizontal')
                     ->label('Ver PDF')
                     ->icon('heroicon-o-document-arrow-down')
@@ -1827,17 +1827,16 @@ abstract class BaseEstrategyResource extends Resource
                             'logoRightPath' => $logoRightAbsolutePath
                         ]);
 
-                        // Configurar opciones del PDF - LANDSCAPE
+                        // Configurar opciones del PDF - LANDSCAPE carta
                         $pdf->setPaper('letter', 'landscape');
 
-                        // Configurar opciones de DomPDF para respetar los márgenes
+                        // Configurar opciones de DomPDF
                         $pdf->setOption('isHtml5ParserEnabled', true);
                         $pdf->setOption('isRemoteEnabled', true);
                         $pdf->setOption('dpi', 96);
 
                         // Nombre del archivo
-                        $filename = 'Estrategia_Horizontal_' . $estrategy->institution_name . '_' . $estrategy->anio . '.pdf';
-                        $filename = str_replace(' ', '_', $filename);
+                        $filename = 'ReporteEstrategia' . $estrategy->anio . '.pdf';
 
                         // Descargar el PDF
                         return response()->streamDownload(function () use ($pdf) {

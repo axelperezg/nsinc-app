@@ -1,115 +1,118 @@
-{{-- Página 1: Misión, Visión y Objetivos --}}
+{{-- Página 1: Carátula (Misión, Visión, Objetivos) --}}
 
-<div style="padding: 0 20px;">
-    {{-- Header con logos --}}
-    <table style="width: 100%; margin-bottom: 10px; border: none;">
-        <tr>
-            <td style="width: 15%; text-align: left; vertical-align: top; border: none;">
-                @if($logoPath && file_exists($logoPath))
-                    <img src="{{ $logoPath }}" height="60" alt="Logo Izquierdo">
-                @endif
-            </td>
-            <td style="width: 70%; text-align: center; vertical-align: middle; border: none;">
-                <div style="font-size: 12pt; font-weight: bold; color: #000; line-height: 1.3;">
-                    ESTRATEGIA ANUAL DE {{ $estrategy->partida_presupuestal === '36101' ? 'COMUNICACIÓN SOCIAL' : 'PROMOCIÓN Y PUBLICIDAD' }}<br>
-                    PARA EL EJERCICIO FISCAL {{ $estrategy->anio }}
-                </div>
-            </td>
-            <td style="width: 15%; text-align: right; vertical-align: top; border: none;">
-                @if($logoRightPath && file_exists($logoRightPath))
-                    <img src="{{ $logoRightPath }}" height="30" alt="Logo Derecho">
-                @endif
-            </td>
-        </tr>
-    </table>
+{{-- Header con logos --}}
+<table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 14px;">
+    <tr>
+        <td style="width: 25%; text-align: left; vertical-align: middle; border: none;">
+            @if($logoPath && file_exists($logoPath))
+                <img src="{{ $logoPath }}" height="55" alt="Logo Izquierdo">
+            @endif
+        </td>
+        <td style="width: 50%; border: none;"></td>
+        <td style="width: 25%; text-align: right; vertical-align: middle; border: none;">
+            @if($logoRightPath && file_exists($logoRightPath))
+                <img src="{{ $logoRightPath }}" height="55" alt="Logo Derecho">
+            @endif
+        </td>
+    </tr>
+</table>
 
-    {{-- Datos Principales --}}
-    <table style="width: 100%; border: 1px solid #000; border-radius: 5px; margin-bottom: 10px;">
-        <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; width: 22%; border-radius: 5px 0 0 0;">Dependencia o Entidad:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt;" colspan="3">{{ $estrategy->institution_name }}</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold;">Naturaleza Jurídica:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; width: 28%;">{{ $estrategy->juridical_nature_name }}</td>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; width: 22%;">Cabeza de sector:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; width: 28%;">{{ $estrategy->institution->sector->name ?? 'No disponible' }}</td>
-        </tr>
-        <!--<tr>
-            <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 6px 12px; font-size: 9pt; font-weight: bold; border-radius: 0 0 0 5px;">Fecha de elaboración:</td>
-            <td style="border: 1px solid #000; padding: 6px 12px; font-size: 9pt; border-radius: 0 0 5px 0;" colspan="3">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
-        </tr>-->
-    </table>
-
-    {{-- Misión --}}
-    <div style="margin-bottom: 12px;">
-        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10pt; color: #333;">Misión:</div>
-        <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; min-height: 80px; text-align: justify; font-size: 9pt; line-height: 1.5; background-color: #fafafa;">
-            {{ $estrategy->mision }}
-        </div>
+{{-- Título principal --}}
+<div style="text-align: center; margin-bottom: 12px;">
+    <div style="font-size: 13pt; font-weight: bold; line-height: 1.4;">
+        ESTRATEGIA ANUAL DE {{ $estrategy->partida_presupuestal === '36101' ? 'COMUNICACIÓN SOCIAL' : 'PROMOCIÓN Y PUBLICIDAD' }}<br>
+        PARA EL EJERCICIO FISCAL {{ $estrategy->anio }}
     </div>
-
-    {{-- Visión --}}
-    <div style="margin-bottom: 12px;">
-        <div style="font-weight: bold; margin-bottom: 5px; font-size: 10pt; color: #333;">Visión:</div>
-        <div style="border: 1px solid #000; border-radius: 5px; padding: 12px; min-height: 80px; text-align: justify; font-size: 9pt; line-height: 1.5; background-color: #fafafa;">
-            {{ $estrategy->vision }}
-        </div>
-    </div>
-
-    {{-- Objetivos (lado a lado en cuadros separados más compactos) --}}
-    <table style="width: 100%; margin-bottom: 10px; border-collapse: separate; border-spacing: 6px 0;">
-        <tr>
-            <td style="width: 50%; vertical-align: top;">
-                <div style="border: 1px solid #000; border-radius: 8px; padding: 8px; background-color: #f0f8ff;">
-                    <div style="font-weight: bold; margin-bottom: 3px; font-size: 9pt; color: #2c5282;">Objetivo Institucional:</div>
-                    <div style="text-align: justify; font-size: 9pt; line-height: 1.3;">
-                        {{ $estrategy->objetivo_institucional }}
-                    </div>
-                </div>
-            </td>
-            <td style="width: 50%; vertical-align: top;">
-                <div style="border: 1px solid #000; border-radius: 8px; padding: 8px; background-color: #fff8f0;">
-                    <div style="font-weight: bold; margin-bottom: 3px; font-size: 9pt; color: #8b5a00;">Objetivo de la estrategia de comunicación:</div>
-                    <div style="text-align: justify; font-size: 9pt; line-height: 1.3;">
-                        {{ $estrategy->objetivo_estrategia }}
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    {{-- Sección de Firmas --}}
-    @if($estrategy->institution && $estrategy->institution->isSector)
-        {{-- Si es Sector, solo mostrar firma del Responsable de Sector centrada --}}
-        <table style="margin-top: 40px; width: 100%;">
-            <tr>
-                <td style="text-align: center; vertical-align: bottom; padding-top: 30px;">
-                    <div style="border-top: 1px solid #000; margin: 0 auto; width: 50%; padding-top: 5px; font-size: 9pt;">
-                        {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                        Nombre y firma del titular de comunicación social de la coordinadora sectorial
-                    </div>
-                </td>
-            </tr>
-        </table>
-    @else
-        {{-- Si NO es Sector, mostrar ambas firmas --}}
-        <table style="margin-top: 40px; width: 100%;">
-            <tr>
-                <td style="width: 48%; text-align: center; vertical-align: bottom; padding-top: 30px;">
-                    <div style="border-top: 1px solid #000; margin: 0 auto; width: 85%; padding-top: 5px; font-size: 9pt;">
-                        {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                        Nombre y firma del titular de comunicación social de la coordinadora sectorial
-                    </div>
-                </td>
-                <td style="width: 4%;"></td>
-                <td style="width: 48%; text-align: center; vertical-align: bottom; padding-top: 30px;">
-                    <div style="border-top: 1px solid #000; margin: 0 auto; width: 85%; padding-top: 5px; font-size: 9pt;">
-                        {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
-                        Nombre y firma del titular de comunicación social de la dependencia/entidad
-                    </div>
-                </td>
-            </tr>
-        </table>
-    @endif
 </div>
+
+{{-- Datos de la institución --}}
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <tr>
+        <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px 8px; font-size: 9pt; font-weight: bold; width: 20%;">Dependencia o Entidad:</td>
+        <td style="border: 1px solid #000; padding: 4px 8px; font-size: 9pt;" colspan="3">{{ $estrategy->institution_name }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px 8px; font-size: 9pt; font-weight: bold;">Naturaleza Jurídica:</td>
+        <td style="border: 1px solid #000; padding: 4px 8px; font-size: 9pt; width: 30%;">{{ $estrategy->juridical_nature_name }}</td>
+        <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px 8px; font-size: 9pt; font-weight: bold; width: 20%;">Cabeza de sector:</td>
+        <td style="border: 1px solid #000; padding: 4px 8px; font-size: 9pt; width: 30%;">{{ $estrategy->institution->sector->name ?? 'No disponible' }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px 8px; font-size: 9pt; font-weight: bold;">Partida presupuestal:</td>
+        <td style="border: 1px solid #000; padding: 4px 8px; font-size: 9pt;">{{ $estrategy->partida_presupuestal }}</td>
+        <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px 8px; font-size: 9pt; font-weight: bold;">Solicitud:</td>
+        <td style="border: 1px solid #000; padding: 4px 8px; font-size: 9pt;">{{ $estrategy->concepto }}</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid #000; background-color: #d9d9d9; padding: 4px 8px; font-size: 9pt; font-weight: bold;">Fecha de elaboración:</td>
+        <td style="border: 1px solid #000; padding: 4px 8px; font-size: 9pt;" colspan="3">{{ \Carbon\Carbon::parse($estrategy->fecha_elaboracion)->translatedFormat('d \d\e F \d\e Y') }}</td>
+    </tr>
+</table>
+
+{{-- Misión y Visión en dos columnas --}}
+<table style="width: 100%; border-collapse: separate; border-spacing: 8px 0; margin-bottom: 8px;">
+    <tr>
+        <td style="width: 50%; vertical-align: top; border: none;">
+            <div style="background-color: #9B1B30; color: #fff; font-size: 9pt; font-weight: bold; padding: 4px 8px; margin-bottom: 0;">Misión:</div>
+            <div style="border: 1px solid #000; border-top: none; padding: 8px; font-size: 9pt; text-align: justify; line-height: 1.4; min-height: 70px;">
+                {{ $estrategy->mision }}
+            </div>
+        </td>
+        <td style="width: 50%; vertical-align: top; border: none;">
+            <div style="background-color: #9B1B30; color: #fff; font-size: 9pt; font-weight: bold; padding: 4px 8px; margin-bottom: 0;">Visión:</div>
+            <div style="border: 1px solid #000; border-top: none; padding: 8px; font-size: 9pt; text-align: justify; line-height: 1.4; min-height: 70px;">
+                {{ $estrategy->vision }}
+            </div>
+        </td>
+    </tr>
+</table>
+
+{{-- Objetivos en dos columnas --}}
+<table style="width: 100%; border-collapse: separate; border-spacing: 8px 0; margin-bottom: 14px;">
+    <tr>
+        <td style="width: 50%; vertical-align: top; border: none;">
+            <div style="background-color: #9B1B30; color: #fff; font-size: 9pt; font-weight: bold; padding: 4px 8px; margin-bottom: 0;">Objetivo Institucional:</div>
+            <div style="border: 1px solid #000; border-top: none; padding: 8px; font-size: 9pt; text-align: justify; line-height: 1.4; min-height: 60px;">
+                {{ $estrategy->objetivo_institucional }}
+            </div>
+        </td>
+        <td style="width: 50%; vertical-align: top; border: none;">
+            <div style="background-color: #9B1B30; color: #fff; font-size: 9pt; font-weight: bold; padding: 4px 8px; margin-bottom: 0;">Objetivo de la estrategia de comunicación:</div>
+            <div style="border: 1px solid #000; border-top: none; padding: 8px; font-size: 9pt; text-align: justify; line-height: 1.4; min-height: 60px;">
+                {{ $estrategy->objetivo_estrategia }}
+            </div>
+        </td>
+    </tr>
+</table>
+
+{{-- Firmas --}}
+@if($estrategy->institution && $estrategy->institution->isSector)
+    <table style="margin-top: 116px; width: 100%; border: none;">
+        <tr>
+            <td style="text-align: center; vertical-align: bottom; border: none;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 45%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
+                    {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
+                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
+                </div>
+            </td>
+        </tr>
+    </table>
+@else
+    <table style="margin-top: 116px; width: 100%; border: none;">
+        <tr>
+            <td style="width: 48%; text-align: center; vertical-align: bottom; border: none;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 80%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
+                    {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
+                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
+                </div>
+            </td>
+            <td style="width: 4%; border: none;"></td>
+            <td style="width: 48%; text-align: center; vertical-align: bottom; border: none;">
+                <div style="border-top: 1px solid #000; margin: 0 auto; width: 80%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
+                    {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
+                    Nombre y firma del titular de comunicación social de la dependencia/entidad
+                </div>
+            </td>
+        </tr>
+    </table>
+@endif
