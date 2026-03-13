@@ -230,3 +230,6 @@ The form provides:
 - `phpunit.xml` configures test environment variables
 - Factories are located in `database/factories/`
 - Use `php artisan test` (not `phpunit` directly) to ensure Laravel environment is loaded
+
+
+Utiliza la configuracion de Panel de Filament
