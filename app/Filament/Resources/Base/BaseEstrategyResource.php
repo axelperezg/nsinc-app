@@ -1468,6 +1468,15 @@ abstract class BaseEstrategyResource extends Resource
                             });
                         }
                         break;
+                    case 'usuarios_segob':
+                        // Usuarios Segob ven solo estrategias del sector Secretaría de Gobernación
+                        $segobSector = \App\Models\Sector::where('name', 'SECRETARIA DE GOBERNACIÓN')->value('id');
+                        if ($segobSector) {
+                            $query->whereHas('institution', function ($q) use ($segobSector) {
+                                $q->where('sector_id', $segobSector);
+                            });
+                        }
+                        break;
                     default:
                         // Usuarios de institución ven solo su institución
                         if ($user->institution_id) {
@@ -1582,6 +1591,13 @@ abstract class BaseEstrategyResource extends Resource
                         Forms\Components\Select::make('sector_id')
                             ->label('Sector')
                             ->options(fn () => \App\Models\Sector::query()->pluck('name', 'id'))
+                            ->default(function () {
+                                $user = Auth::user();
+                                if ($user && $user->role && $user->role->name === 'dgnc_user') {
+                                    return \App\Models\Sector::where('name', 'SECRETARIA DE GOBERNACIÓN')->value('id');
+                                }
+                                return null;
+                            })
                             //->searchable()
                             ->live(),
                     ])
@@ -1600,8 +1616,8 @@ abstract class BaseEstrategyResource extends Resource
                         }
                         return null;
                     })
-                    ->visible(fn () => Auth::user() && Auth::user()->role && in_array(Auth::user()->role->name, ['super_admin', 'dgnc_user'])),
-                
+                    ->visible(fn () => Auth::user() && Auth::user()->role && in_array(Auth::user()->role->name, ['super_admin', 'dgnc_user', 'usuarios_segob'])),
+
                 Tables\Filters\Filter::make('institution_id')
                     ->label('Institución')
                     ->form([
