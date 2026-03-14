@@ -72,20 +72,20 @@ abstract class BaseListEstrategies extends ListRecords
         }
 
         // Botón de exportar campañas a Excel
-        $partida = static::$partidaPresupuestal;
-        $nombrePartida = $partida === '36101' ? 'comunicacion_social' : 'promocion_publicidad';
+        // $partida = static::$partidaPresupuestal;
+        // $nombrePartida = $partida === '36101' ? 'comunicacion_social' : 'promocion_publicidad';
 
-        $actions[] = Actions\Action::make('exportar_campanas_excel')
-            ->label('Exportar Campañas a Excel')
-            ->icon('heroicon-o-document-arrow-down')
-            ->color('success')
-            ->action(function () use ($partida, $nombrePartida) {
-                return Excel::download(
-                    new CampaignsExport($partida),
-                    'campanas_' . $nombrePartida . '_' . now()->format('Y-m-d_H-i-s') . '.xlsx'
-                );
-            })
-            ->tooltip('Descargar campañas de esta partida en formato Excel');
+        // $actions[] = Actions\Action::make('exportar_campanas_excel')
+        //     ->label('Exportar Campañas a Excel')
+        //     ->icon('heroicon-o-document-arrow-down')
+        //     ->color('success')
+        //     ->action(function () use ($partida, $nombrePartida) {
+        //         return Excel::download(
+        //             new CampaignsExport($partida),
+        //             'campanas_' . $nombrePartida . '_' . now()->format('Y-m-d_H-i-s') . '.xlsx'
+        //         );
+        //     })
+        //     ->tooltip('Descargar campañas de esta partida en formato Excel');
 
         return $actions;
     }

@@ -30,8 +30,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->registration()
             ->login()
-            ->brandLogo(fn () => Configuration::get('pdf.logo_path') ? "/storage/" . Configuration::get('pdf.logo_path') : null)
-            ->darkModeBrandLogo(fn () => Configuration::get('pdf.logo_path') ? "/storage/" . Configuration::get('pdf.logo_path') : null)
+            ->brandLogo(fn () => Configuration::get('pdf.logo_path') ? Storage::url(Configuration::get('pdf.logo_path')) : null)
+            ->darkModeBrandLogo(fn () => Configuration::get('pdf.logo_path') ? Storage::url(Configuration::get('pdf.logo_path')) : null)
             ->brandLogoHeight('2.5rem')
             ->colors([
                 'primary' => Color::rgb('rgb(108, 29, 69)'),

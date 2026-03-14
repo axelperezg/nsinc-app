@@ -186,7 +186,8 @@ class UserResource extends Resource
                 Tables\Filters\SelectFilter::make('role_id')
                     ->label('Rol')
                     ->relationship('role', 'display_name')
-                    ->preload(),
+                    ->preload()
+                    ->default(\App\Models\Role::where('name', 'sector_coordinator')->value('id')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
