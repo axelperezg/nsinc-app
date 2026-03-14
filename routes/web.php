@@ -8,6 +8,20 @@ Route::get('/', function () {
     return view('home');
 });
 
+// Ruta pública para servir logos de configuración (evita dependencia del symlink de storage)
+Route::get('/config-logo/{type}', function ($type) {
+    $key = $type === 'right' ? 'pdf.logo_right_path' : 'pdf.logo_path';
+    $path = \App\Models\Configuration::get($key);
+    if (!$path) {
+        abort(404);
+    }
+    $fullPath = storage_path('app/public/' . $path);
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+    return response()->file($fullPath);
+})->name('config-logo');
+
 // Ruta para evaluación de estrategias por coordinadores de sector
 Route::post('/estrategy/{estrategy}/evaluar', [EstrategyController::class, 'evaluar'])
     ->name('estrategy.evaluar')
