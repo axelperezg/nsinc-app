@@ -33,7 +33,7 @@ class RoleSeeder extends Seeder
 
         $consultaRole = Role::firstOrCreate(['name' => 'consulta'], [
             'display_name' => 'Consulta',
-            'description' => 'Usuario de solo lectura con acceso a estrategias de Comunicación Social y Promoción y Publicidad',
+            'description' => 'Usuario de solo lectura con acceso a Campañas',
         ]);
 
         // Crear permisos
