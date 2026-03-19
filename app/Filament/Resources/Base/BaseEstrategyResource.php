@@ -1215,6 +1215,60 @@ abstract class BaseEstrategyResource extends Resource
                     ->columns(4)
                     ->collapsible(false),
 
+                    Forms\Components\Section::make('Detalle de Campañas')
+                    ->icon('heroicon-o-megaphone')
+                    ->schema([
+                        Forms\Components\Placeholder::make('campañas_detalle')
+                            ->label('')
+                            ->content(function ($get) {
+                                $campaigns = $get('campaigns') ?? [];
+
+                                if (empty($campaigns)) {
+                                    return new \Illuminate\Support\HtmlString('<p class="text-gray-500 text-sm">No hay campañas registradas.</p>');
+                                }
+
+                                $rows = '';
+                                foreach ($campaigns as $campaign) {
+                                    $nombre = $campaign['name'] ?? '(Sin nombre)';
+                                    $total = 0;
+
+                                    if (isset($campaign['televisoras'])) {
+                                        $total = floatval($campaign['televisoras'] ?? 0)
+                                            + floatval($campaign['radiodifusoras'] ?? 0)
+                                            + floatval($campaign['cine'] ?? 0)
+                                            + floatval($campaign['decdmx'] ?? 0)
+                                            + floatval($campaign['deedos'] ?? 0)
+                                            + floatval($campaign['deextr'] ?? 0)
+                                            + floatval($campaign['revistas'] ?? 0)
+                                            + floatval($campaign['mediosComplementarios'] ?? 0)
+                                            + floatval($campaign['mediosDigitales'] ?? 0)
+                                            + floatval($campaign['mediosDigitalesInternet'] ?? 0)
+                                            + floatval($campaign['preEstudios'] ?? 0)
+                                            + floatval($campaign['postEstudios'] ?? 0)
+                                            + floatval($campaign['disenio'] ?? 0)
+                                            + floatval($campaign['produccion'] ?? 0)
+                                            + floatval($campaign['preProduccion'] ?? 0)
+                                            + floatval($campaign['postProduccion'] ?? 0)
+                                            + floatval($campaign['copiado'] ?? 0);
+                                    }
+
+                                    $rows .= '<tr class="border-b last:border-0">'
+                                        . '<td class="py-2 px-4 font-medium text-gray-800">' . e($nombre) . '</td>'
+                                        . '<td class="py-2 px-4 text-right font-mono text-gray-800">$' . number_format($total, 2) . '</td>'
+                                        . '</tr>';
+                                }
+
+                                return new \Illuminate\Support\HtmlString(
+                                    '<table class="w-full text-sm">'
+                                    . '<thead><tr class="border-b bg-gray-50"><th class="py-2 px-4 text-left font-semibold text-gray-600">Campaña</th><th class="py-2 px-4 text-right font-semibold text-gray-600">Presupuesto Asignado</th></tr></thead>'
+                                    . '<tbody>' . $rows . '</tbody>'
+                                    . '</table>'
+                                );
+                            })
+                            ->reactive(),
+                    ])
+                    ->collapsible(false),
+
                     Forms\Components\Section::make('Justificación de Estudios')
                     ->description(function ($get) {
                         $campaigns = $get('campaigns') ?? [];
@@ -1588,10 +1642,9 @@ abstract class BaseEstrategyResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-               
-                
                 Tables\Filters\Filter::make('sector_id')
                     ->label('Sector')
+                    ->columnSpan(1)
                     ->form([
                         Forms\Components\Select::make('sector_id')
                             ->label('Sector')
@@ -1603,7 +1656,7 @@ abstract class BaseEstrategyResource extends Resource
                                 }
                                 return null;
                             })
-                            //->searchable()
+                            ->searchable()
                             ->live(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -1625,6 +1678,7 @@ abstract class BaseEstrategyResource extends Resource
 
                 Tables\Filters\Filter::make('institution_id')
                     ->label('Institución')
+                    ->columnSpan(1)
                     ->form([
                         Forms\Components\Select::make('institution_id')
                             ->label('Institución')
@@ -1643,7 +1697,7 @@ abstract class BaseEstrategyResource extends Resource
                                 
                                 return $query->pluck('name', 'id');
                             })
-                            //->searchable()
+                            ->searchable()
                             ->live(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -1694,6 +1748,7 @@ abstract class BaseEstrategyResource extends Resource
                         return 'Año: ' . now()->year;
                     }),
             ])
+            ->filtersFormColumns(2)
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 //  Tables\Actions\Action::make('exportar_pdf')
@@ -2161,6 +2216,7 @@ abstract class BaseEstrategyResource extends Resource
                                 \Filament\Forms\Components\TextInput::make('institution.name')
                                     ->label('Institución')
                                     ->default(fn ($record) => $record->institution->name)
+                                    ->columnSpanFull()
                                     ->disabled(),
                                 \Filament\Forms\Components\TextInput::make('estado_estrategia')
                                     ->label('Estado Actual')
