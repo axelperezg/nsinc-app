@@ -246,10 +246,9 @@ class CampaignResource extends Resource
                 return $query;
             })
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->searchable()
-                    ->sortable(),
+               
+                Tables\Columns\TextColumn::make('estrategy.anio')
+                    ->label('Año'),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable()
@@ -286,6 +285,25 @@ class CampaignResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('year')
+                    ->label('Año')
+                    ->options(function () {
+                        $currentYear = (int) now()->format('Y');
+                        $years = [];
+                        for ($i = 0; $i < 12; $i++) {
+                            $year = $currentYear + $i;
+                            $years[$year] = (string) $year;
+                        }
+                        return $years;
+                    })
+                    ->default((int) now()->format('Y'))
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['value']) {
+                            $query->whereHas('estrategy', function ($q) use ($data) {
+                                $q->where('anio', $data['value']);
+                            });
+                        }
+                    }),
                 Tables\Filters\SelectFilter::make('campaign_type_id')
                     ->label('Tipo de Campaña')
                     ->relationship('campaignType', 'name'),

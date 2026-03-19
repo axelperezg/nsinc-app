@@ -20,6 +20,11 @@ class ListUsers extends ListRecords
         ];
     }
 
+    public function getDefaultActiveTab(): string|int|null
+    {
+        return 'sector_coordinator';
+    }
+
     public function getTabs(): array
     {
         $tabs = [

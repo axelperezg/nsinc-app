@@ -108,16 +108,15 @@ class ExpirationDateResource extends Resource
                 ->form([
                     Forms\Components\Select::make('anio')
                         ->label('Año')
-                        ->options(
-                            [
-                                2025 => '2025',
-                                2026 => '2026',
-                                2027 => '2027',
-                                2028 => '2028',
-                                2029 => '2029',
-                                2030 => '2030',
-                            ]
-                        )->default(now()->year),
+                        ->options(function () {
+                        $currentYear = (int) now()->format('Y');
+                        $years = [];
+                        for ($i = 0; $i < 15; $i++) {
+                            $year = $currentYear + $i;
+                            $years[$year] = (string) $year;
+                        }
+                        return $years;
+                    })
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     return $query

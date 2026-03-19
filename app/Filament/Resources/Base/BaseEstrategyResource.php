@@ -112,7 +112,7 @@ abstract class BaseEstrategyResource extends Resource
                         ->icon('heroicon-o-document-text')
                         ->completedIcon('heroicon-o-check-circle')
                         ->schema([
-                            Forms\Components\Section::make('Información General')
+                        Forms\Components\Section::make('Información General')
                             ->description('Datos básicos de la estrategia (generados automáticamente)')
                             ->icon('heroicon-o-document-text')
                             ->schema([
@@ -122,25 +122,48 @@ abstract class BaseEstrategyResource extends Resource
                             ->default(function () {
                                 // Tomar el año del filtro activo o año actual
                                 return request()->get('tableFilters.anio.anio', now()->year);
-                            }),   
-                        Forms\Components\Hidden::make('institution_id')
-                            ->default(function () {
-                                $user = Auth::user();
-                                return $user ? $user->institution_id : null;
                             }),
-                        Forms\Components\TextInput::make('institution_name')
-                            ->label('Institución')
+                        Forms\Components\TextInput::make('concepto')
+                            ->label('Solicitud')
                             ->disabled()
                             ->dehydrated() // Incluir en el envío aunque esté deshabilitado
                             ->default(function () {
+                                // Verificar si ya existe una estrategia para este año e institución
+                                $anio = request()->get('tableFilters.anio.anio', now()->year);
                                 $user = Auth::user();
+                                
                                 if ($user && $user->institution_id) {
-                                    $institution = \App\Models\Institution::find($user->institution_id);
-                                    if ($institution) {
-                                        return $institution->name;
+                                    $estrategiaExistente = \App\Models\Estrategy::where('anio', $anio)
+                                        ->where('institution_id', $user->institution_id)
+                                        ->first();
+                                    
+                                    if ($estrategiaExistente) {
+                                        return $estrategiaExistente->concepto;
                                     }
                                 }
-                                return 'No disponible';
+                                
+                                return 'Registro';
+                            }), 
+                        Forms\Components\TextInput::make('estado_estrategia')
+                            ->label('Estado de la Estrategia')
+                            ->disabled()
+                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
+                            ->default(function () {
+                                // Verificar si ya existe una estrategia para este año e institución
+                                $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                $user = Auth::user();
+                                
+                                if ($user && $user->institution_id) {
+                                    $estrategiaExistente = \App\Models\Estrategy::where('anio', $anio)
+                                        ->where('institution_id', $user->institution_id)
+                                        ->first();
+                                    
+                                    if ($estrategiaExistente) {
+                                        return $estrategiaExistente->estado_estrategia;
+                                    }
+                                }
+                                
+                                return 'Creada';
                             }),
                         Forms\Components\Hidden::make('juridical_nature_id')
                             ->default(function () {
@@ -151,7 +174,7 @@ abstract class BaseEstrategyResource extends Resource
                                 }
                                 return null;
                             }),
-                        Forms\Components\TextInput::make('juridical_nature_name')
+                         Forms\Components\TextInput::make('juridical_nature_name')
                             ->label('Naturaleza Jurídica')
                             ->disabled()
                             ->dehydrated() // Incluir en el envío aunque esté deshabilitado
@@ -175,7 +198,7 @@ abstract class BaseEstrategyResource extends Resource
                                 return null;
                             }),
                         Forms\Components\TextInput::make('responsable_name')
-                            ->label('Responsable')
+                            ->label('Responsable Institución')
                             ->disabled()
                             ->dehydrated() // Incluir en el envío aunque esté deshabilitado
                             ->default(function () {
@@ -202,54 +225,15 @@ abstract class BaseEstrategyResource extends Resource
                                 }
                                 return 'No disponible';
                             }),
+                        
                         Forms\Components\DatePicker::make('fecha_elaboracion')
                             ->label('Fecha de Elaboración')
                             ->disabled()
                             ->default(now())
                             ->hidden()
                             ->dehydrated(), // Esto asegura que el campo se incluya en el envío aunque esté deshabilitado
-                        Forms\Components\TextInput::make('estado_estrategia')
-                            ->label('Estado de la Estrategia')
-                            ->disabled()
-                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
-                            ->default(function () {
-                                // Verificar si ya existe una estrategia para este año e institución
-                                $anio = request()->get('tableFilters.anio.anio', now()->year);
-                                $user = Auth::user();
-                                
-                                if ($user && $user->institution_id) {
-                                    $estrategiaExistente = \App\Models\Estrategy::where('anio', $anio)
-                                        ->where('institution_id', $user->institution_id)
-                                        ->first();
-                                    
-                                    if ($estrategiaExistente) {
-                                        return $estrategiaExistente->estado_estrategia;
-                                    }
-                                }
-                                
-                                return 'Creada';
-                            }),
-                        Forms\Components\TextInput::make('concepto')
-                            ->label('Solicitud')
-                            ->disabled()
-                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
-                            ->default(function () {
-                                // Verificar si ya existe una estrategia para este año e institución
-                                $anio = request()->get('tableFilters.anio.anio', now()->year);
-                                $user = Auth::user();
-                                
-                                if ($user && $user->institution_id) {
-                                    $estrategiaExistente = \App\Models\Estrategy::where('anio', $anio)
-                                        ->where('institution_id', $user->institution_id)
-                                        ->first();
-                                    
-                                    if ($estrategiaExistente) {
-                                        return $estrategiaExistente->concepto;
-                                    }
-                                }
-                                
-                                return 'Registro';
-                            }),
+                       
+                        
                         Forms\Components\TextInput::make('oficio_dgnc')
                             ->label('Oficio DGNC')
                             ->maxLength(255)
@@ -260,6 +244,25 @@ abstract class BaseEstrategyResource extends Resource
                             })
                             ->dehydrated()
                             ->hidden(), // Incluir en el envío aunque esté deshabilitado
+                        Forms\Components\Hidden::make('institution_id')
+                            ->default(function () {
+                                $user = Auth::user();
+                                return $user ? $user->institution_id : null;
+                            }),
+                        Forms\Components\TextInput::make('institution_name')
+                            ->label('Institución')
+                            ->disabled()
+                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
+                            ->default(function () {
+                                $user = Auth::user();
+                                if ($user && $user->institution_id) {
+                                    $institution = \App\Models\Institution::find($user->institution_id);
+                                    if ($institution) {
+                                        return $institution->name;
+                                    }
+                                }
+                                return 'No disponible';
+                            })->columnSpanFull(),
                         Forms\Components\DatePicker::make('fecha_envio_dgnc')
                             ->label('Fecha de Envío DGNC')
                             ->disabled()
@@ -798,7 +801,9 @@ abstract class BaseEstrategyResource extends Resource
                                             ->label('Edad')
                                             ->multiple()
                                             ->options([
-                                                '18-24' => '18-24',
+                                                '00-12' => '00-12',
+                                                '13-18' => '13-18',
+                                                '19-24' => '19-24',
                                                 '25-34' => '25-34',
                                                 '35-44' => '35-44',
                                                 '45-54' => '45-54',
@@ -1660,16 +1665,15 @@ abstract class BaseEstrategyResource extends Resource
                     ->form([
                         Forms\Components\Select::make('anio')
                             ->label('Año')
-                            ->options(
-                                [
-                                    2025 => '2025',
-                                    2026 => '2026',
-                                    2027 => '2027',
-                                    2028 => '2028',
-                                    2029 => '2029',
-                                    2030 => '2030',
-                                ]
-                            )->default(now()->year),
+                            ->options(function () {
+                            $currentYear = (int) now()->format('Y');
+                            $years = [];
+                            for ($i = 0; $i < 15; $i++) {
+                                $year = $currentYear + $i;
+                                $years[$year] = (string) $year;
+                            }
+                            return $years;
+                        })        
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query

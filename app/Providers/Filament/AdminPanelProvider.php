@@ -32,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => Configuration::get('pdf.logo_path') ? route('config-logo', 'left') : null)
             ->darkModeBrandLogo(fn () => Configuration::get('pdf.logo_path') ? route('config-logo', 'left') : null)
             ->brandLogoHeight('2.5rem')
+            ->favicon(asset('favicon.png'))
             ->colors([
                 'primary' => Color::rgb('rgb(108, 29, 69)'),
             ])
