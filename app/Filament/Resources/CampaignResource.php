@@ -290,7 +290,7 @@ class CampaignResource extends Resource
                     ->options(function () {
                         $currentYear = (int) now()->format('Y');
                         $years = [];
-                        for ($i = 0; $i < 12; $i++) {
+                        for ($i = 0; $i < 15; $i++) {
                             $year = $currentYear + $i;
                             $years[$year] = (string) $year;
                         }
@@ -331,8 +331,9 @@ class CampaignResource extends Resource
                     ->label('Exportar a Excel')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('success')
-                    ->action(function () {
-                        return Excel::download(new CampaignsExport, 'campaigns_' . now()->format('Y-m-d_H-i-s') . '.xlsx');
+                    ->action(function ($livewire) {
+                        $anio = (int) ($livewire->tableFilters['year']['value'] ?? now()->year);
+                        return Excel::download(new CampaignsExport(null, $anio), 'campaigns_' . $anio . '.xlsx');
                     })
                     ->tooltip('Descargar todas las campañas en formato Excel'),
             ])

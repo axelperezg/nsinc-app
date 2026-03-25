@@ -13,10 +13,12 @@ use Illuminate\Support\Collection;
 class CampaignsExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
 {
     protected ?string $partidaPresupuestal;
+    protected ?int $anio;
 
-    public function __construct(?string $partidaPresupuestal = null)
+    public function __construct(?string $partidaPresupuestal = null, ?int $anio = null)
     {
         $this->partidaPresupuestal = $partidaPresupuestal;
+        $this->anio = $anio;
     }
 
     /**
@@ -57,6 +59,12 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
             'estrategy.responsable',
             'versions'
         ]);
+
+        if ($this->anio) {
+            $query->whereHas('estrategy', function ($q) {
+                $q->where('anio', $this->anio);
+            });
+        }
 
         if ($this->partidaPresupuestal) {
             $query->whereHas('estrategy', function ($q) {
