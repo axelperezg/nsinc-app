@@ -121,7 +121,7 @@ abstract class BaseEstrategyResource extends Resource
                             ->disabled()
                             ->default(function () {
                                 // Tomar el año del filtro activo o año actual
-                                return request()->get('tableFilters.anio.anio', now()->year);
+                                return request()->get('year', now()->year);
                             }),
                         Forms\Components\TextInput::make('concepto')
                             ->label('Solicitud')
@@ -129,7 +129,7 @@ abstract class BaseEstrategyResource extends Resource
                             ->dehydrated() // Incluir en el envío aunque esté deshabilitado
                             ->default(function () {
                                 // Verificar si ya existe una estrategia para este año e institución
-                                $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                $anio = request()->get('year', now()->year);
                                 $user = Auth::user();
                                 
                                 if ($user && $user->institution_id) {
@@ -150,7 +150,7 @@ abstract class BaseEstrategyResource extends Resource
                             ->dehydrated() // Incluir en el envío aunque esté deshabilitado
                             ->default(function () {
                                 // Verificar si ya existe una estrategia para este año e institución
-                                $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                $anio = request()->get('year', now()->year);
                                 $user = Auth::user();
                                 
                                 if ($user && $user->institution_id) {
@@ -269,7 +269,7 @@ abstract class BaseEstrategyResource extends Resource
                             ->hidden()
                             ->visible(function () {
                                 // Solo mostrar si el estado es 'Enviada a DGNC' o posterior
-                                $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                $anio = request()->get('year', now()->year);
                                 $user = Auth::user();
                                 
                                 if ($user && $user->institution_id) {
@@ -290,7 +290,7 @@ abstract class BaseEstrategyResource extends Resource
                                 return false;
                             })
                             ->default(function () {
-                                $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                $anio = request()->get('year', now()->year);
                                 $user = Auth::user();
                                 
                                 if ($user && $user->institution_id) {
@@ -311,7 +311,7 @@ abstract class BaseEstrategyResource extends Resource
                             // Campos ocultos para guardar los IDs correctos
                             Forms\Components\Hidden::make('anio')
                                 ->default(function () {
-                                    return request()->get('tableFilters.anio.anio', now()->year);
+                                    return request()->get('year', now()->year);
                                 }),
                             Forms\Components\Hidden::make('institution_id')
                                 ->default(function () {
@@ -331,7 +331,7 @@ abstract class BaseEstrategyResource extends Resource
                                 }),
                             Forms\Components\Hidden::make('estado_estrategia')
                                 ->default(function () {
-                                    $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                    $anio = request()->get('year', now()->year);
                                     $user = Auth::user();
                                     
                                     if ($user && $user->institution_id) {
@@ -348,7 +348,7 @@ abstract class BaseEstrategyResource extends Resource
                                 }),
                             Forms\Components\Hidden::make('concepto')
                                 ->default(function () {
-                                    $anio = request()->get('tableFilters.anio.anio', now()->year);
+                                    $anio = request()->get('year', now()->year);
                                     $user = Auth::user();
                                     
                                     if ($user && $user->institution_id) {
