@@ -30,12 +30,14 @@
 
 @php
     $totalElectronicos    = 0;
+    $totalRadioComunitaria = 0;
     $totalImpresos        = 0;
     $totalComplementarios = 0;
     $totalEstudios        = 0;
     $totalDisenoProduccion = 0;
 
     foreach ($estrategy->campaigns as $c) {
+        $totalRadioComunitaria += ($c->radio_comunitaria ?? 0);
         $totalElectronicos    += ($c->televisoras ?? 0) + ($c->radiodifusoras ?? 0) + ($c->radio_comunitaria ?? 0) + ($c->mediosDigitalesInternet ?? 0);
         $totalImpresos        += ($c->decdmx ?? 0) + ($c->deedos ?? 0) + ($c->deextr ?? 0) + ($c->revistas ?? 0);
         $totalComplementarios += ($c->cine ?? 0) + ($c->mediosComplementarios ?? 0) + ($c->mediosDigitales ?? 0);
@@ -87,6 +89,7 @@
     @php
         $categorias = [
             ['nombre' => 'Medios Electrónicos',    'valor' => $totalElectronicos,     'color' => '#9B1B30'],
+            ['nombre' => 'Radio Comunitaria',       'valor' => $totalRadioComunitaria, 'color' => '#2D8A4E'],
             ['nombre' => 'Medios Impresos',         'valor' => $totalImpresos,         'color' => '#C45E73'],
             ['nombre' => 'Medios Complementarios',  'valor' => $totalComplementarios,  'color' => '#E89CAC'],
             ['nombre' => 'Estudios',                'valor' => $totalEstudios,         'color' => '#B8860B'],

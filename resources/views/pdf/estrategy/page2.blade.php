@@ -27,6 +27,7 @@
 @php
     // Calcular totales por categoría
     $totalElectronicos = 0;
+    $totalRadioComunitaria = 0;
     $totalImpresos = 0;
     $totalComplementarios = 0;
     $totalEstudios = 0;
@@ -34,6 +35,7 @@
 
     foreach($estrategy->campaigns as $campaign) {
         // Medios Electrónicos
+        $totalRadioComunitaria += ($campaign->radio_comunitaria ?? 0);
         $totalElectronicos += ($campaign->televisoras ?? 0) + ($campaign->radiodifusoras ?? 0) + ($campaign->radio_comunitaria ?? 0) + ($campaign->mediosDigitalesInternet ?? 0);
 
         // Medios Impresos
@@ -96,6 +98,7 @@
         @php
             $categorias = [
                 ['nombre' => 'Medios Electrónicos', 'valor' => $totalElectronicos, 'color' => '#9B1B30'],
+                ['nombre' => 'Radio Comunitaria', 'valor' => $totalRadioComunitaria, 'color' => '#2D8A4E'],
                 ['nombre' => 'Medios Impresos', 'valor' => $totalImpresos, 'color' => '#C45E73'],
                 ['nombre' => 'Medios Complementarios', 'valor' => $totalComplementarios, 'color' => '#E89CAC'],
                 ['nombre' => 'Estudios', 'valor' => $totalEstudios, 'color' => '#B8860B'],
@@ -136,7 +139,7 @@
             <td style="text-align: center; vertical-align: bottom; padding-top: 40px;">
                 <div style="border-top: 1px solid #000; margin: 0 auto; width: 60%; padding-top: 5px; font-size: 8pt;">
                     {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                    {{ $estrategy->partida_presupuestal === '36201' ? 'Titular del Area de Mercadotecnia' : 'Nombre y firma del Titular de Comunicación Social' }}
+                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
                 </div>
             </td>
         </tr>
@@ -148,14 +151,14 @@
             <td class="signature-cell">
                 <div class="signature-line">
                     {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                    {{ $estrategy->partida_presupuestal === '36201' ? 'Titular del Area de Mercadotecnia de la Coordinadora Sectorial' : 'Nombre y firma del Titular de Comunicación Social de la Coordinadora Sectorial' }}
+                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
                 </div>
             </td>
             <td style="width: 4%;"></td>
             <td class="signature-cell">
                 <div class="signature-line">
                     {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
-                    {{ $estrategy->partida_presupuestal === '36201' ? 'Titular del Area de Mercadotecnia de la Dependencia/Entidad' : 'Nombre y firma del Titular de Comunicación Social de la Dependencia/Entidad' }}
+                    Nombre y firma del titular de comunicación social de la dependencia/entidad
                 </div>
             </td>
         </tr>
