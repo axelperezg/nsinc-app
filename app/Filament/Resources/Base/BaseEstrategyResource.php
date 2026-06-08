@@ -1897,6 +1897,7 @@ abstract class BaseEstrategyResource extends Resource
                 //          }, $filename);
                 //      })
                 //      ->tooltip('Descargar estrategia en PDF'),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('exportar_pdf_horizontal')
                     ->label('Ver PDF')
                     ->icon('heroicon-o-document-arrow-down')
@@ -1973,7 +1974,7 @@ abstract class BaseEstrategyResource extends Resource
                         $pdf->setOption('dpi', 96);
 
                         // Nombre del archivo
-                        $filename = 'ReporteEstrategia' . $estrategy->anio . '.pdf';
+                        $filename = 'EyPA_' . $estrategy->partida_presupuestal . '_' . str_replace(' ', '_', $estrategy->institution->acronym) . '_' . $estrategy->anio . '.pdf';
 
                         // Descargar el PDF
                         return response()->streamDownload(function () use ($pdf) {
@@ -1981,7 +1982,7 @@ abstract class BaseEstrategyResource extends Resource
                         }, $filename);
                     })
                     ->tooltip('Descargar estrategia PDF'),
-                Tables\Actions\ViewAction::make(),
+                
                 Tables\Actions\EditAction::make()
                     ->visible(function ($record) {
                         $user = Auth::user();
