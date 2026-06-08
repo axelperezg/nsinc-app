@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Sector;
+use App\Models\Institution;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -44,59 +45,26 @@ class UserSeeder extends Seeder
             $this->command->info('Usuario Super Admin de prueba creado: admin@admin.com / password');
         }
 
-        // Crear usuario de institución (SEP)
+        // Crear un usuario de institución por cada institución registrada
         $institutionUserRole = Role::where('name', 'institution_user')->first();
-        $institutionSEP = \App\Models\Institution::where('acronym', 'SEP')->first();
 
-        if ($institutionUserRole && $institutionSEP) {
-            User::firstOrCreate(
-                ['email' => 'sep@admin.com'],
-                [
-                    'name' => 'Usuario SEP',
-                    'password' => Hash::make('password'),
-                    'role_id' => $institutionUserRole->id,
-                    'institution_id' => $institutionSEP->id,
-                ]
-            );
-
-            $this->command->info('Usuario SEP creado: sep@admin.com / password');
-        }
-
-        // Crear usuario básico (UNAM)
-        $institutionUserRole = Role::where('name', 'institution_user')->first();
-        $institutionUNAM = \App\Models\Institution::where('acronym', 'UNAM')->first();
-        
-        if ($institutionUserRole && $institutionUNAM) {
-            User::firstOrCreate(
-                ['email' => 'unam@user.com'],
-                [
-                    'name' => 'Usuario UNAM',
-                    'password' => Hash::make('password'),
-                    'role_id' => $institutionUserRole->id,
-                    'institution_id' => $institutionUNAM->id,
-                ]
-            );
-            
-            $this->command->info('Usuario UNAM creado: unam@user.com / password');
-        }
-
-        // Crear usuario básico (IMSS)
         if ($institutionUserRole) {
-            $institutionIMSS = \App\Models\Institution::where('acronym', 'IMSS')->first();
-            
-            if ($institutionIMSS) {
+            Institution::all()->each(function (Institution $institution) use ($institutionUserRole) {
+                $slug  = Str::slug($institution->acronym);
+                $email = "{$slug}@{$slug}.gob.mx";
+
                 User::firstOrCreate(
-                    ['email' => 'imss@user.com'],
+                    ['email' => $email],
                     [
-                        'name' => 'Usuario IMSS',
-                        'password' => Hash::make('password'),
-                        'role_id' => $institutionUserRole->id,
-                        'institution_id' => $institutionIMSS->id,
+                        'name'           => 'Usuario ' . $institution->acronym,
+                        'password'       => Hash::make('password'),
+                        'role_id'        => $institutionUserRole->id,
+                        'institution_id' => $institution->id,
                     ]
                 );
-                
-                $this->command->info('Usuario IMSS creado: imss@user.com / password');
-            }
+
+                $this->command->info("Usuario {$institution->acronym} creado: {$email} / password");
+            });
         }
 
         // Crear un coordinador de sector por cada sector registrado
