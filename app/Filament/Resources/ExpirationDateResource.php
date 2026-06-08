@@ -106,17 +106,13 @@ class ExpirationDateResource extends Resource
             ->filters([
                 Tables\Filters\Filter::make('anio')
                 ->form([
-                    Forms\Components\Select::make('anio')
+                    Forms\Components\TextInput::make('anio')
                         ->label('Año')
-                        ->options(function () {
-                        $currentYear = (int) now()->format('Y');
-                        $years = [];
-                        for ($i = 0; $i < 15; $i++) {
-                            $year = $currentYear + $i;
-                            $years[$year] = (string) $year;
-                        }
-                        return $years;
-                    })
+                        ->numeric()
+                        ->minValue(2000)
+                        ->maxValue(2100)
+                        ->default(now()->year)
+                        ->placeholder((string) now()->year),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     return $query
@@ -129,7 +125,7 @@ class ExpirationDateResource extends Resource
                             fn (Builder $query): Builder => $query->where('anio', now()->year),
                         );
                 })
-                ->default(now()->year)
+                ->default(['anio' => now()->year])
                 ->indicateUsing(function (array $data): ?string {
                     if ($data['anio']) {
                         return 'Año: ' . $data['anio'];

@@ -373,7 +373,7 @@
         $totalGeneral = 0;
         foreach($estrategy->campaigns as $campaign) {
             $totalGeneral += ($campaign->televisoras ?? 0) + ($campaign->radiodifusoras ?? 0) +
-                           ($campaign->mediosDigitales ?? 0) + ($campaign->mediosDigitalesInternet ?? 0) +
+                           ($campaign->radio_comunitaria ?? 0) + ($campaign->mediosDigitales ?? 0) + ($campaign->mediosDigitalesInternet ?? 0) +
                            ($campaign->decdmx ?? 0) + ($campaign->deedos ?? 0) + ($campaign->deextr ?? 0) +
                            ($campaign->revistas ?? 0) + ($campaign->cine ?? 0) +
                            ($campaign->mediosComplementarios ?? 0) + ($campaign->preEstudios ?? 0) +
@@ -508,6 +508,7 @@
                         $budgetItems = [
                             ['label' => 'Televisoras', 'value' => $campaign->televisoras],
                             ['label' => 'Radiodifusoras', 'value' => $campaign->radiodifusoras],
+                            ['label' => 'Radio Comunitaria', 'value' => $campaign->radio_comunitaria],
                             ['label' => 'Radios Comunitarias', 'value' => $campaign->mediosDigitales],
                             ['label' => 'Diarios CDMX', 'value' => $campaign->decdmx],
                             ['label' => 'Diarios Estados', 'value' => $campaign->deedos],

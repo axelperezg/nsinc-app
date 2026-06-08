@@ -36,7 +36,7 @@
     $totalDisenoProduccion = 0;
 
     foreach ($estrategy->campaigns as $c) {
-        $totalElectronicos    += ($c->televisoras ?? 0) + ($c->radiodifusoras ?? 0) + ($c->mediosDigitalesInternet ?? 0);
+        $totalElectronicos    += ($c->televisoras ?? 0) + ($c->radiodifusoras ?? 0) + ($c->radio_comunitaria ?? 0) + ($c->mediosDigitalesInternet ?? 0);
         $totalImpresos        += ($c->decdmx ?? 0) + ($c->deedos ?? 0) + ($c->deextr ?? 0) + ($c->revistas ?? 0);
         $totalComplementarios += ($c->cine ?? 0) + ($c->mediosComplementarios ?? 0) + ($c->mediosDigitales ?? 0);
         $totalEstudios        += ($c->preEstudios ?? 0) + ($c->postEstudios ?? 0);

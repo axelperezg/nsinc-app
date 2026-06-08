@@ -7,10 +7,12 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Support\Collection;
 
-class CampaignsExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize
+class CampaignsExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithColumnFormatting
 {
     protected ?string $partidaPresupuestal;
     protected ?int $anio;
@@ -29,6 +31,7 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
         return [
             'Televisoras' => 'televisoras',
             'Radiodifusoras' => 'radiodifusoras',
+            'Radio Comunitaria' => 'radio_comunitaria',
             'Cine' => 'cine',
             'Diarios CDMX' => 'decdmx',
             'Diarios Estados' => 'deedos',
@@ -48,7 +51,7 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
     }
 
     /**
-     * Retorna la colección expandida con 17 filas por campaña
+     * Retorna la colección expandida con 18 filas por campaña
      */
     public function collection()
     {
@@ -129,7 +132,7 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
 
                     // Tipo de Medio y Monto
                     'tipo_medio' => $mediaName,
-                    'monto' => $campaign->{$mediaField} ?? 0,
+                    'monto' => (float) ($campaign->{$mediaField} ?? 0),
 
                     // Versiones y Fechas
                     'num_versiones' => $campaign->versions->count(),
@@ -187,6 +190,17 @@ class CampaignsExport implements FromCollection, WithHeadings, WithStyles, Shoul
             'Número de Versiones',
             'Fecha Creación Campaña',
             'Última Actualización Campaña',
+        ];
+    }
+
+    /**
+     * Formato numérico para columnas de montos
+     */
+    public function columnFormats(): array
+    {
+        return [
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2, // Presupuesto Total
+            'Y' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED2, // Monto
         ];
     }
 

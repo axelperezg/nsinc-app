@@ -914,6 +914,7 @@ abstract class BaseEstrategyResource extends Resource
                                                 }
                                             }
                                         ]),
+                                        self::createDecimalField('radio_comunitaria', 'Radio Comunitaria'),
                                         self::createDecimalField('mediosDigitales', 'Radios Comunitarias'),
                                         self::createDecimalField('mediosDigitalesInternet', 'Medios Digitales'),
                                         self::createDecimalField('decdmx', 'Diarios Editados en la CDMX'),
@@ -950,9 +951,10 @@ abstract class BaseEstrategyResource extends Resource
                                                 return "Total Medios de: {$nombreCampaña}";
                                             })
                                             ->content(function ($get) {
-                                                // Obtener valores de los 17 medios
+                                                // Obtener valores de los 18 medios
                                                 $televisoras = floatval($get('televisoras') ?? 0);
                                                 $radiodifusoras = floatval($get('radiodifusoras') ?? 0);
+                                                $radioComunitaria = floatval($get('radio_comunitaria') ?? 0);
                                                 $cine = floatval($get('cine') ?? 0);
                                                 $decdmx = floatval($get('decdmx') ?? 0);
                                                 $deedos = floatval($get('deedos') ?? 0);
@@ -970,7 +972,7 @@ abstract class BaseEstrategyResource extends Resource
                                                 $copiado = floatval($get('copiado') ?? 0);
 
                                                 // Calcular suma total
-                                                $suma = $televisoras + $radiodifusoras + $cine + $decdmx + $deedos +
+                                                $suma = $televisoras + $radiodifusoras + $radioComunitaria + $cine + $decdmx + $deedos +
                                                         $deextr + $revistas + $mediosComplementarios + $mediosDigitales +
                                                         $mediosDigitalesInternet + $preEstudios + $postEstudios + $disenio +
                                                         $produccion + $preProduccion + $postProduccion + $copiado;
@@ -978,16 +980,51 @@ abstract class BaseEstrategyResource extends Resource
                                                 return '$' . number_format($suma, 2);
                                             })
                                             ->reactive()
-                                            ->helperText('Suma automática de los 17 medios de esta campaña')
+                                            ->helperText('Suma automática de los 18 medios de esta campaña')
                                             ->extraAttributes(['class' => 'font-mono text-sm']),
 
                                         Forms\Components\Placeholder::make('porcentaje_campaña')
                                             ->label('Porcentaje del Presupuesto Anual')
                                             ->content(function ($get) {
-                                                // Obtener presupuesto anual
                                                 $presupuestoAnual = floatval($get('../../presupuesto') ?? 0);
 
-                                                // Calcular suma de medios de esta campaña
+                                                $televisoras = floatval($get('televisoras') ?? 0);
+                                                $radiodifusoras = floatval($get('radiodifusoras') ?? 0);
+                                                $radioComunitaria = floatval($get('radio_comunitaria') ?? 0);
+                                                $cine = floatval($get('cine') ?? 0);
+                                                $decdmx = floatval($get('decdmx') ?? 0);
+                                                $deedos = floatval($get('deedos') ?? 0);
+                                                $deextr = floatval($get('deextr') ?? 0);
+                                                $revistas = floatval($get('revistas') ?? 0);
+                                                $mediosComplementarios = floatval($get('mediosComplementarios') ?? 0);
+                                                $mediosDigitales = floatval($get('mediosDigitales') ?? 0);
+                                                $mediosDigitalesInternet = floatval($get('mediosDigitalesInternet') ?? 0);
+                                                $preEstudios = floatval($get('preEstudios') ?? 0);
+                                                $postEstudios = floatval($get('postEstudios') ?? 0);
+                                                $disenio = floatval($get('disenio') ?? 0);
+                                                $produccion = floatval($get('produccion') ?? 0);
+                                                $preProduccion = floatval($get('preProduccion') ?? 0);
+                                                $postProduccion = floatval($get('postProduccion') ?? 0);
+                                                $copiado = floatval($get('copiado') ?? 0);
+
+                                                $sumaCampaña = $televisoras + $radiodifusoras + $radioComunitaria + $cine + $decdmx + $deedos +
+                                                              $deextr + $revistas + $mediosComplementarios + $mediosDigitales +
+                                                              $mediosDigitalesInternet + $preEstudios + $postEstudios + $disenio +
+                                                              $produccion + $preProduccion + $postProduccion + $copiado;
+
+                                                $porcentaje = $presupuestoAnual > 0 ? ($sumaCampaña / $presupuestoAnual) * 100 : 0;
+
+                                                return number_format($porcentaje, 2) . '%';
+                                            })
+                                            ->reactive()
+                                            ->helperText('Porcentaje que representa esta campaña del presupuesto anual')
+                                            ->extraAttributes(['class' => 'font-mono text-sm font-bold']),
+
+                                        Forms\Components\Placeholder::make('porcentaje_radio_comunitaria')
+                                            ->label('% Radio Comunitaria')
+                                            ->content(function ($get) {
+                                                $radioComunitaria = floatval($get('radio_comunitaria') ?? 0);
+
                                                 $televisoras = floatval($get('televisoras') ?? 0);
                                                 $radiodifusoras = floatval($get('radiodifusoras') ?? 0);
                                                 $cine = floatval($get('cine') ?? 0);
@@ -1006,19 +1043,18 @@ abstract class BaseEstrategyResource extends Resource
                                                 $postProduccion = floatval($get('postProduccion') ?? 0);
                                                 $copiado = floatval($get('copiado') ?? 0);
 
-                                                $sumaCampaña = $televisoras + $radiodifusoras + $cine + $decdmx + $deedos +
+                                                $sumaCampaña = $televisoras + $radiodifusoras + $radioComunitaria + $cine + $decdmx + $deedos +
                                                               $deextr + $revistas + $mediosComplementarios + $mediosDigitales +
                                                               $mediosDigitalesInternet + $preEstudios + $postEstudios + $disenio +
                                                               $produccion + $preProduccion + $postProduccion + $copiado;
 
-                                                // Calcular porcentaje
-                                                $porcentaje = $presupuestoAnual > 0 ? ($sumaCampaña / $presupuestoAnual) * 100 : 0;
+                                                $porcentaje = $sumaCampaña > 0 ? ($radioComunitaria / $sumaCampaña) * 100 : 0;
 
                                                 return number_format($porcentaje, 2) . '%';
                                             })
                                             ->reactive()
-                                            ->helperText('Porcentaje que representa esta campaña del presupuesto anual')
-                                            ->extraAttributes(['class' => 'font-mono text-sm font-bold']),
+                                            ->helperText('% que representa Radio Comunitaria sobre el total de la campaña')
+                                            ->extraAttributes(['class' => 'font-mono text-sm']),
                                     ])
                                     ->columns(3)
                                     ->collapsible(false)
@@ -1051,6 +1087,7 @@ abstract class BaseEstrategyResource extends Resource
                                     if (isset($campaign['televisoras'])) {
                                         $televisoras = floatval($campaign['televisoras'] ?? 0);
                                         $radiodifusoras = floatval($campaign['radiodifusoras'] ?? 0);
+                                        $radioComunitaria = floatval($campaign['radio_comunitaria'] ?? 0);
                                         $cine = floatval($campaign['cine'] ?? 0);
                                         $decdmx = floatval($campaign['decdmx'] ?? 0);
                                         $deedos = floatval($campaign['deedos'] ?? 0);
@@ -1067,15 +1104,15 @@ abstract class BaseEstrategyResource extends Resource
                                         $postProduccion = floatval($campaign['postProduccion'] ?? 0);
                                         $copiado = floatval($campaign['copiado'] ?? 0);
 
-                                        $sumaCampaña = $televisoras + $radiodifusoras + $cine + $decdmx + $deedos +
+                                        $sumaCampaña = $televisoras + $radiodifusoras + $radioComunitaria + $cine + $decdmx + $deedos +
                                                       $deextr + $revistas + $mediosComplementarios + $mediosDigitales +
                                                       $mediosDigitalesInternet + $preEstudios + $postEstudios + $disenio +
                                                       $produccion + $preProduccion + $postProduccion + $copiado;
-                                        
+
                                         $totalGeneral += $sumaCampaña;
                                     }
                                 }
-                                
+
                                 return '$' . number_format($totalGeneral, 2);
                             })
                             ->reactive()
@@ -1087,11 +1124,12 @@ abstract class BaseEstrategyResource extends Resource
                             ->content(function ($get) {
                                 $campaigns = $get('campaigns') ?? [];
                                 $totalGeneral = 0;
-                                
+
                                 foreach ($campaigns as $campaign) {
                                     if (isset($campaign['televisoras'])) {
                                         $televisoras = floatval($campaign['televisoras'] ?? 0);
                                         $radiodifusoras = floatval($campaign['radiodifusoras'] ?? 0);
+                                        $radioComunitaria = floatval($campaign['radio_comunitaria'] ?? 0);
                                         $cine = floatval($campaign['cine'] ?? 0);
                                         $decdmx = floatval($campaign['decdmx'] ?? 0);
                                         $deedos = floatval($campaign['deedos'] ?? 0);
@@ -1108,15 +1146,15 @@ abstract class BaseEstrategyResource extends Resource
                                         $postProduccion = floatval($campaign['postProduccion'] ?? 0);
                                         $copiado = floatval($campaign['copiado'] ?? 0);
 
-                                        $sumaCampaña = $televisoras + $radiodifusoras + $cine + $decdmx + $deedos +
+                                        $sumaCampaña = $televisoras + $radiodifusoras + $radioComunitaria + $cine + $decdmx + $deedos +
                                                       $deextr + $revistas + $mediosComplementarios + $mediosDigitales +
                                                       $mediosDigitalesInternet + $preEstudios + $postEstudios + $disenio +
                                                       $produccion + $preProduccion + $postProduccion + $copiado;
-                                        
+
                                         $totalGeneral += $sumaCampaña;
                                     }
                                 }
-                                
+
                                 $presupuesto = floatval($get('presupuesto') ?? 0);
                                 
                                 if ($presupuesto > 0) {
@@ -1166,11 +1204,12 @@ abstract class BaseEstrategyResource extends Resource
                             ->content(function ($get) {
                                 $campaigns = $get('campaigns') ?? [];
                                 $totalGeneral = 0;
-                                
+
                                 foreach ($campaigns as $campaign) {
                                     if (isset($campaign['televisoras'])) {
                                         $televisoras = floatval($campaign['televisoras'] ?? 0);
                                         $radiodifusoras = floatval($campaign['radiodifusoras'] ?? 0);
+                                        $radioComunitaria = floatval($campaign['radio_comunitaria'] ?? 0);
                                         $cine = floatval($campaign['cine'] ?? 0);
                                         $decdmx = floatval($campaign['decdmx'] ?? 0);
                                         $deedos = floatval($campaign['deedos'] ?? 0);
@@ -1187,21 +1226,21 @@ abstract class BaseEstrategyResource extends Resource
                                         $postProduccion = floatval($campaign['postProduccion'] ?? 0);
                                         $copiado = floatval($campaign['copiado'] ?? 0);
 
-                                        $sumaCampaña = $televisoras + $radiodifusoras + $cine + $decdmx + $deedos +
+                                        $sumaCampaña = $televisoras + $radiodifusoras + $radioComunitaria + $cine + $decdmx + $deedos +
                                                       $deextr + $revistas + $mediosComplementarios + $mediosDigitales +
                                                       $mediosDigitalesInternet + $preEstudios + $postEstudios + $disenio +
                                                       $produccion + $preProduccion + $postProduccion + $copiado;
-                                        
+
                                         $totalGeneral += $sumaCampaña;
                                     }
                                 }
-                                
+
                                 $presupuesto = floatval($get('presupuesto') ?? 0);
                                 $disponible = $presupuesto - $totalGeneral;
-                                
+
                                 $color = $disponible < 0 ? 'text-red-600' : 'text-green-600';
                                 $icono = $disponible < 0 ? '⚠️ ' : '✅ ';
-                                
+
                                 return view('components.presupuesto-disponible', [
                                     'monto' => $disponible,
                                     'color' => $color,
@@ -1210,6 +1249,33 @@ abstract class BaseEstrategyResource extends Resource
                             })
                             ->reactive()
                             ->helperText('Presupuesto restante después de asignar a todas las campañas')
+                            ->extraAttributes(['class' => 'font-mono text-lg font-bold']),
+
+                        Forms\Components\Placeholder::make('porcentaje_radio_comunitaria_global')
+                            ->label('% Radio Comunitaria Global')
+                            ->content(function ($get) {
+                                $campaigns = $get('campaigns') ?? [];
+                                $totalRadioComunitaria = 0;
+
+                                foreach ($campaigns as $campaign) {
+                                    if (isset($campaign['radio_comunitaria'])) {
+                                        $totalRadioComunitaria += floatval($campaign['radio_comunitaria'] ?? 0);
+                                    }
+                                }
+
+                                $presupuesto = floatval($get('presupuesto') ?? 0);
+                                $porcentaje = $presupuesto > 0 ? ($totalRadioComunitaria / $presupuesto) * 100 : 0;
+
+                                $cumple = $porcentaje >= 1;
+                                $color  = $cumple ? 'color: #16a34a; font-weight: bold;' : 'color: #dc2626; font-weight: bold;';
+                                $icono  = $cumple ? '✅ ' : '⚠️ ';
+
+                                return new \Illuminate\Support\HtmlString(
+                                    "<span style=\"{$color}\">{$icono}" . number_format($porcentaje, 2) . "%</span>"
+                                );
+                            })
+                            ->reactive()
+                            ->helperText('Suma de Radio Comunitaria de todas las campañas vs presupuesto (mínimo requerido: 1%)')
                             ->extraAttributes(['class' => 'font-mono text-lg font-bold']),
                     ])
                     ->columns(4)
@@ -1717,17 +1783,13 @@ abstract class BaseEstrategyResource extends Resource
                     
                 Tables\Filters\Filter::make('anio')
                     ->form([
-                        Forms\Components\Select::make('anio')
+                        Forms\Components\TextInput::make('anio')
                             ->label('Año')
-                            ->options(function () {
-                            $currentYear = (int) now()->format('Y');
-                            $years = [];
-                            for ($i = 0; $i < 15; $i++) {
-                                $year = $currentYear + $i;
-                                $years[$year] = (string) $year;
-                            }
-                            return $years;
-                        })        
+                            ->numeric()
+                            ->minValue(2000)
+                            ->maxValue(2100)
+                            ->default(now()->year)
+                            ->placeholder((string) now()->year),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -1740,7 +1802,7 @@ abstract class BaseEstrategyResource extends Resource
                                 fn (Builder $query): Builder => $query->where('anio', now()->year),
                             );
                     })
-                    ->default(now()->year)
+                    ->default(['anio' => now()->year])
                     ->indicateUsing(function (array $data): ?string {
                         if ($data['anio']) {
                             return 'Año: ' . $data['anio'];

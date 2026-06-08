@@ -7,6 +7,7 @@
     $totalCampaign =
         ($campaign->televisoras           ?? 0) +
         ($campaign->radiodifusoras        ?? 0) +
+        ($campaign->radio_comunitaria     ?? 0) +
         ($campaign->mediosDigitalesInternet ?? 0) +
         ($campaign->cine                  ?? 0) +
         ($campaign->decdmx                ?? 0) +
@@ -31,7 +32,7 @@
     foreach ($estrategy->campaigns as $c) {
         $acumulado +=
             ($c->televisoras           ?? 0) + ($c->radiodifusoras        ?? 0) +
-            ($c->mediosDigitalesInternet ?? 0) + ($c->cine                ?? 0) +
+            ($c->radio_comunitaria     ?? 0) + ($c->mediosDigitalesInternet ?? 0) + ($c->cine ?? 0) +
             ($c->decdmx                ?? 0) + ($c->deedos                ?? 0) +
             ($c->deextr                ?? 0) + ($c->revistas              ?? 0) +
             ($c->mediosComplementarios ?? 0) + ($c->mediosDigitales       ?? 0) +
@@ -224,6 +225,7 @@
                     $medios = [
                         ['label' => 'Televisoras',                    'val' => $campaign->televisoras           ?? 0],
                         ['label' => 'Radiodifusoras',                 'val' => $campaign->radiodifusoras        ?? 0],
+                        ['label' => 'Radio Comunitaria',              'val' => $campaign->radio_comunitaria     ?? 0],
                         ['label' => 'Cine',                           'val' => $campaign->cine                  ?? 0],
                         ['label' => 'Diarios Editados en CDMX',       'val' => $campaign->decdmx                ?? 0],
                         ['label' => 'Diarios Editados en los Estados','val' => $campaign->deedos                ?? 0],

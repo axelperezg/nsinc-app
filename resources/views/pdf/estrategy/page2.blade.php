@@ -34,7 +34,7 @@
 
     foreach($estrategy->campaigns as $campaign) {
         // Medios Electrónicos
-        $totalElectronicos += ($campaign->televisoras ?? 0) + ($campaign->radiodifusoras ?? 0) + ($campaign->mediosDigitalesInternet ?? 0);
+        $totalElectronicos += ($campaign->televisoras ?? 0) + ($campaign->radiodifusoras ?? 0) + ($campaign->radio_comunitaria ?? 0) + ($campaign->mediosDigitalesInternet ?? 0);
 
         // Medios Impresos
         $totalImpresos += ($campaign->decdmx ?? 0) + ($campaign->deedos ?? 0) + ($campaign->deextr ?? 0) + ($campaign->revistas ?? 0);
@@ -136,7 +136,7 @@
             <td style="text-align: center; vertical-align: bottom; padding-top: 40px;">
                 <div style="border-top: 1px solid #000; margin: 0 auto; width: 60%; padding-top: 5px; font-size: 8pt;">
                     {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
+                    {{ $estrategy->partida_presupuestal === '36201' ? 'Titular del Area de Mercadotecnia' : 'Nombre y firma del Titular de Comunicación Social' }}
                 </div>
             </td>
         </tr>
@@ -148,14 +148,14 @@
             <td class="signature-cell">
                 <div class="signature-line">
                     {{ $estrategy->NombreSectorResponsable ?? '_________________________________' }}<br>
-                    Nombre y firma del titular de comunicación social de la coordinadora sectorial
+                    {{ $estrategy->partida_presupuestal === '36201' ? 'Titular del Area de Mercadotecnia de la Coordinadora Sectorial' : 'Nombre y firma del Titular de Comunicación Social de la Coordinadora Sectorial' }}
                 </div>
             </td>
             <td style="width: 4%;"></td>
             <td class="signature-cell">
                 <div class="signature-line">
                     {{ $estrategy->responsable_name ?? '_________________________________' }}<br>
-                    Nombre y firma del titular de comunicación social de la dependencia/entidad
+                    {{ $estrategy->partida_presupuestal === '36201' ? 'Titular del Area de Mercadotecnia de la Dependencia/Entidad' : 'Nombre y firma del Titular de Comunicación Social de la Dependencia/Entidad' }}
                 </div>
             </td>
         </tr>

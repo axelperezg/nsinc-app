@@ -21,6 +21,7 @@
     // Calcular totales por campaña
     $totalCampaign = ($campaign->televisoras ?? 0) +
                      ($campaign->radiodifusoras ?? 0) +
+                     ($campaign->radio_comunitaria ?? 0) +
                      ($campaign->cine ?? 0) +
                      ($campaign->decdmx ?? 0) +
                      ($campaign->deedos ?? 0) +
@@ -44,6 +45,7 @@
     foreach($estrategy->campaigns as $c) {
         $acumulado += ($c->televisoras ?? 0) +
                       ($c->radiodifusoras ?? 0) +
+                      ($c->radio_comunitaria ?? 0) +
                       ($c->cine ?? 0) +
                       ($c->decdmx ?? 0) +
                       ($c->deedos ?? 0) +
@@ -274,6 +276,10 @@
         <tr>
             <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Radiodifusoras</td>
             <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->radiodifusoras ?? 0, 2) }}</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Radio Comunitaria</td>
+            <td style="border: 1px solid #000; padding: 0px 3px; text-align: right; font-size: 7pt;">{{ number_format($campaign->radio_comunitaria ?? 0, 2) }}</td>
         </tr>
         <tr>
             <td style="border: 1px solid #000; padding: 0px 3px; font-size: 7pt;">Radios Comunitarias</td>

@@ -6,6 +6,7 @@ use App\Filament\Resources\CampaignResource\Pages;
 use App\Filament\Resources\CampaignResource\RelationManagers;
 use App\Models\Campaign;
 use App\Exports\CampaignsExport;
+use App\Exports\LatestInstitutionStrategiesExport;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -163,6 +164,10 @@ class CampaignResource extends Resource
                             ->label('Radiodifusoras')
                             ->numeric()
                             ->step(0.01),
+                        Forms\Components\TextInput::make('radio_comunitaria')
+                            ->label('Radio Comunitaria')
+                            ->numeric()
+                            ->step(0.01),
                         Forms\Components\TextInput::make('cine')
                             ->label('Cine')
                             ->numeric()
@@ -285,24 +290,25 @@ class CampaignResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('year')
-                    ->label('Año')
-                    ->options(function () {
-                        $currentYear = (int) now()->format('Y');
-                        $years = [];
-                        for ($i = 0; $i < 15; $i++) {
-                            $year = $currentYear + $i;
-                            $years[$year] = (string) $year;
-                        }
-                        return $years;
-                    })
-                    ->default((int) now()->format('Y'))
+                Tables\Filters\Filter::make('year')
+                    ->form([
+                        Forms\Components\TextInput::make('year')
+                            ->label('Año')
+                            ->numeric()
+                            ->minValue(2000)
+                            ->maxValue(2100)
+                            ->default(now()->year)
+                            ->placeholder((string) now()->year),
+                    ])
+                    ->default(['year' => now()->year])
                     ->query(function (Builder $query, array $data) {
-                        if ($data['value']) {
-                            $query->whereHas('estrategy', function ($q) use ($data) {
-                                $q->where('anio', $data['value']);
-                            });
-                        }
+                        $anio = $data['year'] ?? now()->year;
+                        $query->whereHas('estrategy', function ($q) use ($anio) {
+                            $q->where('anio', $anio);
+                        });
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        return 'Año: ' . ($data['year'] ?? now()->year);
                     }),
                 Tables\Filters\SelectFilter::make('campaign_type_id')
                     ->label('Tipo de Campaña')
@@ -336,6 +342,17 @@ class CampaignResource extends Resource
                         return Excel::download(new CampaignsExport(null, $anio), 'campaigns_' . $anio . '.xlsx');
                     })
                     ->tooltip('Descargar todas las campañas en formato Excel'),
+                Tables\Actions\Action::make('exportar_ultimas_estrategias')
+                    ->label('Última Estrategia por Institución')
+                    ->icon('heroicon-o-building-office')
+                    ->color('info')
+                    ->action(function () {
+                        return Excel::download(
+                            new LatestInstitutionStrategiesExport(),
+                            'ultimas_estrategias_instituciones_' . now()->format('Ymd') . '.xlsx'
+                        );
+                    })
+                    ->tooltip('Descargar la última estrategia registrada de cada institución'),
             ])
             ->actions([
                 //Tables\Actions\EditAction::make(),
