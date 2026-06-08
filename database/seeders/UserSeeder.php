@@ -5,7 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Sector;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -97,39 +99,26 @@ class UserSeeder extends Seeder
             }
         }
 
-                // Crear coordinador de sector (para el sector Educación)
+        // Crear un coordinador de sector por cada sector registrado
         $sectorCoordinatorRole = Role::where('name', 'sector_coordinator')->first();
-        $sectorEducacion = \App\Models\Sector::where('name', 'Educación')->first();
-        
-        if ($sectorCoordinatorRole && $sectorEducacion) {
-            User::firstOrCreate(
-                ['email' => 'coord.educacion@test.com'],
-                [
-                    'name' => 'Coordinadora Sector Educación',
-                    'password' => Hash::make('password'),
-                    'sector_id' => $sectorEducacion->id,
-                    'role_id' => $sectorCoordinatorRole->id,
-                ]
-            );
-            
-            $this->command->info('Coordinadora Sector Educación creada: coord.educacion@test.com / password');
-        }
 
-        // Crear coordinador de sector (para el sector Salud)
-        $sectorSalud = \App\Models\Sector::where('name', 'Salud')->first();
-        
-        if ($sectorCoordinatorRole && $sectorSalud) {
-            User::firstOrCreate(
-                ['email' => 'coord.salud@test.com'],
-                [
-                    'name' => 'Coordinadora Sector Salud',
-                    'password' => Hash::make('password'),
-                    'sector_id' => $sectorSalud->id,
-                    'role_id' => $sectorCoordinatorRole->id,
-                ]
-            );
-            
-            $this->command->info('Coordinadora Sector Salud creada: coord.salud@test.com / password');
+        if ($sectorCoordinatorRole) {
+            Sector::all()->each(function (Sector $sector) use ($sectorCoordinatorRole) {
+                $slug  = Str::slug($sector->acronym);
+                $email = "{$slug}@{$slug}.gob.mx";
+
+                User::firstOrCreate(
+                    ['email' => $email],
+                    [
+                        'name'      => 'Usuario ' . $sector->acronym,
+                        'password'  => Hash::make('password'),
+                        'sector_id' => $sector->id,
+                        'role_id'   => $sectorCoordinatorRole->id,
+                    ]
+                );
+
+                $this->command->info("Coordinador {$sector->acronym} creado: {$email} / password");
+            });
         }
 
         // Crear usuario DGNC
