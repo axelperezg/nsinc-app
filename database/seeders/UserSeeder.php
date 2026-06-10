@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
                 User::firstOrCreate(
                     ['email' => $email],
                     [
-                        'name'           => 'Usuario ' . $institution->acronym,
+                        'name'           => 'Entidad ' . $institution->acronym,
                         'password'       => Hash::make('password'),
                         'role_id'        => $institutionUserRole->id,
                         'institution_id' => $institution->id,
@@ -73,12 +73,12 @@ class UserSeeder extends Seeder
         if ($sectorCoordinatorRole) {
             Sector::all()->each(function (Sector $sector) use ($sectorCoordinatorRole) {
                 $slug  = Str::slug($sector->acronym);
-                $email = "{$slug}@{$slug}.gob.mx";
+                $email = "{$slug}_cs@{$slug}.gob.mx";
 
                 User::firstOrCreate(
                     ['email' => $email],
                     [
-                        'name'      => 'Usuario ' . $sector->acronym,
+                        'name'      => 'CS ' . $sector->acronym,
                         'password'  => Hash::make('password'),
                         'sector_id' => $sector->id,
                         'role_id'   => $sectorCoordinatorRole->id,
