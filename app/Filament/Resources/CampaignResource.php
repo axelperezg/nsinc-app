@@ -129,12 +129,30 @@ class CampaignResource extends Resource
                             ->label('Población')
                             ->multiple()
                             ->options(Campaign::getPoblacionOptions())
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if (is_array($state) && in_array('Rural', $state)) {
+                                    $nse = $get('nse') ?? [];
+                                    if (!in_array('E', $nse)) {
+                                        $set('nse', array_values(array_unique([...$nse, 'E'])));
+                                    }
+                                }
+                            }),
                         Forms\Components\Select::make('nse')
                             ->label('NSE')
                             ->multiple()
                             ->options(Campaign::getNseOptions())
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if (is_array($state) && in_array('E', $state)) {
+                                    $poblacion = $get('poblacion') ?? [];
+                                    if (!in_array('Rural', $poblacion)) {
+                                        $set('poblacion', array_values(array_unique([...$poblacion, 'Rural'])));
+                                    }
+                                }
+                            }),
                         Forms\Components\Textarea::make('caracEspecific')
                             ->label('Características Específicas')
                             ->maxLength(65535),
@@ -310,9 +328,7 @@ class CampaignResource extends Resource
                     ->indicateUsing(function (array $data): ?string {
                         return 'Año: ' . ($data['year'] ?? now()->year);
                     }),
-                Tables\Filters\SelectFilter::make('campaign_type_id')
-                    ->label('Tipo de Campaña')
-                    ->relationship('campaignType', 'name'),
+                
                 Tables\Filters\SelectFilter::make('partida_presupuestal')
                     ->label('Partida Presupuestal')
                     ->options([
@@ -354,6 +370,8 @@ class CampaignResource extends Resource
                     })
                     ->tooltip('Descargar la última estrategia registrada de cada institución'),
             ])
+            ->filtersFormColumns(2)
+            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 //Tables\Actions\EditAction::make(),
                 //Tables\Actions\DeleteAction::make(),

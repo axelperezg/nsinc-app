@@ -209,7 +209,7 @@ abstract class BaseEstrategyResource extends Resource
                                         return $responsable->name;
                                     }
                                 }
-                                return 'No disponible';
+                                return 'No aplica';
                             }),
                         Forms\Components\TextInput::make('NombreSectorResponsable')
                             ->label('Responsable del Sector')
@@ -416,8 +416,7 @@ abstract class BaseEstrategyResource extends Resource
                             ->helperText('Especifica los objetivos de comunicación que buscas alcanzar este año.')
                             ->placeholder('Ejemplo: Informar a la población sobre nuevos programas de prevención...'),
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(2),
                         ]),
 
                     // Step específico por partida (PND para 36101, Entorno/Metas para 36201)
@@ -481,8 +480,7 @@ abstract class BaseEstrategyResource extends Resource
                                 ->tooltip('El presupuesto debe incluir todos los gastos de medios, producción y estudios para el año completo.')
                         ),
                     ])
-                    ->columns(3)
-                    ->collapsible(),
+                    ->columns(3),
                         ]),
 
                     Wizard\Step::make('Campañas')
@@ -581,8 +579,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->placeholder('Ejemplo: Incrementar en 40% la vacunación en adultos mayores...'),
 
                                     ])
-                                    ->columns(2)
-                                    ->collapsible(),
+                                    ->columns(2),
 
                                 Forms\Components\Section::make('Versiones')
                                     ->description('Define las versiones de tu campaña y sus periodos de difusión')
@@ -760,11 +757,9 @@ abstract class BaseEstrategyResource extends Resource
                                             ->minItems(1)
                                             ->required()
                                             ->reorderable(false)
-                                            ->collapsible()
                                             ->addActionLabel('Agregar Versión')
                                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
-                                    ])
-                                    ->collapsible(),
+                                    ]),
 
                                 Forms\Components\Section::make('Coemisores')
                                     ->description('Indica si hay coemisores en esta campaña')
@@ -779,8 +774,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->hintColor('info')
                                             ->helperText('Menciona las dependencias o entidades que participan como coemisores en esta campaña (en caso de ser Coemitida).')
                                             ->placeholder('Ejemplo: Secretaría de Salud, IMSS, ISSSTE'),
-                                    ])
-                                    ->collapsible(),
+                                    ]),
 
                                 Forms\Components\Section::make('Público Objetivo')
                                     ->description('Define a quién va dirigida tu campaña')
@@ -824,7 +818,16 @@ abstract class BaseEstrategyResource extends Resource
                                             ->required()
                                             ->hint('Tipo de población')
                                             ->hintIcon('heroicon-o-home')
-                                            ->helperText('Selecciona el tipo de población objetivo.'),
+                                            ->helperText('Selecciona el tipo de población objetivo.')
+                                            ->live()
+                                            ->afterStateUpdated(function ($state, $set, $get) {
+                                                if (is_array($state) && in_array('Rural', $state)) {
+                                                    $nse = $get('nse') ?? [];
+                                                    if (!in_array('E', $nse)) {
+                                                        $set('nse', array_values(array_unique([...$nse, 'E'])));
+                                                    }
+                                                }
+                                            }),
                                         Forms\Components\Select::make('nse')
                                             ->label('NSE (Nivel Socioeconómico)')
                                             ->multiple()
@@ -839,7 +842,16 @@ abstract class BaseEstrategyResource extends Resource
                                             ->required()
                                             ->hint('Nivel socioeconómico')
                                             ->hintIcon('heroicon-o-banknotes')
-                                            ->helperText('Selecciona los niveles socioeconómicos de tu audiencia.'),
+                                            ->helperText('Selecciona los niveles socioeconómicos de tu audiencia.')
+                                            ->live()
+                                            ->afterStateUpdated(function ($state, $set, $get) {
+                                                if (is_array($state) && in_array('E', $state)) {
+                                                    $poblacion = $get('poblacion') ?? [];
+                                                    if (!in_array('Rural', $poblacion)) {
+                                                        $set('poblacion', array_values(array_unique([...$poblacion, 'Rural'])));
+                                                    }
+                                                }
+                                            }),
                                         Forms\Components\Textarea::make('caracEspecific')
                                             ->label('Características Específicas')
                                             ->maxLength(65535)
@@ -849,20 +861,19 @@ abstract class BaseEstrategyResource extends Resource
                                             ->helperText('Describe características específicas de tu público (ocupación, intereses, comportamientos, etc.).')
                                             ->placeholder('Ejemplo: Madres de familia trabajadoras, interesadas en salud preventiva...'),
                                     ])
-                                    ->columns(2)
-                                    ->collapsible(),
+                                    ->columns(2),
 
                                         Forms\Components\Section::make('Medios')
                                         ->description('Indica los medios de comunicación que utilizarás')
                                         ->icon('heroicon-o-tv')
                                         ->schema([
                                             Forms\Components\Checkbox::make('tv_oficial')
-                                                ->label('TV Oficial')
+                                                ->label('TV Tiempos Oficiales')
                                                 ->hint('Tiempos oficiales')
                                                 ->hintIcon('heroicon-o-tv')
                                                 ->helperText('Marca si usarás tiempos oficiales en televisión.'),
                                             Forms\Components\Checkbox::make('radio_oficial')
-                                                ->label('Radio Oficial')
+                                                ->label('Radio Tiempos Oficiales')
                                                 ->hint('Tiempos oficiales')
                                                 ->hintIcon('heroicon-o-radio')
                                                 ->helperText('Marca si usarás tiempos oficiales en radio.'),
@@ -889,8 +900,7 @@ abstract class BaseEstrategyResource extends Resource
                                                 ->hintIcon('heroicon-o-check-circle')
                                                 ->helperText('Se marca automáticamente cuando hay presupuesto en Radiodifusoras'),
                                         ])
-                                        ->columns(2)
-                                        ->collapsible(),
+                                        ->columns(2),
 
                                 Forms\Components\Section::make('Presupuestos')
                                     ->description('Distribuye el presupuesto de tu campaña entre los diferentes medios y conceptos (todos los campos son opcionales)')
@@ -931,8 +941,7 @@ abstract class BaseEstrategyResource extends Resource
                                         self::createDecimalField('postProduccion', 'Post-Producción'),
                                         self::createDecimalField('copiado', 'Copiado'),
                                     ])
-                                    ->columns(3)
-                                    ->collapsible(),
+                                    ->columns(3),
 
                                 Forms\Components\Section::make('Resumen de Medios')
                                     ->schema([
@@ -1065,7 +1074,6 @@ abstract class BaseEstrategyResource extends Resource
                             ->columns(1)
                             ->defaultItems(0)
                             ->reorderable(false)
-                            ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),
                         ]),
@@ -1411,8 +1419,7 @@ abstract class BaseEstrategyResource extends Resource
 
                                 return $totalEstudios == 0;
                             }),
-                    ])
-                    ->collapsible(),
+                    ]),
 
                 // Acciones del formulario
                 Forms\Components\Actions::make([
@@ -1620,18 +1627,10 @@ abstract class BaseEstrategyResource extends Resource
                 Tables\Columns\TextColumn::make('partida_presupuestal')
                     ->label('Partida Presupuestal'),
                 
-                Tables\Columns\TextColumn::make('institution.sector.name')
-                    ->label('Sector'),
-                
                 Tables\Columns\TextColumn::make('institution.name')
                     ->label('Institución'),
                     //->searchable()
                     //->visible(fn () => Auth::user() && Auth::user()->role && Auth::user()->role->name === 'super_admin'),
-
-                Tables\Columns\TextColumn::make('NombreSectorResponsable')
-                    ->label('Responsable Sector')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('concepto')
                     ->label('Concepto')
