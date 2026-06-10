@@ -132,11 +132,12 @@ class CampaignResource extends Resource
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
-                                if (is_array($state) && in_array('Rural', $state)) {
-                                    $nse = $get('nse') ?? [];
-                                    if (!in_array('E', $nse)) {
-                                        $set('nse', array_values(array_unique([...$nse, 'E'])));
-                                    }
+                                $state = is_array($state) ? $state : [];
+                                $nse = is_array($get('nse')) ? $get('nse') : [];
+                                if (in_array('Rural', $state)) {
+                                    $set('nse', array_values(array_unique([...$nse, 'E'])));
+                                } else {
+                                    $set('nse', array_values(array_filter($nse, fn($v) => $v !== 'E')));
                                 }
                             }),
                         Forms\Components\Select::make('nse')
@@ -146,11 +147,12 @@ class CampaignResource extends Resource
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
-                                if (is_array($state) && in_array('E', $state)) {
-                                    $poblacion = $get('poblacion') ?? [];
-                                    if (!in_array('Rural', $poblacion)) {
-                                        $set('poblacion', array_values(array_unique([...$poblacion, 'Rural'])));
-                                    }
+                                $state = is_array($state) ? $state : [];
+                                $poblacion = is_array($get('poblacion')) ? $get('poblacion') : [];
+                                if (in_array('E', $state)) {
+                                    $set('poblacion', array_values(array_unique([...$poblacion, 'Rural'])));
+                                } else {
+                                    $set('poblacion', array_values(array_filter($poblacion, fn($v) => $v !== 'Rural')));
                                 }
                             }),
                         Forms\Components\Textarea::make('caracEspecific')
