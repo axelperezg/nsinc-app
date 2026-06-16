@@ -12,9 +12,13 @@ class SectorFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->company();
+
         return [
-            'name' => $name . ' Sector',
-            'acronym' => strtoupper(substr($name, 0, 3)),
+            'name' => $name.' Sector',
+            // El prefijo de 'name' no garantiza unicidad (varios nombres pueden
+            // compartir las mismas 3 primeras letras), por lo que se agrega un
+            // sufijo único para evitar colisiones con la restricción unique() de la columna.
+            'acronym' => strtoupper(substr($name, 0, 3)).$this->faker->unique()->numerify('####'),
         ];
     }
 }

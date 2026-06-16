@@ -19,7 +19,7 @@ class JuridicalNatureFactory extends Factory
             'Poder Judicial' => 'Poder Judicial de la Federación',
         ];
 
-        $name = $this->faker->unique()->randomElement(array_keys($names));
+        $name = $this->faker->randomElement(array_keys($names));
 
         return [
             'name' => $name,

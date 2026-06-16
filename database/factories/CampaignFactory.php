@@ -3,9 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Campaign;
-use App\Models\Estrategy;
-use App\Models\Institution;
 use App\Models\CampaignType;
+use App\Models\Estrategy;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CampaignFactory extends Factory
@@ -19,7 +18,6 @@ class CampaignFactory extends Factory
             'temaEspecifico' => $this->faker->sentence(),
             'objetivoComunicacion' => $this->faker->paragraph(),
             'campaign_type_id' => CampaignType::factory(),
-            'institution_id' => Institution::factory(),
             'estrategy_id' => Estrategy::factory(),
             'coemisores_acronyms' => $this->faker->company(),
             'sexo' => ['Mujeres', 'Hombres'],

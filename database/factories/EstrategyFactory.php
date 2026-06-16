@@ -21,6 +21,9 @@ class EstrategyFactory extends Factory
         return [
             'anio' => now()->year,
             'institution_id' => $institution->id,
+            // Coincide con el default de la columna en BD; se fija explícitamente
+            // para que el modelo en memoria no quede desincronizado del valor persistido.
+            'partida_presupuestal' => '36101',
             'institution_name' => $institution->name,
             'juridical_nature_id' => $juridicalNature->id,
             'juridical_nature_name' => $juridicalNature->name,

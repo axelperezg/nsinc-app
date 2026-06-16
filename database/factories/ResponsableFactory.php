@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Responsable;
 use App\Models\Institution;
+use App\Models\Responsable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ResponsableFactory extends Factory
@@ -15,9 +15,7 @@ class ResponsableFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'institution_id' => Institution::factory(),
-            'cargo' => $this->faker->jobTitle(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'telefono' => $this->faker->phoneNumber(),
+            'charge' => $this->faker->jobTitle(),
         ];
     }
 }

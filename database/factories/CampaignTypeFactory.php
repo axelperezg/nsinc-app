@@ -19,6 +19,7 @@ class CampaignTypeFactory extends Factory
                 'Política',
                 'Educativa',
             ]),
+            'description' => $this->faker->sentence(),
         ];
     }
 }

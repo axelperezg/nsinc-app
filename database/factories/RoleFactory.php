@@ -13,6 +13,7 @@ class RoleFactory extends Factory
     {
         return [
             'name' => 'institution_user',
+            'display_name' => 'Institution User',
             'description' => 'Institution User',
         ];
     }
@@ -21,6 +22,7 @@ class RoleFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'name' => 'super_admin',
+            'display_name' => 'Super Administrator',
             'description' => 'Super Administrator',
         ]);
     }
@@ -29,6 +31,7 @@ class RoleFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'name' => 'sector_coordinator',
+            'display_name' => 'Sector Coordinator',
             'description' => 'Sector Coordinator',
         ]);
     }
@@ -37,6 +40,7 @@ class RoleFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'name' => 'dgnc_user',
+            'display_name' => 'DGNC User',
             'description' => 'DGNC User',
         ]);
     }

@@ -2,13 +2,12 @@
 
 namespace Tests\Unit\Models;
 
-use Tests\TestCase;
 use App\Models\Campaign;
-use App\Models\Estrategy;
-use App\Models\Institution;
 use App\Models\CampaignType;
+use App\Models\Estrategy;
 use App\Models\Version;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CampaignModelTest extends TestCase
 {
@@ -22,16 +21,6 @@ class CampaignModelTest extends TestCase
 
         $this->assertInstanceOf(Estrategy::class, $campaign->estrategy);
         $this->assertEquals($estrategy->id, $campaign->estrategy->id);
-    }
-
-    /** @test */
-    public function it_belongs_to_institution()
-    {
-        $institution = Institution::factory()->create();
-        $campaign = Campaign::factory()->create(['institution_id' => $institution->id]);
-
-        $this->assertInstanceOf(Institution::class, $campaign->institution);
-        $this->assertEquals($institution->id, $campaign->institution->id);
     }
 
     /** @test */
@@ -216,23 +205,23 @@ class CampaignModelTest extends TestCase
             'copiado' => 17000.00,
         ]);
 
-        $total = (float)$campaign->televisoras +
-                 (float)$campaign->radiodifusoras +
-                 (float)$campaign->cine +
-                 (float)$campaign->decdmx +
-                 (float)$campaign->deedos +
-                 (float)$campaign->deextr +
-                 (float)$campaign->revistas +
-                 (float)$campaign->mediosComplementarios +
-                 (float)$campaign->mediosDigitales +
-                 (float)$campaign->mediosDigitalesInternet +
-                 (float)$campaign->preEstudios +
-                 (float)$campaign->postEstudios +
-                 (float)$campaign->disenio +
-                 (float)$campaign->produccion +
-                 (float)$campaign->preProduccion +
-                 (float)$campaign->postProduccion +
-                 (float)$campaign->copiado;
+        $total = (float) $campaign->televisoras +
+                 (float) $campaign->radiodifusoras +
+                 (float) $campaign->cine +
+                 (float) $campaign->decdmx +
+                 (float) $campaign->deedos +
+                 (float) $campaign->deextr +
+                 (float) $campaign->revistas +
+                 (float) $campaign->mediosComplementarios +
+                 (float) $campaign->mediosDigitales +
+                 (float) $campaign->mediosDigitalesInternet +
+                 (float) $campaign->preEstudios +
+                 (float) $campaign->postEstudios +
+                 (float) $campaign->disenio +
+                 (float) $campaign->produccion +
+                 (float) $campaign->preProduccion +
+                 (float) $campaign->postProduccion +
+                 (float) $campaign->copiado;
 
         $this->assertEquals(153000.00, $total);
     }
@@ -272,7 +261,7 @@ class CampaignModelTest extends TestCase
     public function campaign_preserves_coemisores_information()
     {
         $campaign = Campaign::factory()->create([
-            'coemisores_acronyms' => 'Secretaría de Salud, IMSS, ISSSTE'
+            'coemisores_acronyms' => 'Secretaría de Salud, IMSS, ISSSTE',
         ]);
 
         $this->assertEquals('Secretaría de Salud, IMSS, ISSSTE', $campaign->coemisores_acronyms);
@@ -284,7 +273,7 @@ class CampaignModelTest extends TestCase
         $objective = 'Incrementar la conciencia sobre la importancia de la vacunación';
 
         $campaign = Campaign::factory()->create([
-            'objetivoComunicacion' => $objective
+            'objetivoComunicacion' => $objective,
         ]);
 
         $this->assertEquals($objective, $campaign->objetivoComunicacion);
@@ -296,7 +285,7 @@ class CampaignModelTest extends TestCase
         $theme = 'Salud Pública - Prevención de Enfermedades';
 
         $campaign = Campaign::factory()->create([
-            'temaEspecifico' => $theme
+            'temaEspecifico' => $theme,
         ]);
 
         $this->assertEquals($theme, $campaign->temaEspecifico);

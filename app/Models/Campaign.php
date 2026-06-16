@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Campaign extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'temaEspecifico',
         'objetivoComunicacion',
         'campaign_type_id',
         'estrategy_id',
-        'institution_id',
         'institution_name',
         'coemisores_acronyms',
         'sexo',
@@ -78,11 +78,6 @@ class Campaign extends Model
     public function campaignType()
     {
         return $this->belongsTo(CampaignType::class);
-    }
-
-    public function institution()
-    {
-        return $this->belongsTo(Institution::class);
     }
 
     public function estrategy()

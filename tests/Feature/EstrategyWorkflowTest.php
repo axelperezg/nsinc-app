@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Estrategy;
 use App\Models\Institution;
-use App\Models\User;
-use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class EstrategyWorkflowTest extends TestCase
 {
@@ -58,7 +56,7 @@ class EstrategyWorkflowTest extends TestCase
 
         $estrategy->update([
             'estado_estrategia' => 'Enviada a DGNC',
-            'fecha_envio_dgnc' => now()
+            'fecha_envio_dgnc' => now(),
         ]);
 
         $this->assertEquals('Enviada a DGNC', $estrategy->fresh()->estado_estrategia);
@@ -197,13 +195,13 @@ class EstrategyWorkflowTest extends TestCase
         $old = Estrategy::factory()->autorizada()->create([
             'institution_id' => $institution->id,
             'anio' => 2024,
-            'created_at' => now()->subDays(5)
+            'created_at' => now()->subDays(5),
         ]);
 
         $latest = Estrategy::factory()->autorizada()->create([
             'institution_id' => $institution->id,
             'anio' => 2024,
-            'created_at' => now()
+            'created_at' => now(),
         ]);
 
         $this->assertTrue($latest->isLatestForInstitutionAndYear());
@@ -254,14 +252,14 @@ class EstrategyWorkflowTest extends TestCase
     public function fecha_envio_dgnc_is_set_when_sent_to_dgnc()
     {
         $estrategy = Estrategy::factory()->aceptadaCS()->create([
-            'fecha_envio_dgnc' => null
+            'fecha_envio_dgnc' => null,
         ]);
 
         $this->assertNull($estrategy->fecha_envio_dgnc);
 
         $estrategy->update([
             'estado_estrategia' => 'Enviada a DGNC',
-            'fecha_envio_dgnc' => now()
+            'fecha_envio_dgnc' => now(),
         ]);
 
         $this->assertNotNull($estrategy->fresh()->fecha_envio_dgnc);
@@ -281,7 +279,7 @@ class EstrategyWorkflowTest extends TestCase
         $ejes = ['eje_general_1_gobernanza', 'eje_transversal_1_igualdad'];
 
         $estrategy = Estrategy::factory()->create([
-            'ejes_plan_nacional' => $ejes
+            'ejes_plan_nacional' => $ejes,
         ]);
 
         $estrategy->update(['estado_estrategia' => 'Enviada a CS']);
