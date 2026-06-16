@@ -61,6 +61,7 @@ class ExpirationDateResource extends Resource
                        'Registro' => 'Registro',
                         'Modificación' => 'Modificación',
                         'Observación' => 'Observación',
+                        'Cancelación' => 'Cancelación',
                     ])
                     ->required(),
                 Forms\Components\Textarea::make('description')

@@ -60,7 +60,7 @@ class ExpirationDateHelper
             $diasRestantes = $today->diffInDays($expiration->fecha_limite, false);
             return [
                 'allowed' => true,
-                'message' => "¡Atención! Quedan {$diasRestantes} día(s) para realizar {$concept}. Fecha límite: {$expiration->fecha_limite->format('d/m/Y')}",
+                //'message' => "¡Atención! Quedan {$diasRestantes} día(s) para realizar {$concept}. Fecha límite: {$expiration->fecha_limite->format('d/m/Y')}",
                 'level' => 'warning',
                 'expiration' => $expiration,
             ];
@@ -81,7 +81,7 @@ class ExpirationDateHelper
         $diasRestantes = $today->diffInDays($expiration->fecha_limite);
         return [
             'allowed' => true,
-            'message' => "Puede realizar {$concept}. Fecha límite: {$expiration->fecha_limite->format('d/m/Y')} ({$diasRestantes} días restantes)",
+           // 'message' => "Puede realizar {$concept}. Fecha límite: {$expiration->fecha_limite->format('d/m/Y')} ({$diasRestantes} días restantes)",
             'level' => 'success',
             'expiration' => $expiration,
         ];

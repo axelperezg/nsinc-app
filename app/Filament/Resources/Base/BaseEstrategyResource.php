@@ -188,43 +188,6 @@ abstract class BaseEstrategyResource extends Resource
                                 }
                                 return 'No disponible';
                             }),
-                        Forms\Components\Hidden::make('responsable_id')
-                            ->default(function () {
-                                $user = Auth::user();
-                                if ($user && $user->institution_id) {
-                                    $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
-                                    return $responsable ? $responsable->id : null;
-                                }
-                                return null;
-                            }),
-                        Forms\Components\TextInput::make('responsable_name')
-                            ->label('Responsable Institución')
-                            ->disabled()
-                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
-                            ->default(function () {
-                                $user = Auth::user();
-                                if ($user && $user->institution_id) {
-                                    $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
-                                    if ($responsable) {
-                                        return $responsable->name;
-                                    }
-                                }
-                                return 'No aplica';
-                            }),
-                        Forms\Components\TextInput::make('NombreSectorResponsable')
-                            ->label('Responsable del Sector')
-                            ->disabled()
-                            ->dehydrated() // Incluir en el envío aunque esté deshabilitado
-                            ->default(function () {
-                                $user = Auth::user();
-                                if ($user && $user->institution_id) {
-                                    $institution = \App\Models\Institution::with('sector')->find($user->institution_id);
-                                    if ($institution && $institution->sector) {
-                                        return $institution->sector->ResponsableSector ?? 'No disponible';
-                                    }
-                                }
-                                return 'No disponible';
-                            }),
                         
                         Forms\Components\DatePicker::make('fecha_elaboracion')
                             ->label('Fecha de Elaboración')
@@ -262,7 +225,7 @@ abstract class BaseEstrategyResource extends Resource
                                     }
                                 }
                                 return 'No disponible';
-                            })->columnSpanFull(),
+                            })->columnSpan(2),
                         Forms\Components\DatePicker::make('fecha_envio_dgnc')
                             ->label('Fecha de Envío DGNC')
                             ->disabled()
@@ -508,7 +471,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->hintIcon('heroicon-o-question-mark-circle')
                                             ->hintColor('info')
                                             ->helperText('Ingresa un nombre descriptivo que identifique claramente la campaña (mínimo 10 caracteres).')
-                                            ->placeholder('Ejemplo: Campaña de Prevención de Enfermedades Respiratorias 2025')
+                                            ->placeholder('Ejemplo: Campaña de Prevención de Enfermedades Respiratorias 2026')
                                             ->live(debounce: 500)
                                             ->afterStateUpdated(function ($state, $set, $get) {
                                                 if ($state) {
@@ -1423,6 +1386,48 @@ abstract class BaseEstrategyResource extends Resource
                             }),
                     ]),
 
+                    Forms\Components\Section::make('Responsables')
+                        ->schema([
+                            Forms\Components\Hidden::make('responsable_id')
+                                ->default(function () {
+                                    $user = Auth::user();
+                                    if ($user && $user->institution_id) {
+                                        $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
+                                        return $responsable ? $responsable->id : null;
+                                    }
+                                    return null;
+                                }),
+                            Forms\Components\TextInput::make('responsable_name')
+                                ->label('Responsable Institución')
+                                ->disabled()
+                                ->dehydrated() // Incluir en el envío aunque esté deshabilitado
+                                ->default(function () {
+                                    $user = Auth::user();
+                                    if ($user && $user->institution_id) {
+                                        $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
+                                        if ($responsable) {
+                                            return $responsable->name;
+                                        }
+                                    }
+                                    return 'No aplica';
+                                }),
+                            Forms\Components\TextInput::make('NombreSectorResponsable')
+                                ->label('Responsable del Sector')
+                                ->disabled()
+                                ->dehydrated() // Incluir en el envío aunque esté deshabilitado
+                                ->default(function () {
+                                    $user = Auth::user();
+                                    if ($user && $user->institution_id) {
+                                        $institution = \App\Models\Institution::with('sector')->find($user->institution_id);
+                                        if ($institution && $institution->sector) {
+                                            return $institution->sector->ResponsableSector ?? 'No disponible';
+                                        }
+                                    }
+                                    return 'No disponible';
+                                }),
+                        ])
+                        ->columns(2),
+
                 // Acciones del formulario
                 Forms\Components\Actions::make([
                     Forms\Components\Actions\Action::make('enviar_cs')
@@ -2197,7 +2202,7 @@ abstract class BaseEstrategyResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Modificar Estrategia')
-                    ->modalDescription('¿Estás seguro de que quieres crear una modificación de esta estrategia? Se duplicará con todos sus datos y campañas.')
+                    ->modalDescription('¿Estás seguro de que quieres crear una modificación de esta estrategia?')
                     ->modalSubmitActionLabel('Sí, Modificar')
                     ->modalCancelActionLabel('Cancelar'),
 
@@ -2220,7 +2225,7 @@ abstract class BaseEstrategyResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Solventar Estrategia')
-                    ->modalDescription('¿Estás seguro de que quieres crear una solventación de esta estrategia? Se duplicará con todos sus datos y campañas.')
+                    ->modalDescription('¿Estás seguro de que quieres crear una solventación de esta estrategia?')
                     ->modalSubmitActionLabel('Sí, Solventar')
                     ->modalCancelActionLabel('Cancelar'),
 
@@ -2253,7 +2258,7 @@ abstract class BaseEstrategyResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Cancelar Estrategia')
-                    ->modalDescription('¿Estás seguro de que quieres crear una cancelación de esta estrategia? Se duplicará con todos sus datos y campañas.')
+                    ->modalDescription('¿Estás seguro de que quieres crear una cancelación de esta estrategia?')
                     ->modalSubmitActionLabel('Sí, Cancelar')
                     ->modalCancelActionLabel('Cancelar'),
                 
