@@ -14,7 +14,10 @@ class ExpirationDate extends Model
         'fecha_limite',
         'fecha_restrictiva',
         'concept',
+        'target_role',
         'description',
+        'exempted_institution_ids',
+        'exempted_coordinator_ids',
     ];
 
     /**
@@ -25,7 +28,19 @@ class ExpirationDate extends Model
         'fecha_diaPrevio' => 'date',
         'fecha_limite' => 'date',
         'fecha_restrictiva' => 'date',
+        'exempted_institution_ids' => 'array',
+        'exempted_coordinator_ids' => 'array',
     ];
+
+    public function isInstitutionExempted(int $institutionId): bool
+    {
+        return in_array($institutionId, $this->exempted_institution_ids ?? []);
+    }
+
+    public function isCoordinatorExempted(int $userId): bool
+    {
+        return in_array($userId, $this->exempted_coordinator_ids ?? []);
+    }
 
     /**
      * Obtiene la fecha de vencimiento para un concepto y año específico

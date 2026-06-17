@@ -38,7 +38,9 @@ class ModificarPromocionPublicidad extends Page
         // Validar fechas de vencimiento para Modificación
         $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
             'Modificación',
-            $this->estrategyOriginal->anio
+            $this->estrategyOriginal->anio,
+            $this->estrategyOriginal->institution_id,
+            'institution_user'
         );
 
         if (!$validation['allowed']) {

@@ -28,7 +28,9 @@ class EditPromocionPublicidad extends EditRecord
         // Validar fecha de vencimiento basado en el concepto de la estrategia
         $validation = ExpirationDateHelper::validateEstrategyConcept(
             $this->record->concepto,
-            $this->record->anio
+            $this->record->anio,
+            $this->record->institution_id,
+            'institution_user'
         );
 
         // Si no está permitido editar, redirigir
@@ -64,7 +66,9 @@ class EditPromocionPublicidad extends EditRecord
         // Validar nuevamente antes de guardar
         $validation = ExpirationDateHelper::validateEstrategyConcept(
             $this->record->concepto,
-            $this->record->anio
+            $this->record->anio,
+            $this->record->institution_id,
+            'institution_user'
         );
 
         if (!$validation['allowed']) {
@@ -87,7 +91,9 @@ class EditPromocionPublicidad extends EditRecord
     {
         $validation = ExpirationDateHelper::validateEstrategyConcept(
             $this->record->concepto,
-            $this->record->anio
+            $this->record->anio,
+            $this->record->institution_id,
+            'institution_user'
         );
 
         $message = "La estrategia ha sido actualizada exitosamente.";

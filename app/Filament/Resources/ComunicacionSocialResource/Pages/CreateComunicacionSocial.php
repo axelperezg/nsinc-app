@@ -25,7 +25,7 @@ class CreateComunicacionSocial extends CreateRecord
         parent::mount();
 
         $year = $this->getYearForCreation();
-        $validation = ExpirationDateHelper::validateEstrategyConcept('Registro', $year);
+        $validation = ExpirationDateHelper::validateEstrategyConcept('Registro', $year, Auth::user()?->institution_id, 'institution_user');
 
         if (!$validation['allowed']) {
             Notification::make()
@@ -161,7 +161,7 @@ class CreateComunicacionSocial extends CreateRecord
             $this->halt();
         }
 
-        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year);
+        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year, $institutionId, 'institution_user');
 
         if (!$validation['allowed']) {
             Notification::make()
@@ -184,7 +184,7 @@ class CreateComunicacionSocial extends CreateRecord
 
         $year = $this->record->anio;
         $concepto = $this->record->concepto;
-        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year);
+        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year, $this->record->institution_id, 'institution_user');
 
         $message = "La estrategia ha sido creada exitosamente.";
         if ($validation['expiration']) {

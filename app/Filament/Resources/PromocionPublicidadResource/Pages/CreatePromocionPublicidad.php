@@ -33,7 +33,7 @@ class CreatePromocionPublicidad extends CreateRecord
         $year = $this->getYearForCreation();
 
         // Validar fecha de vencimiento para "Registro"
-        $validation = ExpirationDateHelper::validateEstrategyConcept('Registro', $year);
+        $validation = ExpirationDateHelper::validateEstrategyConcept('Registro', $year, Auth::user()?->institution_id, 'institution_user');
 
         // Si no está permitido, redirigir y mostrar notificación
         if (!$validation['allowed']) {
@@ -198,7 +198,7 @@ class CreatePromocionPublicidad extends CreateRecord
         }
 
         // Validar nuevamente antes de guardar
-        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year);
+        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year, $institutionId, 'institution_user');
 
         if (!$validation['allowed']) {
             Notification::make()
@@ -228,7 +228,7 @@ class CreatePromocionPublicidad extends CreateRecord
         $year = $this->record->anio;
         $concepto = $this->record->concepto;
 
-        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year);
+        $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year, $this->record->institution_id, 'institution_user');
 
         $message = "La estrategia ha sido creada exitosamente.";
         if ($validation['expiration']) {

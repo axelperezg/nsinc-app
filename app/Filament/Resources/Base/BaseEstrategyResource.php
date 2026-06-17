@@ -2307,8 +2307,26 @@ abstract class BaseEstrategyResource extends Resource
                             ->columns(1),
                     ])
                     ->action(function (array $data, $record) {
+                        $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
+                            $record->concepto,
+                            $record->anio,
+                            null,
+                            'sector_coordinator',
+                            Auth::id()
+                        );
+
+                        if (!$validation['allowed']) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('No se puede evaluar la estrategia')
+                                ->body($validation['message'])
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                            return;
+                        }
+
                         $record->update(['estado_estrategia' => $data['nuevo_estado']]);
-                        
+
                         \Filament\Notifications\Notification::make()
                             ->title('Estrategia evaluada exitosamente')
                             ->body('El estado ha sido cambiado a: ' . $data['nuevo_estado'])
@@ -2338,11 +2356,29 @@ abstract class BaseEstrategyResource extends Resource
                     ->modalSubmitActionLabel('Sí, Enviar')
                     ->modalCancelActionLabel('Cancelar')
                     ->action(function ($record) {
+                        $validation = \App\Helpers\ExpirationDateHelper::validateEstrategyConcept(
+                            $record->concepto,
+                            $record->anio,
+                            null,
+                            'sector_coordinator',
+                            Auth::id()
+                        );
+
+                        if (!$validation['allowed']) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('No se puede enviar a DGNC')
+                                ->body($validation['message'])
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                            return;
+                        }
+
                         $record->update([
                             'estado_estrategia' => 'Enviada a DGNC',
-                            'fecha_envio_dgnc' => now() // Actualizar la fecha de envío a DGNC
+                            'fecha_envio_dgnc'  => now(),
                         ]);
-                        
+
                         \Filament\Notifications\Notification::make()
                             ->title('Estrategia enviada exitosamente')
                             ->body('La estrategia ha sido enviada a DGNC para revisión')
