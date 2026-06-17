@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
             // 5. Plan Nacional de Desarrollo (configuración de ejes para estrategias)
             PlanNacionalDesarrolloSeeder::class,
 
+            // 6. Tipos de campaña
+            CampaignTypeSeeder::class,
+
             // 6. Configuraciones del sistema
             ConfigurationSeeder::class,
             
