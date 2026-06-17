@@ -176,6 +176,11 @@ class SectorSeeder extends Seeder
                 'acronym' => 'STPS',
                 'ResponsableSector' => 'Lic. Diego Camacho Aquiahuatl',
             ],
+            [
+                'name' => 'SECRETARÍA DE SEGURIDAD Y PROTECCIÓN CIUDADANA',
+                'acronym' => 'SSPC',
+                'ResponsableSector' => 'Mtra. Tania Guadalupe Aguilar Diaz',
+            ],
         ];
 
         $created = 0;
