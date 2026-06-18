@@ -7,11 +7,9 @@ use Illuminate\Database\Seeder;
 
 class PlanNacionalDesarrolloSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // ── PND 2025-2030 (activo) ──────────────────────────────────────────
         $this->command->info('Creando Plan Nacional de Desarrollo 2025-2030...');
 
         PlanNacionalDesarrollo::firstOrCreate(
@@ -20,6 +18,7 @@ class PlanNacionalDesarrolloSeeder extends Seeder
                 'fecha_inicio' => '2025-01-01',
                 'fecha_fin' => '2030-12-31',
                 'activo' => true,
+                'sin_plan_publicado' => false,
                 'nombre_ejes_generales' => 'Ejes Generales',
                 'nombre_ejes_transversales' => 'Ejes Transversales',
                 'descripcion' => 'Plan Nacional de Desarrollo del gobierno federal 2025-2030',
@@ -73,5 +72,46 @@ class PlanNacionalDesarrolloSeeder extends Seeder
         );
 
         $this->command->info('✅ Plan Nacional de Desarrollo 2025-2030 creado correctamente.');
+
+        // ── Período sin PND publicado: enero–octubre 2031 ──────────────────
+        $this->command->info('Creando período sin Plan Nacional publicado (ene–oct 2031)...');
+
+        PlanNacionalDesarrollo::firstOrCreate(
+            ['nombre' => 'Sin Plan Nacional de Desarrollo publicado (2031)'],
+            [
+                'fecha_inicio' => '2031-01-01',
+                'fecha_fin' => '2031-10-31',
+                'activo' => false,
+                'sin_plan_publicado' => true,
+                'nombre_ejes_generales' => 'Ejes Generales',
+                'nombre_ejes_transversales' => 'Ejes Transversales',
+                'descripcion' => 'El Plan Nacional de Desarrollo 2031-2035 aún no ha sido publicado. '
+                    .'Los campos de ejes estratégicos se habilitarán una vez que el plan sea publicado.',
+                'ejes_generales' => null,
+                'ejes_transversales' => null,
+            ]
+        );
+
+        $this->command->info('✅ Período sin PND publicado (ene–oct 2031) creado correctamente.');
+
+        // ── PND 2031-2035 (a partir del 1 de noviembre de 2031) ────────────
+        $this->command->info('Creando Plan Nacional de Desarrollo 2031-2035...');
+
+        PlanNacionalDesarrollo::firstOrCreate(
+            ['nombre' => 'Plan Nacional de Desarrollo 2031-2035'],
+            [
+                'fecha_inicio' => '2031-11-01',
+                'fecha_fin' => '2035-12-31',
+                'activo' => false,
+                'sin_plan_publicado' => false,
+                'nombre_ejes_generales' => 'Ejes Generales',
+                'nombre_ejes_transversales' => 'Ejes Transversales',
+                'descripcion' => 'Plan Nacional de Desarrollo del gobierno federal 2031-2035',
+                'ejes_generales' => [],
+                'ejes_transversales' => [],
+            ]
+        );
+
+        $this->command->info('✅ Plan Nacional de Desarrollo 2031-2035 creado correctamente.');
     }
 }
