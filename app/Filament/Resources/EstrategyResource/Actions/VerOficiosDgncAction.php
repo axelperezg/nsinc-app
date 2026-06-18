@@ -109,11 +109,7 @@ class VerOficiosDgncAction
                         ->collapsible();
                 }
                 
-                return [
-                    Forms\Components\Section::make('Oficios DGNC Cargados')
-                        ->schema($sections)
-                        ->columns(1),
-                ];
+                return $sections;
             })
             ->modalHeading(function ($record) {
                 $documentos = $record->oficioDgncDocuments;

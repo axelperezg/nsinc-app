@@ -1568,6 +1568,13 @@ abstract class BaseEstrategyResource extends Resource
                         ->modalDescription('¿Estás seguro de que quieres autorizar esta estrategia? Una vez autorizada, estará disponible para modificaciones.')
                         ->modalSubmitActionLabel('Sí, Autorizar')
                         ->modalCancelActionLabel('Cancelar'),
+
+                    Forms\Components\Actions\Action::make('regresar_tabla')
+                        ->label('Regresar a la tabla')
+                        ->icon('heroicon-o-arrow-left')
+                        ->color('gray')
+                        ->size('lg')
+                        ->url(fn () => static::getUrl('index')),
                     ])
                     ->alignment('center')
                     ->columnSpanFull(),
@@ -1691,7 +1698,7 @@ abstract class BaseEstrategyResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('presupuesto')
                     ->label('Presupuesto')
-                    ->money('MXN')
+                    ->money('Miles de pesos', locale: 'en_US')
                     ->sortable(),
                 //Tables\Columns\TextColumn::make('campaigns_count')
                   //  ->label('Campañas')
@@ -2325,11 +2332,20 @@ abstract class BaseEstrategyResource extends Resource
                             return;
                         }
 
-                        $record->update(['estado_estrategia' => $data['nuevo_estado']]);
+                        $nuevoEstado = $data['nuevo_estado'] === 'Aceptada CS'
+                            ? 'Enviada a DGNC'
+                            : $data['nuevo_estado'];
+
+                        $campos = ['estado_estrategia' => $nuevoEstado];
+                        if ($nuevoEstado === 'Enviada a DGNC') {
+                            $campos['fecha_envio_dgnc'] = now();
+                        }
+
+                        $record->update($campos);
 
                         \Filament\Notifications\Notification::make()
                             ->title('Estrategia evaluada exitosamente')
-                            ->body('El estado ha sido cambiado a: ' . $data['nuevo_estado'])
+                            ->body('El estado de la estrategia ha sido actualizado a: ' . $nuevoEstado)
                             ->success()
                             ->send();
                     })
