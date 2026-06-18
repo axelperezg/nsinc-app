@@ -46,30 +46,35 @@ class PlanNacionalDesarrolloResource extends Resource
                             ->label('Nombre del PND')
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('Plan Nacional de Desarrollo 2025-2030')
-                            ->helperText('Nombre completo del Plan Nacional de Desarrollo')
+                            ->placeholder(fn ($get) => $get('sin_plan_publicado') ? 'Sin Plan Nacional publicado' : 'Plan Nacional de Desarrollo 2025-2030')
+                            ->helperText(fn ($get) => $get('sin_plan_publicado') ? 'Etiqueta identificadora para este período sin plan publicado' : 'Nombre completo del Plan Nacional de Desarrollo')
+                            ->columnSpanFull(),
+
+                        Forms\Components\Toggle::make('sin_plan_publicado')
+                            ->label('Período sin Plan Nacional publicado')
+                            ->helperText('Activa esta opción para registrar un período en el que el Plan Nacional de Desarrollo aún no ha sido publicado.')
+                            ->default(false)
+                            ->live()
                             ->columnSpanFull(),
 
                         Forms\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('periodo_inicio')
-                                    ->label('Año de Inicio')
-                                    ->numeric()
+                                Forms\Components\DatePicker::make('fecha_inicio')
+                                    ->label('Fecha de Inicio')
                                     ->required()
-                                    ->minValue(2020)
-                                    ->maxValue(2050)
-                                    ->placeholder('2025')
-                                    ->helperText('Año de inicio del período'),
+                                    ->displayFormat('d/m/Y')
+                                    ->format('Y-m-d')
+                                    ->placeholder('01/01/2025')
+                                    ->helperText('Fecha de inicio del período'),
 
-                                Forms\Components\TextInput::make('periodo_fin')
-                                    ->label('Año de Fin')
-                                    ->numeric()
+                                Forms\Components\DatePicker::make('fecha_fin')
+                                    ->label('Fecha de Fin')
                                     ->required()
-                                    ->minValue(2020)
-                                    ->maxValue(2050)
-                                    ->placeholder('2030')
-                                    ->helperText('Año de finalización del período')
-                                    ->gt('periodo_inicio'),
+                                    ->displayFormat('d/m/Y')
+                                    ->format('Y-m-d')
+                                    ->placeholder('31/12/2030')
+                                    ->helperText('Fecha de finalización del período')
+                                    ->after('fecha_inicio'),
                             ]),
 
                         Forms\Components\Toggle::make('activo')
@@ -79,10 +84,16 @@ class PlanNacionalDesarrolloResource extends Resource
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('descripcion')
-                            ->label('Descripción')
+                            ->label(fn ($get) => $get('sin_plan_publicado') ? 'Mensaje para mostrar a los usuarios' : 'Descripción')
                             ->rows(3)
                             ->maxLength(65535)
-                            ->placeholder('Descripción general del Plan Nacional de Desarrollo')
+                            ->placeholder(fn ($get) => $get('sin_plan_publicado')
+                                ? 'El Plan Nacional de Desarrollo aún no ha sido publicado para este período.'
+                                : 'Descripción general del Plan Nacional de Desarrollo')
+                            ->helperText(fn ($get) => $get('sin_plan_publicado')
+                                ? 'Este texto se mostrará en las estrategias creadas durante este período.'
+                                : null)
+                            ->required(fn ($get) => (bool) $get('sin_plan_publicado'))
                             ->columnSpanFull(),
                     ])
                     ->columns(1)
@@ -91,6 +102,7 @@ class PlanNacionalDesarrolloResource extends Resource
                 Forms\Components\Section::make('Configuración de Nombres de Secciones')
                     ->description('Personaliza los nombres de las secciones de ejes')
                     ->icon('heroicon-o-tag')
+                    ->hidden(fn ($get) => (bool) $get('sin_plan_publicado'))
                     ->schema([
                         Forms\Components\TextInput::make('nombre_ejes_generales')
                             ->label('Nombre de la Sección de Ejes Generales')
@@ -116,6 +128,7 @@ class PlanNacionalDesarrolloResource extends Resource
                 Forms\Components\Section::make(fn ($get) => $get('nombre_ejes_generales') ?: 'Ejes Generales')
                     ->description('Define los ejes generales del Plan Nacional de Desarrollo')
                     ->icon('heroicon-o-chart-bar')
+                    ->hidden(fn ($get) => (bool) $get('sin_plan_publicado'))
                     ->schema([
                         Forms\Components\Repeater::make('ejes_generales')
                             ->label('')
@@ -168,6 +181,7 @@ class PlanNacionalDesarrolloResource extends Resource
                 Forms\Components\Section::make(fn ($get) => $get('nombre_ejes_transversales') ?: 'Ejes Transversales')
                     ->description('Define los ejes transversales del Plan Nacional de Desarrollo')
                     ->icon('heroicon-o-arrow-path')
+                    ->hidden(fn ($get) => (bool) $get('sin_plan_publicado'))
                     ->schema([
                         Forms\Components\Repeater::make('ejes_transversales')
                             ->label('')
@@ -230,12 +244,21 @@ class PlanNacionalDesarrolloResource extends Resource
                     ->weight('bold')
                     ->wrap(),
 
-                Tables\Columns\TextColumn::make('periodo')
+                Tables\Columns\TextColumn::make('fecha_inicio')
                     ->label('Período')
-                    ->formatStateUsing(fn ($record) => "{$record->periodo_inicio} - {$record->periodo_fin}")
-                    ->sortable(['periodo_inicio', 'periodo_fin'])
+                    ->formatStateUsing(fn ($record) => $record->fecha_inicio->format('d/m/Y').' - '.$record->fecha_fin->format('d/m/Y'))
+                    ->sortable()
                     ->badge()
-                    ->color('info'),
+                    ->color(fn ($record) => $record->sin_plan_publicado ? 'warning' : 'info'),
+
+                Tables\Columns\IconColumn::make('sin_plan_publicado')
+                    ->label('Sin PND publicado')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-exclamation-triangle')
+                    ->falseIcon('heroicon-o-minus')
+                    ->trueColor('warning')
+                    ->falseColor('gray')
+                    ->sortable(),
 
                 Tables\Columns\IconColumn::make('activo')
                     ->label('Estado')
@@ -294,7 +317,7 @@ class PlanNacionalDesarrolloResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('periodo_inicio', 'desc');
+            ->defaultSort('fecha_inicio', 'desc');
     }
 
     public static function getPages(): array

@@ -17,8 +17,8 @@ class PlanNacionalDesarrolloSeeder extends Seeder
         PlanNacionalDesarrollo::firstOrCreate(
             ['nombre' => 'Plan Nacional de Desarrollo 2025-2030'],
             [
-                'periodo_inicio' => 2025,
-                'periodo_fin' => 2030,
+                'fecha_inicio' => '2025-01-01',
+                'fecha_fin' => '2030-12-31',
                 'activo' => true,
                 'nombre_ejes_generales' => 'Ejes Generales',
                 'nombre_ejes_transversales' => 'Ejes Transversales',

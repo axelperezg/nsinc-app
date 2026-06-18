@@ -15,9 +15,10 @@ class PlanNacionalDesarrollo extends Model
 
     protected $fillable = [
         'nombre',
-        'periodo_inicio',
-        'periodo_fin',
+        'fecha_inicio',
+        'fecha_fin',
         'activo',
+        'sin_plan_publicado',
         'nombre_ejes_generales',
         'nombre_ejes_transversales',
         'ejes_generales',
@@ -27,8 +28,9 @@ class PlanNacionalDesarrollo extends Model
 
     protected $casts = [
         'activo' => 'boolean',
-        'periodo_inicio' => 'integer',
-        'periodo_fin' => 'integer',
+        'sin_plan_publicado' => 'boolean',
+        'fecha_inicio' => 'date',
+        'fecha_fin' => 'date',
         'ejes_generales' => 'array',
         'ejes_transversales' => 'array',
     ];
@@ -52,12 +54,24 @@ class PlanNacionalDesarrollo extends Model
     }
 
     /**
-     * Obtener PND por año específico
+     * Obtener PND por fecha específica (incluye períodos sin plan publicado)
+     */
+    public static function getForDate(string|\DateTimeInterface $date): ?self
+    {
+        $date = $date instanceof \DateTimeInterface ? $date->format('Y-m-d') : $date;
+
+        return self::whereDate('fecha_inicio', '<=', $date)
+            ->whereDate('fecha_fin', '>=', $date)
+            ->first();
+    }
+
+    /**
+     * Obtener PND por año específico (busca por rango de fechas)
      */
     public static function getForYear(int $year): ?self
     {
-        return self::where('periodo_inicio', '<=', $year)
-            ->where('periodo_fin', '>=', $year)
+        return self::whereDate('fecha_inicio', '<=', "{$year}-12-31")
+            ->whereDate('fecha_fin', '>=', "{$year}-01-01")
             ->first();
     }
 

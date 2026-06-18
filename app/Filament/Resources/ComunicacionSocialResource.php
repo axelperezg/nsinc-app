@@ -84,9 +84,15 @@ class ComunicacionSocialResource extends BaseEstrategyResource
 
                         $pnd = \App\Models\PlanNacionalDesarrollo::find($pndId);
 
-                        return $pnd
-                            ? "Selecciona los ejes del {$pnd->nombre} que se relacionan con tu estrategia"
-                            : 'Selecciona los ejes del Plan Nacional que se relacionan con tu estrategia';
+                        if (! $pnd) {
+                            return 'Selecciona los ejes del Plan Nacional que se relacionan con tu estrategia';
+                        }
+
+                        if ($pnd->sin_plan_publicado) {
+                            return $pnd->descripcion ?? 'El Plan Nacional de Desarrollo aún no ha sido publicado para este período.';
+                        }
+
+                        return "Selecciona los ejes del {$pnd->nombre} que se relacionan con tu estrategia";
                     })
                     ->icon('heroicon-o-flag')
                     ->schema(function ($record) {
@@ -108,6 +114,15 @@ class ComunicacionSocialResource extends BaseEstrategyResource
 
                         if (! $pnd) {
                             return [];
+                        }
+
+                        if ($pnd->sin_plan_publicado) {
+                            return [
+                                Forms\Components\Placeholder::make('pnd_not_published')
+                                    ->label('')
+                                    ->content($pnd->descripcion ?? 'El Plan Nacional de Desarrollo aún no ha sido publicado para este período.')
+                                    ->extraAttributes(['class' => 'text-center italic text-gray-500']),
+                            ];
                         }
 
                         $schema = [];

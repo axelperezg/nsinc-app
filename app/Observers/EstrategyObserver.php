@@ -72,7 +72,7 @@ class EstrategyObserver
         if (! empty($snapshot)) {
             $estrategy->ejes_plan_nacional_snapshot = [
                 'pnd_nombre' => $pnd->nombre,
-                'pnd_periodo' => "{$pnd->periodo_inicio}-{$pnd->periodo_fin}",
+                'pnd_periodo' => $pnd->fecha_inicio->format('d/m/Y').' - '.$pnd->fecha_fin->format('d/m/Y'),
                 'nombre_ejes_generales' => $pnd->nombre_ejes_generales,
                 'nombre_ejes_transversales' => $pnd->nombre_ejes_transversales,
                 'fecha_snapshot' => now()->toIso8601String(),
