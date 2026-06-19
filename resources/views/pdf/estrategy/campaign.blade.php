@@ -39,6 +39,7 @@
                      ($campaign->copiado ?? 0);
 
     $porcentajeCampaign = $estrategy->presupuesto > 0 ? ($totalCampaign / $estrategy->presupuesto) * 100 : 0;
+    $esComunicacion = $estrategy->partida_presupuestal === '36101';
 
     // Acumulado
     $acumulado = 0;
@@ -122,10 +123,17 @@
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Nombre de la campaña:</td>
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->name }}</td>
                 </tr>
+                @if($esComunicacion)
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Clasificación de campaña:</td>
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->campaignType->name ?? 'No especificado' }}</td>
                 </tr>
+                @else
+                <tr>
+                    <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Meta de Campaña:</td>
+                    <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->meta_campana ?? 'No especificado' }}</td>
+                </tr>
+                @endif
                 <tr>
                     <td style="font-weight: bold; padding: 2px 4px; border: none; line-height: 1.2;">Tema específico:</td>
                     <td style="padding: 2px 4px; border: none; line-height: 1.2;">{{ $campaign->temaEspecifico }}</td>
