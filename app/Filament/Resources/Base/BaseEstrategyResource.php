@@ -104,6 +104,8 @@ abstract class BaseEstrategyResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $partida = static::$partidaPresupuestal;
+
         return $form
             ->schema([
                 Wizard::make([
@@ -514,12 +516,27 @@ abstract class BaseEstrategyResource extends Resource
                                         Forms\Components\Select::make('campaign_type_id')
                                             ->label('Tipo de Campaña')
                                             ->relationship('campaignType', 'name')
-                                            ->required()
+                                            ->required($partida === '36101')
+                                            ->visible($partida === '36101')
+                                            ->dehydrated()
+                                            ->dehydrateStateUsing(fn ($state) => $partida === '36101' ? $state : null)
                                             ->hint('Selecciona el tipo')
                                             ->hintIcon('heroicon-o-question-mark-circle')
                                             ->hintColor('info')
                                             ->helperText('Elige el tipo de campaña según su naturaleza y objetivos.')
                                             ->preload(),
+                                        Forms\Components\TextInput::make('meta_campana')
+                                            ->label('Meta de Campaña')
+                                            ->required($partida === '36201')
+                                            ->visible($partida === '36201')
+                                            ->dehydrated()
+                                            ->dehydrateStateUsing(fn ($state) => $partida === '36201' ? ($state ?? '') : 'No Aplica')
+                                            ->maxLength(500)
+                                            ->hint('Meta específica de la campaña')
+                                            ->hintIcon('heroicon-o-question-mark-circle')
+                                            ->hintColor('info')
+                                            ->helperText('Especifica la meta cuantificable de esta campaña de promoción y publicidad.')
+                                            ->placeholder('Ejemplo: Incrementar ventas en 20% durante el primer trimestre...'),
                                         Forms\Components\Textarea::make('temaEspecifico')
                                             ->label('Tema Específico')
                                             ->required()

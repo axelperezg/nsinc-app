@@ -14,6 +14,7 @@ class Campaign extends Model
         'temaEspecifico',
         'objetivoComunicacion',
         'campaign_type_id',
+        'meta_campana',
         'estrategy_id',
         'institution_name',
         'coemisores_acronyms',

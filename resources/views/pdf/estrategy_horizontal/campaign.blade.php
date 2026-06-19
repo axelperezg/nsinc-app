@@ -123,10 +123,17 @@
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; width: 36%; vertical-align: top;">Nombre de la campaña:</td>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->name }}</td>
                 </tr>
+                @if($esComunicacion)
                 <tr>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; vertical-align: top;">Clasificación de campaña:</td>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->campaignType->name ?? 'No especificado' }}</td>
                 </tr>
+                @else
+                <tr>
+                    <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; vertical-align: top;">Meta de Campaña:</td>
+                    <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->meta_campana ?? 'No especificado' }}</td>
+                </tr>
+                @endif
                 <tr>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; vertical-align: top;">Tema específico:</td>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->temaEspecifico ?? 'No especificado' }}</td>
