@@ -1715,7 +1715,8 @@ abstract class BaseEstrategyResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('presupuesto')
                     ->label('Presupuesto')
-                    ->money('Miles de pesos', locale: 'en_US')
+                    ->numeric(decimalPlaces: 2, thousandsSeparator: ',', decimalSeparator: '.')
+                    ->tooltip('Miles de pesos')
                     ->sortable(),
                 //Tables\Columns\TextColumn::make('campaigns_count')
                   //  ->label('Campañas')
