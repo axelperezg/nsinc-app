@@ -4,7 +4,6 @@ namespace App\Filament\Resources\PromocionPublicidadResource\Pages;
 
 use App\Filament\Resources\PromocionPublicidadResource;
 use App\Helpers\ExpirationDateHelper;
-use App\Models\Estrategy;
 use App\Models\StrategyDraft;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -177,19 +176,18 @@ class CreatePromocionPublicidad extends CreateRecord
         $concepto = $data['concepto'] ?? 'Registro';
         $institutionId = $data['institution_id'] ?? Auth::user()->institution_id;
 
-        // Verificar duplicados recientes (creados en los últimos 30 segundos)
-        $recentDuplicate = Estrategy::withoutGlobalScopes()
-            ->where('institution_id', $institutionId)
-            ->where('anio', $year)
-            ->where('concepto', $concepto)
-            ->where('partida_presupuestal', '36201') // Promoción y Publicidad
-            ->where('created_at', '>=', now()->subSeconds(30))
-            ->exists();
+        $existing = PromocionPublicidadResource::findDuplicateUniqueConcept(
+            (int) $institutionId,
+            (int) $year,
+            '36201',
+            $concepto
+        );
 
-        if ($recentDuplicate) {
+        if ($existing) {
+            $label = $concepto === 'Registro' ? 'un Registro' : 'una Cancelación';
             Notification::make()
-                ->title('Posible duplicado detectado')
-                ->body('Ya existe una estrategia creada recientemente con estos datos. Por favor verifique antes de intentar nuevamente.')
+                ->title('Duplicado detectado — acción cancelada')
+                ->body("Se identificó que se iba a duplicar una estrategia. Ya existe {$label} de Promoción y Publicidad para esta institución en el año {$year}.")
                 ->warning()
                 ->persistent()
                 ->send();
@@ -197,7 +195,6 @@ class CreatePromocionPublicidad extends CreateRecord
             $this->halt();
         }
 
-        // Validar nuevamente antes de guardar
         $validation = ExpirationDateHelper::validateEstrategyConcept($concepto, $year, $institutionId, 'institution_user');
 
         if (!$validation['allowed']) {

@@ -1656,7 +1656,7 @@ abstract class BaseEstrategyResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('partida_presupuestal')
-                    ->label('Partida Presupuestal'),
+                    ->label('Partida'),
                 
                 Tables\Columns\TextColumn::make('institution.name')
                     ->label('Institución'),
@@ -2544,5 +2544,41 @@ abstract class BaseEstrategyResource extends Resource
     protected static function getEspecificosWizardStep(): ?Wizard\Step
     {
         return null;
+    }
+
+    /**
+     * Verifica si ya existe una Modificacion o Solventacion activa (estado 'Creada')
+     * derivada de la misma estrategia original. Previene duplicados por doble clic o doble pestaña.
+     * Retorna el registro activo si hay conflicto, null si se puede proceder.
+     */
+    public static function findActiveDerivada(int $originalId, string $concepto): ?Estrategy
+    {
+        return Estrategy::withoutGlobalScopes()
+            ->where('estrategia_original_id', $originalId)
+            ->where('concepto', $concepto)
+            ->where('estado_estrategia', 'Creada')
+            ->first();
+    }
+
+    /**
+     * Verifica unicidad de conceptos que no admiten duplicados (Registro, Cancelacion).
+     * Retorna el registro existente si hay conflicto, null si se puede proceder.
+     */
+    public static function findDuplicateUniqueConcept(
+        int $institutionId,
+        int $year,
+        string $partida,
+        string $concepto
+    ): ?Estrategy {
+        if (!in_array($concepto, ['Registro', 'Cancelacion'])) {
+            return null;
+        }
+
+        return Estrategy::withoutGlobalScopes()
+            ->where('institution_id', $institutionId)
+            ->where('anio', $year)
+            ->where('partida_presupuestal', $partida)
+            ->where('concepto', $concepto)
+            ->first();
     }
 }

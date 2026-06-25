@@ -72,23 +72,20 @@ class ModificarPromocionPublicidad extends Page
     protected function duplicarEstrategia(): void
     {
         try {
-            // Verificar duplicados recientes (creados en los últimos 30 segundos)
-            $recentDuplicate = Estrategy::withoutGlobalScopes()
-                ->where('institution_id', $this->estrategyOriginal->institution_id)
-                ->where('anio', $this->estrategyOriginal->anio)
-                ->where('concepto', 'Modificacion')
-                ->where('estrategia_original_id', $this->estrategyOriginal->id)
-                ->where('created_at', '>=', now()->subSeconds(30))
-                ->first();
+            $existing = PromocionPublicidadResource::findActiveDerivada(
+                $this->estrategyOriginal->id,
+                'Modificacion'
+            );
 
-            if ($recentDuplicate) {
+            if ($existing) {
                 Notification::make()
-                    ->title('Modificación ya existe')
-                    ->body('Ya existe una modificación reciente de esta estrategia. Redirigiendo a la edición.')
-                    ->info()
+                    ->title('Duplicado detectado — acción cancelada')
+                    ->body('Se identificó que se iba a duplicar una modificación. Ya existe una modificación en proceso para esta estrategia. Redirigiendo a la edición existente.')
+                    ->warning()
+                    ->persistent()
                     ->send();
 
-                $this->redirect(PromocionPublicidadResource::getUrl('edit', ['record' => $recentDuplicate->id]));
+                $this->redirect(PromocionPublicidadResource::getUrl('edit', ['record' => $existing->id]));
                 return;
             }
 

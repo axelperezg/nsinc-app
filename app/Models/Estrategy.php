@@ -39,6 +39,7 @@ class Estrategy extends Model
         'programa_sectorial_especial',
         'objetivos_estrategicos_transversales',
         'justificacion_estudios',
+        'unique_concept_key',
     ];
 
     protected $casts = [
@@ -217,11 +218,26 @@ class Estrategy extends Model
     {
         static::addGlobalScope('institution', function (Builder $builder) {
             $user = Auth::user();
-            
+
             if ($user && $user->institution_id && $user->role && $user->role->name !== 'super_admin') {
                 $builder->where('institution_id', $user->institution_id);
             }
-            // Si es super admin, no se aplica filtro (ve todas las instituciones)
+        });
+
+        static::saving(function (Estrategy $estrategy) {
+            $conceptosUnicos = ['Registro', 'Cancelacion'];
+
+            if (
+                in_array($estrategy->concepto, $conceptosUnicos) &&
+                $estrategy->institution_id &&
+                $estrategy->anio &&
+                $estrategy->partida_presupuestal
+            ) {
+                $estrategy->attributes['unique_concept_key'] =
+                    "{$estrategy->institution_id}-{$estrategy->anio}-{$estrategy->partida_presupuestal}-{$estrategy->concepto}";
+            } else {
+                $estrategy->attributes['unique_concept_key'] = null;
+            }
         });
     }
 

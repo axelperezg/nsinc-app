@@ -72,23 +72,20 @@ class SolventarPromocionPublicidad extends Page
     protected function duplicarEstrategia(): void
     {
         try {
-            // Verificar duplicados recientes (creados en los últimos 30 segundos)
-            $recentDuplicate = Estrategy::withoutGlobalScopes()
-                ->where('institution_id', $this->estrategyOriginal->institution_id)
-                ->where('anio', $this->estrategyOriginal->anio)
-                ->where('concepto', 'Solventacion')
-                ->where('estrategia_original_id', $this->estrategyOriginal->id)
-                ->where('created_at', '>=', now()->subSeconds(30))
-                ->first();
+            $existing = PromocionPublicidadResource::findActiveDerivada(
+                $this->estrategyOriginal->id,
+                'Solventacion'
+            );
 
-            if ($recentDuplicate) {
+            if ($existing) {
                 Notification::make()
-                    ->title('Solventación ya existe')
-                    ->body('Ya existe una solventación reciente de esta estrategia. Redirigiendo a la edición.')
-                    ->info()
+                    ->title('Duplicado detectado — acción cancelada')
+                    ->body('Se identificó que se iba a duplicar una solventación. Ya existe una solventación en proceso para esta estrategia. Redirigiendo a la edición existente.')
+                    ->warning()
+                    ->persistent()
                     ->send();
 
-                $this->redirect(PromocionPublicidadResource::getUrl('edit', ['record' => $recentDuplicate->id]));
+                $this->redirect(PromocionPublicidadResource::getUrl('edit', ['record' => $existing->id]));
                 return;
             }
 
