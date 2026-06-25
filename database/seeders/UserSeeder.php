@@ -94,7 +94,7 @@ class UserSeeder extends Seeder
         
         if ($dgncUserRole) {
             User::firstOrCreate(
-                ['email' => 'usuario.dgnc@test.com'],
+                ['email' => 'usuario_dgnc@segob.gob.mx'],
                 [
                     'name' => 'Usuario DGNC',
                     'password' => Hash::make('password'),
@@ -102,7 +102,7 @@ class UserSeeder extends Seeder
                 ]
             );
             
-            $this->command->info('Usuario DGNC creado: usuario.dgnc@test.com / password');
+            $this->command->info('Usuario DGNC creado: usuario_dgnc@segob.gob.mx / password');
         }
 
         $this->command->info('Usuarios de prueba creados exitosamente.');

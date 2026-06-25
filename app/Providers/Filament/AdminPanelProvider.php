@@ -27,7 +27,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->registration()
             ->login()
             ->brandLogo(fn () => Configuration::get('pdf.logo_path') ? route('config-logo', 'left') : null)
             ->darkModeBrandLogo(fn () => Configuration::get('pdf.logo_path') ? route('config-logo', 'left') : null)
