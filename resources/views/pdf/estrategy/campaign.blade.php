@@ -391,7 +391,7 @@
 {{-- Sección de Firmas Condicional --}}
 @if($estrategy->institution && $estrategy->institution->isSector)
     {{-- Si es Sector, solo mostrar firma del Responsable de Sector centrada --}}
-    <table style="margin-top: 45px; width: 100%;">
+    <table style="margin-top: 20px; width: 100%;">
         <tr>
             <td style="text-align: center; vertical-align: bottom; padding-top: 15px;">
                 <div style="border-top: 1px solid #000; margin: 0 auto; width: 60%; padding-top: 3px; font-size: 7pt;">
@@ -403,7 +403,7 @@
     </table>
 @else
     {{-- Si NO es Sector, mostrar ambas firmas --}}
-    <table class="signature-row" style="margin-top: 45px;">
+    <table class="signature-row" style="margin-top: 20px;">
         <tr>
             <td class="signature-cell" style="padding-top: 15px;">
                 <div class="signature-line" style="font-size: 7pt; padding-top: 3px;">

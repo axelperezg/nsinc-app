@@ -271,7 +271,7 @@
 
 {{-- ===== FIRMAS ===== --}}
 @if($estrategy->institution && $estrategy->institution->isSector)
-    <table style="margin-top: 68px; width: 100%; border: none;">
+    <table style="margin-top: 30px; width: 100%; border: none;">
         <tr>
             <td style="text-align: center; vertical-align: bottom; border: none;">
                 <div style="border-top: 1px solid #000; margin: 0 auto; width: 45%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
@@ -282,7 +282,7 @@
         </tr>
     </table>
 @else
-    <table style="margin-top: 68px; width: 100%; border: none;">
+    <table style="margin-top: 30px; width: 100%; border: none;">
         <tr>
             <td style="width: 48%; text-align: center; vertical-align: bottom; border: none;">
                 <div style="border-top: 1px solid #000; margin: 0 auto; width: 80%; padding-top: 4px; font-size: 8.5pt; text-align: center;">
