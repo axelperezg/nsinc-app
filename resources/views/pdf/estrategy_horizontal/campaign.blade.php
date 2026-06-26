@@ -136,7 +136,7 @@
                 @endif
                 <tr>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; vertical-align: top;">Tema específico:</td>
-                    <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->temaEspecifico ?? 'No especificado' }}</td>
+                    <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->temaEspecifico ? Str::limit($campaign->temaEspecifico, 300, '... (ver en sistema)') : 'No especificado' }}</td>
                 </tr>
                 <tr>
                     <td style="border: none; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; vertical-align: top;">Público objetivo:</td>
@@ -156,7 +156,7 @@
             <table style="width: 100%; border-collapse: collapse; border: none;">
                 <tr>
                     <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; width: 36%; vertical-align: top;">Objetivo de Comunicación:</td>
-                    <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->objetivoComunicacion ?? 'No especificado' }}</td>
+                    <td style="border: none; border-bottom: 1px solid #e0e0e0; padding: 3px 8px; font-size: 8.5pt; vertical-align: top;">{{ $campaign->objetivoComunicacion ? Str::limit($campaign->objetivoComunicacion, 300, '... (ver en sistema)') : 'No especificado' }}</td>
                 </tr>
                 <tr>
                     <td style="border: none; padding: 3px 8px; font-size: 8.5pt; font-weight: bold; vertical-align: top;">Coemisor(es):</td>

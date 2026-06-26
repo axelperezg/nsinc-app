@@ -1753,7 +1753,6 @@ abstract class BaseEstrategyResource extends Resource
                                 }
                                 return null;
                             })
-                            ->searchable()
                             ->live(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -1794,7 +1793,6 @@ abstract class BaseEstrategyResource extends Resource
                                 
                                 return $query->pluck('name', 'id');
                             })
-                            ->searchable()
                             ->live(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
