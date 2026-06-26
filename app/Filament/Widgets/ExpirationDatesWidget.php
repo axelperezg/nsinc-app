@@ -44,7 +44,7 @@ class ExpirationDatesWidget extends Widget
 
         // Validar el estado de cada concepto solo si hay configuración
         $statuses = $hasConfiguration
-            ? ExpirationDateHelper::getAllExpirationStatuses($year)
+            ? ExpirationDateHelper::getAllExpirationStatuses($year, $user->role?->name)
             : [];
 
         return [

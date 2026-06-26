@@ -126,16 +126,17 @@ class ExpirationDateHelper
     }
 
     /**
-     * Obtiene el estado de todas las fechas de vencimiento para un año
+     * Obtiene el estado de todas las fechas de vencimiento para un año.
+     * Pasar $userRole permite encontrar fechas configuradas por rol específico.
      */
-    public static function getAllExpirationStatuses(?int $year = null): array
+    public static function getAllExpirationStatuses(?int $year = null, ?string $userRole = null): array
     {
         $year = $year ?? now()->year;
         $concepts = ['Registro', 'Modificación', 'Observación'];
         $statuses = [];
 
         foreach ($concepts as $concept) {
-            $statuses[$concept] = self::canPerformAction($concept, $year);
+            $statuses[$concept] = self::canPerformAction($concept, $year, null, $userRole);
         }
 
         return $statuses;
