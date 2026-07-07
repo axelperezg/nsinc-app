@@ -206,21 +206,30 @@
             </div>
 
             {{-- Sub-tabla Tiempos Oficiales / Comerciales --}}
+            @php
+                $esPartida36201 = $estrategy->partida_presupuestal === '36201';
+            @endphp
             <table style="width: 100%; border-collapse: collapse; border-bottom: 1px solid #000;">
                 <tr>
+                    @unless($esPartida36201)
                     <td colspan="2" style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; background-color: #9B1B30; color: #fff;">Tiempos oficiales</td>
+                    @endunless
                     <td colspan="2" style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; background-color: #9B1B30; color: #fff;">Tiempos comerciales</td>
                     <td rowspan="3" style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; background-color: #9B1B30; color: #fff; vertical-align: middle;">Recursos<br>programados<br>por tipo medio</td>
                 </tr>
                 <tr>
+                    @unless($esPartida36201)
                     <td style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; width: 10%;">TV</td>
                     <td style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; width: 10%;">Radio</td>
+                    @endunless
                     <td style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; width: 10%;">TV</td>
                     <td style="border: 1px solid #000; text-align: center; font-size: 7.5pt; font-weight: bold; padding: 2px; width: 10%;">Radio</td>
                 </tr>
                 <tr>
+                    @unless($esPartida36201)
                     <td style="border: 1px solid #000; text-align: center; font-size: 8pt; font-weight: bold; padding: 2px;">{{ $campaign->tv_oficial    ? 'X' : '' }}</td>
                     <td style="border: 1px solid #000; text-align: center; font-size: 8pt; font-weight: bold; padding: 2px;">{{ $campaign->radio_oficial  ? 'X' : '' }}</td>
+                    @endunless
                     <td style="border: 1px solid #000; text-align: center; font-size: 8pt; font-weight: bold; padding: 2px;">{{ $campaign->tv_comercial   ? 'X' : '' }}</td>
                     <td style="border: 1px solid #000; text-align: center; font-size: 8pt; font-weight: bold; padding: 2px;">{{ $campaign->radio_comercial ? 'X' : '' }}</td>
                 </tr>

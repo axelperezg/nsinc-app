@@ -220,15 +220,19 @@
 </table>
 
 {{-- Sección de Medios Oficiales y Comerciales --}}
-@if($campaign->tv_oficial || $campaign->radio_oficial || $campaign->tv_comercial || $campaign->radio_comercial)
+@php
+    $esPartida36201 = $estrategy->partida_presupuestal === '36201';
+@endphp
+@if($esPartida36201 ? ($campaign->tv_comercial || $campaign->radio_comercial) : ($campaign->tv_oficial || $campaign->radio_oficial || $campaign->tv_comercial || $campaign->radio_comercial))
 <div style="margin-top: 3px; margin-bottom: 3px;">
     <table class="data-table" style="width: 100%;">
         <tr>
-            <td colspan="4" class="label-cell" style="padding: 4px; font-weight: bold; background-color: #9B1B30; color: #ffffff; text-align: center;">
+            <td colspan="{{ $esPartida36201 ? 2 : 4 }}" class="label-cell" style="padding: 4px; font-weight: bold; background-color: #9B1B30; color: #ffffff; text-align: center;">
                 MEDIOS UTILIZADOS
             </td>
         </tr>
         <tr>
+            @unless($esPartida36201)
             <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
                 @if($campaign->tv_oficial)
                     <strong> TV Oficial</strong>
@@ -243,14 +247,15 @@
                     <span style="color: #999;">Radio Oficial</span>
                 @endif
             </td>
-            <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
+            @endunless
+            <td style="padding: 4px; text-align: center; width: {{ $esPartida36201 ? '50%' : '25%' }}; border: 1px solid #000; font-size: 7.5pt;">
                 @if($campaign->tv_comercial)
                     <strong> TV Comercial</strong>
                 @else
                     <span style="color: #999;">TV Comercial</span>
                 @endif
             </td>
-            <td style="padding: 4px; text-align: center; width: 25%; border: 1px solid #000; font-size: 7.5pt;">
+            <td style="padding: 4px; text-align: center; width: {{ $esPartida36201 ? '50%' : '25%' }}; border: 1px solid #000; font-size: 7.5pt;">
                 @if($campaign->radio_comercial)
                     <strong> Radio Comercial</strong>
                 @else
