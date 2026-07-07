@@ -526,7 +526,7 @@ abstract class BaseEstrategyResource extends Resource
                                             ->helperText('Elige el tipo de campaña según su naturaleza y objetivos.')
                                             ->preload(),
                                         Forms\Components\TextInput::make('meta_campana')
-                                            ->label('Meta de Campaña')
+                                            ->label('Meta a alcanzar')
                                             ->required($partida === '36201')
                                             ->visible($partida === '36201')
                                             ->dehydrated()
@@ -1409,7 +1409,7 @@ abstract class BaseEstrategyResource extends Resource
                                 ->default(function () {
                                     $user = Auth::user();
                                     if ($user && $user->institution_id) {
-                                        $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
+                                        $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->latest()->first();
                                         return $responsable ? $responsable->id : null;
                                     }
                                     return null;
@@ -1421,7 +1421,7 @@ abstract class BaseEstrategyResource extends Resource
                                 ->default(function () {
                                     $user = Auth::user();
                                     if ($user && $user->institution_id) {
-                                        $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->first();
+                                        $responsable = \App\Models\Responsable::where('institution_id', $user->institution_id)->latest()->first();
                                         if ($responsable) {
                                             return $responsable->name;
                                         }

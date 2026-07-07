@@ -166,7 +166,7 @@ class Estrategy extends Model
             $this->attributes['institution_name'] = $institution ? $institution->name : null;
             
             // También sincronizar el responsable de la institución
-            $responsable = Responsable::where('institution_id', $value)->first();
+            $responsable = Responsable::where('institution_id', $value)->latest()->first();
             if ($responsable) {
                 $this->attributes['responsable_id'] = $responsable->id;
                 $this->attributes['responsable_name'] = $responsable->name;
