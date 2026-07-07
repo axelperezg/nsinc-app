@@ -853,12 +853,18 @@ abstract class BaseEstrategyResource extends Resource
                                                 ->label('TV Tiempos Oficiales')
                                                 ->hint('Tiempos oficiales')
                                                 ->hintIcon('heroicon-o-tv')
-                                                ->helperText('Marca si usarás tiempos oficiales en televisión.'),
+                                                ->helperText('Marca si usarás tiempos oficiales en televisión.')
+                                                ->visible($partida !== '36201')
+                                                ->dehydrated()
+                                                ->dehydrateStateUsing(fn ($state) => $partida === '36201' ? false : $state),
                                             Forms\Components\Checkbox::make('radio_oficial')
                                                 ->label('Radio Tiempos Oficiales')
                                                 ->hint('Tiempos oficiales')
                                                 ->hintIcon('heroicon-o-radio')
-                                                ->helperText('Marca si usarás tiempos oficiales en radio.'),
+                                                ->helperText('Marca si usarás tiempos oficiales en radio.')
+                                                ->visible($partida !== '36201')
+                                                ->dehydrated()
+                                                ->dehydrateStateUsing(fn ($state) => $partida === '36201' ? false : $state),
                                             Forms\Components\Checkbox::make('tv_comercial')
                                                 ->label('TV Comercial')
                                                 ->disabled()
