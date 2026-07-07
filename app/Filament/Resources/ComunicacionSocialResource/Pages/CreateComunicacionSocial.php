@@ -86,18 +86,39 @@ class CreateComunicacionSocial extends CreateRecord
                         ->button()
                         ->color('danger')
                         ->label('Eliminar borrador')
-                        ->action(function () use ($draft) {
-                            $draft->delete();
-                            $this->currentDraft = null;
-                            Notification::make()
-                                ->title('Borrador eliminado')
-                                ->success()
-                                ->send();
-                            $this->redirect($this->getResource()::getUrl('create'));
-                        }),
+                        ->action('deleteDraft'),
                 ])
                 ->send();
         }
+    }
+
+    /**
+     * Elimina el borrador actual (llamado desde el botón "Eliminar borrador" de la notificación)
+     *
+     * Las notificaciones persistentes de Filament se serializan a un array antes de
+     * enviarse al navegador, por lo que las Closures pasadas a ->action() se pierden.
+     * Por eso se usa el nombre de un método público de Livewire en su lugar.
+     */
+    public function deleteDraft(): void
+    {
+        $draft = $this->currentDraft
+            ?? StrategyDraft::where('user_id', Auth::id())
+                ->where('year', $this->getYearForCreation())
+                ->latest('last_saved_at')
+                ->first();
+
+        if ($draft) {
+            $draft->delete();
+        }
+
+        $this->currentDraft = null;
+
+        Notification::make()
+            ->title('Borrador eliminado')
+            ->success()
+            ->send();
+
+        $this->redirect($this->getResource()::getUrl('create'));
     }
 
     public function saveDraft(): void
